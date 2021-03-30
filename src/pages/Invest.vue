@@ -87,6 +87,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { signTransferPermit } from "../utils/permit";
 
 export default {
   name: 'Invest',
@@ -130,6 +131,33 @@ export default {
       this.allowance = this.getWeb3.utils.fromWei(this.allowanceWei, "ether");
     },
     async depositIntoPool() {
+      let currentUser = this.getActiveAccount;
+
+      let result = await signTransferPermit(
+        this.getWeb3, // web3 object
+        this.getActiveAccount, // fromAddress
+        this.getLiquidityPoolAddress, // spender
+        this.getWeb3.utils.toWei(this.depositValue, "ether"), // value
+        1, // nonce, TODO: don't hardcode it 
+        Date.now() + 10000000, // expiration in 3 hours (10000000 miliseconds)
+        "Fakecoin v2", 
+        this.getFakecoinAddress, 
+        42 // chainId, TODO: don't hardcode it
+      );
+
+      await this.getLiquidityPoolContract.methods.depositTokens(
+        this.getActiveAccount, // to
+        this.getFakecoinAddress, // token
+        result.value, // value
+        result.deadline, // deadline
+        result.v,
+        result.r,
+        result.s
+      ).send({
+        from: currentUser
+      });
+    },
+    async depositIntoPool2() {
       let component = this;
       let tokensWei = this.getWeb3.utils.toWei(this.depositValue, "ether");
 
