@@ -79,7 +79,7 @@
                       <h2 class="h4 text-gray-900 mb-2">Deposit funds in the liquidity pool</h2>
                   </div>
 
-                  <form @submit.prevent="depositIntoPool" class="mt-3">
+                  <form @submit.prevent="depositIntoPool2" class="mt-3">
                     <div class="input-group">
                       <div class="input-group-prepend">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{selectedToken}}</button>
@@ -335,6 +335,122 @@ export default {
           }
         });
       }
+    },
+    async depositIntoPool2() {
+      let component = this;
+
+      let unit = "ether"; // DAI
+      if (component.selectedToken === "USDC") {
+        unit = "mwei"; // USDC
+      }
+
+      let tokensWei = component.getWeb3.utils.toWei(component.depositValue, unit);
+
+      const deadline = 1618910836;
+
+      const msgParams = {
+        domain: {
+          chainId: 42, // 42 is Kovan testnet
+          name: 'Fakecoin v2',
+          verifyingContract: component.getStablecoinContract._address,
+          version: '1',
+        },
+        message: {
+          owner: component.getActiveAccount,
+          spender: component.getLiquidityPoolAddress,
+          value: tokensWei,
+          nonce: 1,
+          deadline: deadline
+        },
+        primaryType: "Permit",
+        types: {
+          EIP712Domain: [
+            { name: 'name', type: 'string' },
+            { name: 'version', type: 'string' },
+            { name: 'chainId', type: 'uint256' },
+            { name: 'verifyingContract', type: 'address' },
+          ],
+          Permit: [
+            { name: 'owner', type: 'address' },
+            { name: 'spender', type: 'address' },
+            { name: 'value', type: 'uint' },
+            { name: 'nonce', type: 'uint' },
+            { name: 'deadline', type: 'uint' },
+          ]
+        }
+      }
+
+      const sign = await window.ethereum.request({
+        method: 'eth_signTypedData_v4',
+        params: [component.getActiveAccount, JSON.stringify(msgParams)],
+      })
+
+      window.console.log(sign);
+
+      const r = sign.slice(0, 66);
+      const s = "0x" + sign.slice(66, 130);
+      const v = Number("0x" + sign.slice(130, 132));
+
+      window.console.log("r", r);
+      window.console.log("v", v);
+      window.console.log("s", s);
+
+      await component.getLiquidityPoolContract.methods.depositTokens(
+        component.getActiveAccount, 
+        component.getStablecoinContract._address, 
+        tokensWei,
+        deadline,
+        v,
+        r,
+        s
+      ).send({
+          from: component.getActiveAccount
+      }, function(error, hash) {
+        component.loading = true;
+
+        // Deposit tx error
+        if (error) {
+          component.$toast.error("The transaction has been rejected. Please try again.");
+          component.loading = false;
+        }
+
+        // Deposit transaction sent
+        if (hash) {
+          // show a "tx submitted" toast
+          component.$toast.info("The Deposit transaction has been submitted. Please wait for it to be confirmed.");
+
+          // listen for the Transfer event
+          component.getStablecoinContract.once("Transfer", {
+            filter: { owner: component.getActiveAccount }
+          }, function(error, event) {
+            component.loading = false;
+            
+            // failed transaction
+            if (error) {
+              component.$toast.error("The Deposit transaction has failed. Please try again, perhaps with a higher gas limit.");
+            }
+
+            // success
+            if (event) {
+              component.$toast.success("Your deposit was successfull.");
+
+              // refresh values
+              if (component.selectedToken === "DAI") {
+                component.$store.dispatch("dai/fetchLpAllowance");
+                component.$store.dispatch("dai/fetchUserBalance");
+              } else if (component.selectedToken === "USDC") {
+                component.$store.dispatch("usdc/fetchLpAllowance");
+                component.$store.dispatch("usdc/fetchUserBalance");
+              }
+              
+              component.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
+              component.$store.dispatch("liquidityPool/fetchUserBalance");
+              component.depositValue = null;
+            }
+          });
+        }
+      });
+
     }
   }
 }
