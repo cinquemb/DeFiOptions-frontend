@@ -141,6 +141,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { signERC2612Permit } from 'eth-permit';
 
 export default {
   name: 'Invest',
@@ -337,6 +338,30 @@ export default {
       }
     },
     async depositIntoPool2() {
+      let component = this;
+      let tokensWei = component.getWeb3.utils.toWei(component.depositValue, "ether");
+
+      const result = await signERC2612Permit(
+        window.ethereum, 
+        component.getStablecoinContract._address, 
+        component.getActiveAccount, 
+        component.getLiquidityPoolAddress, 
+        tokensWei
+      );
+ 
+      await component.getLiquidityPoolContract.methods.depositTokens(
+        component.getActiveAccount, 
+        component.getStablecoinContract._address, 
+        tokensWei,
+        result.deadline,
+        result.v,
+        result.r,
+        result.s
+      ).send({
+        from: component.getActiveAccount,
+      });
+    },
+    async depositIntoPool3() {
       let component = this;
 
       let unit = "ether"; // DAI
