@@ -538,7 +538,7 @@ export default {
         this.getWeb3.utils.toBN(optionSizeWei), //volume of options to write
         (this.option.type === "CALL") ? 0 : 1, //option type
         this.getWeb3.utils.toBN(strikeInWei), // strike price of option
-        parseInt(this.option.timestamp), // maturity of option in utc
+        Number(this.option.timestamp), // maturity of option in utc
       ).call();
 
       this.collateralNeededRaw = (collateralNeeded * 1.0025) / 10**18; //estimate higher just in case
@@ -768,7 +768,7 @@ export default {
           feedAddress, // feed address
           component.getWeb3.utils.toBN(optionSizeWei), // volume of options to write,
           component.getWeb3.utils.toBN(strikeInWei), // strike price of option
-          String(component.option.timestamp), // maturity of option in utc
+          Number(component.option.timestamp), // maturity of option in utc
           component.getActiveAccount, // option writer
         ).send({
           from: component.getActiveAccount,
@@ -822,7 +822,7 @@ export default {
           component.getWeb3.utils.toBN(optionSizeWei), // volume of options to write
           (component.option.type === "CALL") ? 0 : 1, //option type
           component.getWeb3.utils.toBN(strikeInWei), // srtike price of option
-          parseInt(component.option.timestamp), // maturity of option in utc
+          Number(component.option.timestamp), // maturity of option in utc
           component.getActiveAccount, // option writer
         ).send({
           from: component.getActiveAccount,
