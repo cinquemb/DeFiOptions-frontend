@@ -118,6 +118,7 @@ export default {
       expiryPrice: null, // price at the expiration date (if option expired already)
       hide: false,
       loading: false,
+      slippage: 2, // 2% by default
       optionAllowance: 0, // has user approved the option token yet and for what amount
       selectedOptionPrice: null, // sell option data
       selectedOptionSize: null, // sell option data
@@ -412,7 +413,7 @@ export default {
       const result = await this.getLiquidityPoolContract.methods.querySell(this.option.symbol).call();
 
       if (result) {
-        this.selectedOptionPrice = this.getWeb3.utils.fromWei(String(result.price), "ether");
+        this.selectedOptionPrice = this.getWeb3.utils.fromWei(String(result.price), "ether") * (1 + (this.slippage/100));
         this.selectedOptionVolume = this.getWeb3.utils.fromWei(String(result.volume), "ether");
 
         if (!this.selectedOptionSize) {
