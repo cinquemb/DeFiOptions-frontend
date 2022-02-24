@@ -167,7 +167,7 @@ export default {
       selectedOptionPrice: null,
       selectedSellType: "SELL",
       selectedCoveredType: "COVERED",
-      slippage: 2, // 2% by default
+      slippage: 0.125, // 2% by default
       tooLowVolume: false,
       //unlimitedApproval: false,
       underlyingBalance: 0,
@@ -644,7 +644,7 @@ export default {
       let resultSell = await this.getLiquidityPoolContract.methods.querySell(this.option.symbol).call();
 
       if (resultSell) {
-        this.optionPriceSell = this.getWeb3.utils.fromWei(resultSell.price, "ether") * (1 + (this.slippage/100));
+        this.optionPriceSell = this.getWeb3.utils.fromWei(resultSell.price, "ether") * (1 - (this.slippage/100));
         this.optionPriceFormattedSell = "$" + Number(this.optionPriceSell).toFixed(2);
       }
     },
@@ -711,7 +711,7 @@ export default {
       let resultSell = await this.getLiquidityPoolContract.methods.querySell(this.option.symbol).call();
 
       if (resultSell) {
-        this.optionPriceSell = this.getWeb3.utils.fromWei(resultSell.price, "ether") * (1 + (this.slippage/100));
+        this.optionPriceSell = this.getWeb3.utils.fromWei(resultSell.price, "ether") * (1 - (this.slippage/100));
 
         this.optionPriceFormattedSell = "$" + Number(this.optionPriceSell).toFixed(2);
         this.selectedOptionVolume = this.getWeb3.utils.fromWei(resultSell.volume, "ether");

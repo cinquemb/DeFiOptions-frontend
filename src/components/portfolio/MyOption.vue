@@ -39,6 +39,11 @@
       
       <button v-if="isOptionExpired(option) && intrinsicValue == 0" class="btn btn-danger" disabled>Expired</button>
 
+      <button @click="liquidateOptions" v-if="isOptionExpired(option) && (this.option.written > this.option.holding) && intrinsicValue == 0" class="btn btn-outline-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Free Collateral
+      </button>
+
       <span></span>
     </div>
 
@@ -361,6 +366,48 @@ export default {
       });
     },
 
+    async liquidateOptions() {
+      let component = this;
+      component.loading = true;
+
+      // liquidateOptions transaction
+      await component.getOptionsExchangeContract.methods.liquidateOptions(
+        component.option.address,
+        component.getActiveAccount
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+
+        if (receipt.status) {
+          component.$toast.success("You have successfully liquidated your expired written options and freed your collateral. It may take 10 seconds or more for values to update.");
+
+          // hide the option manually, because Polygon's nodes have a lag
+          component.hide = true;
+
+          // refresh values
+          component.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
+          component.$store.dispatch("optionsExchange/fetchUserOptions");
+          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+        }
+        
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+    },
+
     async sellOption() {
       const component = this;
       component.loading = true;
@@ -413,15 +460,15 @@ export default {
       const result = await this.getLiquidityPoolContract.methods.querySell(this.option.symbol).call();
 
       if (result) {
-        this.selectedOptionPrice = this.getWeb3.utils.fromWei(String(result.price), "ether") * (1 + (this.slippage/100));
+        this.selectedOptionPrice = this.getWeb3.utils.fromWei(String(result.price), "ether"); //* (1 + (this.slippage/100));
         this.selectedOptionVolume = this.getWeb3.utils.fromWei(String(result.volume), "ether");
 
         if (!this.selectedOptionSize) {
           this.selectedOptionSize = this.getMaxOptionSize;
         }
 
-        // hardcoded 1% slippage
-        this.selectedOptionPrice -= Number(this.selectedOptionPrice) * 0.01;
+        // hardcoded 0.125% slippage
+        this.selectedOptionPrice -= Number(this.selectedOptionPrice) * 0.00125;
       }
     },
 
