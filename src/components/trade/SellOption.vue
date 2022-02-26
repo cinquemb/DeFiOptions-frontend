@@ -311,7 +311,10 @@ export default {
 
     isEnoughAllowance() {
       if (Number(this.optionAllowance) >= Number(this.selectedOptionSize)) {
+        this.writingStepTx = 1;
         return true;
+      } else {
+        this.writingStepTx = 0;
       }
 
       return false;
