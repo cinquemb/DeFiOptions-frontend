@@ -39,7 +39,7 @@
       
       <button v-if="isOptionExpired(option) && intrinsicValue == 0" class="btn btn-danger" disabled>Expired</button>
 
-      <button @click="liquidateOptions" v-if="isOptionExpired(option) && (this.option.written > this.option.holding) && intrinsicValue == 0" class="btn btn-outline-success">
+      <button @click="liquidateOptions" v-if="isOptionExpired(option) && (this.option.written > this.option.holding)" class="btn btn-outline-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Free Collateral
       </button>

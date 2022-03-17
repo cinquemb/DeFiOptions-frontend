@@ -103,7 +103,7 @@
       <!-- <div></div> -->
 
       <div class="p-2" v-if="!getCoveredType">
-        <button @click="writeOptions" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status || isEnoughAllowance) || ((writingStepTx < 2) && (!isBuyWithExchangeBalance))">
+        <button @click="writeOptions" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || ((writingStepTx < 2) && (!isBuyWithExchangeBalance))">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Write Options
         </button>
@@ -111,7 +111,7 @@
       <!-- <div></div> -->
 
       <div class="p-2" v-if="getCoveredType">
-        <button @click="writeCovered" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status || isEnoughAllowance) || (writingStepTx < 1)">
+        <button @click="writeCovered" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || (writingStepTx < 1)">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Write Covered
         </button>
