@@ -67,7 +67,7 @@ const actions = {
   async fetchContract({ commit, rootState }) {
     let web3 = rootState.accounts.web3;
     let chainIdDec = parseInt(rootState.accounts.chainId);
-    let address = addresses.LinearLiquidityPool[chainIdDec];
+    let address = addresses.LinearLiquidityPool[chainIdDec]; //TODO: THIS NEEDS TO BE MODIFIED TOO ALLOW FOR DIFFERENT POOL ADDRESSES TO BE TOGGLED
 
     let contract = new web3.eth.Contract(LiquidityPool.abi, address);
     commit("setContract", contract);
