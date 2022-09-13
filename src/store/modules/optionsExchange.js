@@ -5,13 +5,15 @@ const state = {
   abi: null,
   address: null,
   contract: null,
-  poolBalance: null,//TODO: THIS NEEDS TO BE CHANGED TO REFLECT THAT THERE CAN BE MULTIPLE POOLS
+  poolBalance: {},
   userBalance: null,
   userSurplusBalance: null,
   userExchangeBalanceAllowance: null,
   userOptions: null,
   underlyingPrice: null,
-  availableLiquidityPools: []
+  availableLiquidityPools: [],
+  poolSymbolsAddrsMap: {},
+  selectedPool: null
 };
 
 const getters = {
@@ -22,7 +24,7 @@ const getters = {
     return state.userSurplusBalance;
   },
   getLiquidityPoolBalance(state) {
-    return state.poolBalance; //TODO: THIS NEEDS TO BE CHANGED TO REFLECT THAT THERE CAN BE MULTIPLE POOLS
+    return state.poolBalance[state.poolSymbolsAddrsMap[state.selectedPool]];
   },
   getLiquidityPoolAddresses(state) {
     return state.availableLiquidityPools;
@@ -49,6 +51,9 @@ const getters = {
   },
   getUserOptions(state) {
     return state.userOptions;
+  },
+  getSelectedPoolAddr(state) {
+    return state.poolSymbolsAddrsMap[state.selectedPool];
   }
 };
 
@@ -103,14 +108,13 @@ const actions = {
 
     commit("setUserExchangeCollateralSurplus", balance);
   },
-  //TODO: THIS NEEDS TO BE CHANGED TO REFLECT THAT THERE CAN BE MULTIPLE POOLS
   async fetchLiquidityPoolBalance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
 
     let chainIdDec = parseInt(rootState.accounts.chainId);
-    let address = addresses["LinearLiquidityPool"][chainIdDec];
+    let address = state.poolSymbolsAddrsMap[state.selectedPool];
     let balanceWei = await state.contract.methods.balanceOf(address).call();
 
     let web3 = rootState.accounts.web3;
@@ -159,15 +163,16 @@ const actions = {
 
     let activeAccount = rootState.accounts.activeAccount;
     let poolSymbols = await state.contract.methods.poolSymbols(activeAccount).call();
-    let poolSymbolsMaxLen = await state.contract.methods.totalPoolSymbols(activeAccount).call();
-    let poolAddrsList = [];
+    //let poolSymbolsMaxLen = await state.contract.methods.totalPoolSymbols(activeAccount).call();
+    let poolSymbolsAddrsMap = {};
 
     for (let pSymbol of poolSymbols) {
         let poolAddr = await state.contract.methods.getPoolAddress(pSymbol).call();
-        poolAddrsList.push(poolAddr);
+        poolSymbolsAddrsMap[pSymbol] = poolAddr
     }
 
-    commit("setPoolAddrsList", poolAddrsList);
+    commit("setPoolSymbols", poolSymbols);
+    commit("setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
   },
   async fetchUserOptions({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -241,8 +246,7 @@ const mutations = {
     state.contract = _contract;
   },
   setLiquidityPoolBalance(state, balance) {
-    //TODO: THIS NEEDS TO BE CHANGED TO REFLECT THAT THERE CAN BE MULTIPLE POOLS
-    state.poolBalance = balance;
+    state.poolBalance[state.poolSymbolsAddrsMap[state.selectedPool]] = balance;
   },
   setExchangeBalanceAllowance(state, allowance) {
     state.userExchangeBalanceAllowance = allowance;
@@ -261,9 +265,15 @@ const mutations = {
   },
   setUserOptions(state, options) {
     state.userOptions = options;
-  }
-  setPoolAddrsList(state, poolAddrs) {
-      state.availableLiquidityPools = poolAddrs
+  },
+  setPoolSymbols(state, poolSymbols) {
+      state.availableLiquidityPools = poolSymbols;
+  },
+  setPoolSymbolsAddrsMap(state, poolSymbolsAddrsMap) {
+    state.poolSymbolsAddrsMap = poolSymbolsAddrsMap;
+  },
+  setSelectedPool(state, poolSymbol) {
+    state.selectedPool = poolSymbol;
   }
 };
 
