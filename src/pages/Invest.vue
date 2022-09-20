@@ -9,6 +9,10 @@
 
       <LpWithdraw />
     </div>
+
+    <div class="col-md-9">
+      <LpCreatePool />
+    </div>
     
   </div>
 </template>
@@ -18,13 +22,15 @@ import { mapGetters } from "vuex";
 import LpData from '../components/invest/LpData.vue';
 import LpDeposit from '../components/invest/LpDeposit.vue';
 import LpWithdraw from '../components/invest/LpWithdraw.vue';
+import LpCreatePool from '../components/invest/LpCreatePool.vue';
 
 export default {
   name: 'Invest',
   components: { 
     LpData,
     LpDeposit,
-    LpWithdraw
+    LpWithdraw,
+    LpCreatePool
   },
   computed: {
     ...mapGetters("accounts", ["isUserConnected", "getWeb3"])

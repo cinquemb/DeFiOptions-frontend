@@ -28,7 +28,7 @@ const getters = {
   },
   getLiquidityPoolAddresses(state) {
     return state.availableLiquidityPools;
-  }
+  },
   getOptionsExchangeAbi(state) {
     return state.abi;
   },
