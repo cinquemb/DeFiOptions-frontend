@@ -1,5 +1,5 @@
 import LiquidityPool from "../../contracts/LinearLiquidityPool.json";
-import addresses from "../../contracts/addresses.json";
+//import addresses from "../../contracts/addresses.json";
 
 const state = {
   abi: {},
@@ -20,57 +20,58 @@ const state = {
 
 const getters = {
   getApy(state) {
-    return state.apy[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.apy[state.selectedPoolAddress];
   },
   getDefaultMaturity(state) {
-    return state.defaultMaturity[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.defaultMaturity[state.selectedPoolAddress];
   },
   getDefaultPair(state) {
-    return state.defaultPair[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.defaultPair[state.selectedPoolAddress];
   },
   getDefaultType(state) {
-    return state.defaultType[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.defaultType[state.selectedPoolAddress];
   },
   getDefaultSide(state) {
-    return state.defaultSide[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.defaultSide[state.selectedPoolAddress];
   },
   getLiquidityPoolAbi(state) {
-    return state.abi[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.abi[state.selectedPoolAddress];
   },
   getLiquidityPoolAddress(state) {
-    return state.address[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.address[state.selectedPoolAddress];
   },
   getLiquidityPoolContract(state) {
-    return state.contract[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.contract[state.selectedPoolAddress];
   },
   getLiquidityPoolFreeBalance(state) {
-    return state.poolFreeBalance[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.poolFreeBalance[state.selectedPoolAddress];
   },
   getLiquidityPoolMaturityDate(state) {
-    return state.poolMaturityDate[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.poolMaturityDate[state.selectedPoolAddress];
   },
   getLiquidityPoolUserBalance(state) {
-    return state.userBalance[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.userBalance[state.selectedPoolAddress];
   },
   getLiquidityPoolWithdrawalFee(state) {
-    return state.poolWithdrawalFee[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.poolWithdrawalFee[state.selectedPoolAddress];
   },
   getSymbolsListJson(state) {
-    return state.symbolsListJson[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.symbolsListJson[state.selectedPoolAddress];
   },
   getUserPoolUsdValue(state) {
-    return state.userPoolUsdValue[rootState.optionsExchange.getSelectedPoolAddr()];
+    return state.userPoolUsdValue[state.selectedPoolAddress];
   }
 };
 
 const actions = {
   async fetchContract({ commit, rootState }) {
     let web3 = rootState.accounts.web3;
-    let chainIdDec = parseInt(rootState.accounts.chainId);
+    //let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = rootState.optionsExchange.getSelectedPoolAddr();
 
     let contract = new web3.eth.Contract(LiquidityPool.abi, address);
     commit("setContract", contract);
+    commit("setSelectedPoolAddress", address);
   },
   async fetchApy({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -174,7 +175,7 @@ const actions = {
     commit("setAbi", LiquidityPool.abi);
   },
   storeAddress({ commit, rootState }) {
-    let chainIdDec = parseInt(rootState.accounts.chainId);
+    //let chainIdDec = parseInt(rootState.accounts.chainId);
 
     commit("setAddress", rootState.optionsExchange.getSelectedPoolAddr());
   }
@@ -182,43 +183,46 @@ const actions = {
 
 const mutations = {
   setAbi(state, abi) {
-    state.abi[rootState.optionsExchange.getSelectedPoolAddr()] = abi;
+    state.abi[state.selectedPoolAddress] = abi;
   },
   setAddress(state, address) {
-    state.address[rootState.optionsExchange.getSelectedPoolAddr()] = address;
+    state.address[state.selectedPoolAddress] = address;
   },
   setApy(state, apy) {
-    state.apy[rootState.optionsExchange.getSelectedPoolAddr()] = apy;
+    state.apy[state.selectedPoolAddress] = apy;
   },
   setContract(state, _contract) {
-    state.contract[rootState.optionsExchange.getSelectedPoolAddr()] = _contract;
+    state.contract[state.selectedPoolAddress] = _contract;
   },
   setDefaultMaturity(state, maturity) {
-    state.defaultMaturity[rootState.optionsExchange.getSelectedPoolAddr()] = maturity;
+    state.defaultMaturity[state.selectedPoolAddress] = maturity;
   },
   setDefaultPair(state, pair) {
-    state.defaultPair[rootState.optionsExchange.getSelectedPoolAddr()] = pair;
+    state.defaultPair[state.selectedPoolAddress] = pair;
   },
   setDefaultType(state, type) {
-    state.defaultType[rootState.optionsExchange.getSelectedPoolAddr()] = type;
+    state.defaultType[state.selectedPoolAddress] = type;
   },
   setDefaultSide(state, side) {
-    state.defaultSide[rootState.optionsExchange.getSelectedPoolAddr()] = side;
+    state.defaultSide[state.selectedPoolAddress] = side;
   },
   setPoolFreeBalance(state, balance) {
-    state.poolFreeBalance[rootState.optionsExchange.getSelectedPoolAddr()] = balance;
+    state.poolFreeBalance[state.selectedPoolAddress] = balance;
   },
   setPoolMaturityDate(state, date) {
-    state.poolMaturityDate[rootState.optionsExchange.getSelectedPoolAddr()] = date;
+    state.poolMaturityDate[state.selectedPoolAddress] = date;
   },
   setPoolWithdrawalFee(state, fee) {
-    state.poolWithdrawalFee[rootState.optionsExchange.getSelectedPoolAddr()] = fee;
+    state.poolWithdrawalFee[state.selectedPoolAddress] = fee;
   },
   setUserLiquidityPoolBalance(state, balance) {
-    state.userBalance[rootState.optionsExchange.getSelectedPoolAddr()] = balance;
+    state.userBalance[state.selectedPoolAddress] = balance;
   },
   setUserPoolUsdValue(state, value) {
-    state.userPoolUsdValue[rootState.optionsExchange.getSelectedPoolAddr()] = value;
+    state.userPoolUsdValue[state.selectedPoolAddress] = value;
+  },
+  setSelectedPoolAddress(state, address) {
+    state.selectedPoolAddress = address;
   },
   setSymbolsList(state, {web3, symbolsRaw}) {
     let symbolsLines = symbolsRaw.split("\n");
@@ -298,7 +302,7 @@ const mutations = {
 
     }
 
-    state.symbolsListJson[rootState.optionsExchange.getSelectedPoolAddr()] = symbolsArray;
+    state.symbolsListJson[state.selectedPoolAddress] = symbolsArray;
   }
 };
 

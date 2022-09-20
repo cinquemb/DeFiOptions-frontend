@@ -12,26 +12,14 @@
           <input type="text" v-model="nameSuffix" class="form-control deposit-input" placeholder="My Pool Name" aria-describedby="createPoolSymbolText">
         </div>
 
-        <div class="create-pool-button form-button-mobile" v-if="!isCreatePoolValueNotValid">
+        <div class="create-pool-button form-button-mobile">
           <button 
             class="btn btn-success btn-user btn-block text-uppercase form-control" 
-            data-bs-toggle="modal" data-bs-target="#createPoolModalLabel"
+            data-bs-toggle="modal" data-bs-target="#createPoolModal"
             :disabled="isCreatePoolValueNotValid.status"
           >
             <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Create Pool
-          </button>
-          <div></div>
-        </div>
-
-        <div class="create-pool-button form-button-mobile" v-if="isCreatePoolValueNotValid">
-          <button 
-            class="btn btn-success btn-user btn-block text-uppercase form-control" 
-            :disabled="isCreatePoolValueNotValid.status" 
-            @click="approveAllowance"
-          >
-            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            Approve
           </button>
           <div></div>
         </div>
@@ -82,12 +70,12 @@ export default {
 
     isCreatePoolValueNotValid() { // validation for pool create
       // not enough chars in name string
-      if (String(this.nameSuffix).length < 1) {
+      if (this.nameSuffix === null) {
         return {status: true, message: "Please make the name of the pool larger"};
       }
 
       //not enough chars in symbol string
-      if (String(this.symbolSuffix).length < 1) {
+      if (this.symbolSuffix === null) {
         return {status: true, message: "Please make the symbol of the pool larger"};
       }
 

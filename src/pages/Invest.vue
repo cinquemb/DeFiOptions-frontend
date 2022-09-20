@@ -1,17 +1,21 @@
 <template>
-  <div class="section-big row mt-4 mx-3">
-    <div class="col-md-3">
-      <LpData />
+  <div>
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-3">
+        <LpData />
+      </div>
+
+      <div class="col-md-9">
+        <LpDeposit />
+
+        <LpWithdraw />
+      </div>
     </div>
 
-    <div class="col-md-9">
-      <LpDeposit />
-
-      <LpWithdraw />
-    </div>
-
-    <div class="col-md-9">
-      <LpCreatePool />
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <LpCreatePool />
+      </div>
     </div>
     
   </div>
@@ -33,7 +37,8 @@ export default {
     LpCreatePool
   },
   computed: {
-    ...mapGetters("accounts", ["isUserConnected", "getWeb3"])
+    ...mapGetters("accounts", ["isUserConnected", "getWeb3"]),
+    ...mapGetters("optionsExchange", ["getExchangeUserBalance", "getSelectedPoolAddr", "getSelectedPoolAddr"]),
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
