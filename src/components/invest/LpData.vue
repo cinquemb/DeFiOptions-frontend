@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Liquidity pool: {{poolSymbol}}({{poolAddress}})</h3>
+    <h3>Liquidity pool: {{poolSymbol}}({{poolAddress.substring(0, 6)}}...{{ poolAddress.substring(38, 42)}})</h3>
 
     <Card cardClass="card-green" title="Your Pool Balance" :text="'$'+Number(getUserPoolUsdValue).toFixed(2)" />
 
@@ -34,14 +34,15 @@ export default {
     ...mapGetters("liquidityPool", ["getApy", "getUserPoolUsdValue", "getselectedPoolAddress"]),
   },
 
-  created() {
-      this.currentPoolAddress();
+  mounted() {
+    this.$root.$on('poolToggleEvent', this.handlpoolToggleEvent)
   },
 
-  method: {
-    async currentPoolAddress() {
-      this.poolAddress = this.getselectedPoolAddress();
-      this.poolSymbol = this.getSelectedPool();
+  methods: {
+    handlpoolToggleEvent (obj) {
+      this.poolAddress = obj[1];
+      this.poolSymbol = obj[0];
+      console.error(obj[1]);
     }
   }
 }

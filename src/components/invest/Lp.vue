@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import LpDataItem from '../LpDataItem.vue';
 
 export default {
@@ -50,10 +50,17 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getWeb3"]),
+    ...mapMutations("optionsExchange", ["setSelectedPool"]),
+    ...mapMutations("liquidityPool", ["selectedPoolAddress"]),
   },
 
   methods: {
-    async togglePool() {
+    togglePool() {
+      this.$root.$emit('poolToggleEvent', [this.pool.symbol, this.pool.address]);
+
+      //this.setSelectedPool(this.pool.symbol);
+      //this.selectedPoolAddress(this.pool.address);
+
       this.$store.commit("optionsExchange/setSelectedPool", this.pool.symbol);
       this.$store.commit("liquidityPool/setSelectedPoolAddress", this.pool.address);
       this.$store.dispatch("liquidityPool/fetchContract");
@@ -65,6 +72,7 @@ export default {
       this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
       this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
       this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
+
     }
 
   }
