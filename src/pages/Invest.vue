@@ -20,7 +20,7 @@
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
-        <LpToggle :pools="getExchangeLiquidityPools" />
+        <LpToggle :pools="poolSyms" />
       </div>
     </div>
     
@@ -46,7 +46,8 @@ export default {
   },
   computed: {
     ...mapGetters("accounts", ["isUserConnected", "getWeb3"]),
-    ...mapGetters("optionsExchange", ["getExchangeUserBalance", "getSelectedPoolAddr", "getExchangeLiquidityPools"]),
+    ...mapGetters("optionsExchange", ["getExchangeUserBalance", "getSelectedPoolAddr", "getExchangeLiquidityPools","getOptionsExchangeContract"]),
+
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -55,6 +56,7 @@ export default {
 
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("optionsExchange/fetchLiquidityPools");
+    this.getFilteredPools();
     //this.$store.dispatch("liquidityPool/fetchContract");
     this.$store.dispatch("dai/fetchContract");
     this.$store.dispatch("dai/fetchUserBalance");
@@ -62,14 +64,40 @@ export default {
     this.$store.dispatch("usdc/fetchContract");
     this.$store.dispatch("usdc/fetchUserBalance");
     this.$store.dispatch("usdc/storeAddress");
-    //this.$store.dispatch("liquidityPool/fetchUserBalance");
-    //this.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
-    //this.$store.dispatch("liquidityPool/fetchApy");
-    //this.$store.dispatch("liquidityPool/storeAddress");
-    //this.$store.dispatch("liquidityPool/fetchUserPoolUsdValue");
-    //this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
-    //this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
-    //this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
+  },
+
+  data() {
+    return { 
+      poolSyms: []
+    }
+  },
+
+  methods: {
+    async getFilteredPools(){
+
+      let poolSymbols = [];
+      let poolSymbolsAddrsMap = {};
+      let exchangePools = [];
+
+      let poolSymbolsMaxLen = await this.getOptionsExchangeContract.methods.totalPoolSymbols().call();
+      for (var i=0; i < poolSymbolsMaxLen; i++) {
+          let pSym = await this.getOptionsExchangeContract.methods.poolSymbols(i).call();
+          let poolAddr = await this.getOptionsExchangeContract.methods.getPoolAddress(String(pSym)).call();
+
+          poolSymbolsAddrsMap[pSym] = poolAddr;
+          poolSymbols.push(pSym);
+          let symbol = poolSymbols[i];
+          let address = poolSymbolsAddrsMap[symbol];
+          // option object
+          let poolObject = {symbol, address};
+          exchangePools.push(poolObject);
+      }
+
+      this.$store.commit("optionsExchange/setPoolSymbols", poolSymbols);
+      this.$store.commit("optionsExchange/setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
+      this.$store.commit("optionsExchange/setExchangeLiquidityPools", exchangePools);
+      this.poolSyms =  exchangePools;
+    }
   }
 }
 </script>

@@ -159,34 +159,27 @@ const actions = {
       commit("setOptionTokenAddress", "N/A");
     }
   },
-  async fetchLiquidityPools({ commit, dispatch, state, rootState }) {
+  async fetchLiquidityPools({ commit, dispatch, state }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
-
-    let activeAccount = rootState.accounts.activeAccount;
-    let poolSymbols = await state.contract.methods.poolSymbols(activeAccount).call();
-    //let poolSymbolsMaxLen = await state.contract.methods.totalPoolSymbols(activeAccount).call();
+    let poolSymbols = [];
     let poolSymbolsAddrsMap = {};
-
-    for (let pSymbol of poolSymbols) {
-        let poolAddr = await state.contract.methods.getPoolAddress(pSymbol).call();
-        poolSymbolsAddrsMap[pSymbol] = poolAddr;
-    }
-
     let exchangePools = [];
 
-    if (poolSymbols[0] !== "") { // if the list is not empty        
-      for (let pool of poolSymbols) {
-        let symbol = pool;
+    let poolSymbolsMaxLen = await state.contract.methods.totalPoolSymbols().call();
+    for (var i=0; i < poolSymbolsMaxLen; i++) {
+        let pSym = await state.contract.methods.poolSymbols(i).call();
+        let poolAddr = await state.contract.methods.getPoolAddress(String(pSym)).call();
+
+        poolSymbolsAddrsMap[pSym] = poolAddr;
+        poolSymbols.push(pSym);
+        let symbol = poolSymbols[i];
         let address = poolSymbolsAddrsMap[symbol];
-        
         // option object
         let poolObject = {symbol, address};
         exchangePools.push(poolObject);
-      }
     }
-
     commit("setPoolSymbols", poolSymbols);
     commit("setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
     commit("setExchangeLiquidityPools", exchangePools);

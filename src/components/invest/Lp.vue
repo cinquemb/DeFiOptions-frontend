@@ -50,13 +50,21 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getWeb3"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract"]),
   },
 
   methods: {
     async togglePool() {
       this.$store.commit("optionsExchange/setSelectedPool", this.pool.symbol);
+      this.$store.commit("liquidityPool/setSelectedPoolAddress", this.pool.address);
       this.$store.dispatch("liquidityPool/fetchContract");
+      this.$store.dispatch("liquidityPool/fetchUserBalance");
+      this.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
+      this.$store.dispatch("liquidityPool/fetchApy");
+      this.$store.dispatch("liquidityPool/storeAddress");
+      this.$store.dispatch("liquidityPool/fetchUserPoolUsdValue");
+      this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
+      this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
+      this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
     }
 
   }

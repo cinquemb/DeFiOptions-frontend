@@ -1,4 +1,4 @@
-import LiquidityPool from "../../contracts/LinearLiquidityPool.json";
+import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
 //import addresses from "../../contracts/addresses.json";
 
 const state = {
@@ -15,12 +15,16 @@ const state = {
   poolWithdrawalFee: {},
   symbolsListJson: {},
   userBalance: {},
-  userPoolUsdValue: {} // USD value of the pool balance
+  userPoolUsdValue: {}, // USD value of the pool balance
+  selectedPoolAddress: null,
 };
 
 const getters = {
   getApy(state) {
     return state.apy[state.selectedPoolAddress];
+  },
+  getselectedPoolAddress(state){
+    return state.selectedPoolAddress;
   },
   getDefaultMaturity(state) {
     return state.defaultMaturity[state.selectedPoolAddress];
@@ -67,18 +71,17 @@ const actions = {
   async fetchContract({ commit, rootState }) {
     let web3 = rootState.accounts.web3;
     //let chainIdDec = parseInt(rootState.accounts.chainId);
-    let address = rootState.optionsExchange.getSelectedPoolAddr();
+    let address = state.selectedPoolAddress;
 
     let contract = new web3.eth.Contract(LiquidityPool.abi, address);
     commit("setContract", contract);
-    commit("setSelectedPoolAddress", address);
   },
   async fetchApy({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
 
-    const apy = await state.contract.methods.yield(365 * 24 * 60 * 60).call();
+    const apy = await state.contract[state.selectedPoolAddress].methods.yield(365 * 24 * 60 * 60).call();
     let apyBig = ((apy-1e9)/1e9)*100;
 
     if (parseInt(rootState.accounts.chainId) === 137) {
@@ -97,7 +100,7 @@ const actions = {
     let web3 = rootState.accounts.web3;
 
     const operation = { BUY: "1" }
-    let symbolsRaw = await state.contract.methods.listSymbols(operation.BUY).call();
+    let symbolsRaw = await state.contract[state.selectedPoolAddress].methods.listSymbols(operation.BUY).call();
 
     commit("setSymbolsList", {web3, symbolsRaw});
   },
@@ -106,7 +109,7 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let freeBalanceWei = await state.contract.methods.calcFreeBalance().call();
+    let freeBalanceWei = await state.contract[state.selectedPoolAddress].methods.calcFreeBalance().call();
 
     let web3 = rootState.accounts.web3;
     let balance = web3.utils.fromWei(freeBalanceWei, "ether");
@@ -118,7 +121,7 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let maturitySec = await state.contract.methods.maturity().call();
+    let maturitySec = await state.contract[state.selectedPoolAddress].methods.maturity().call();
 
     let maturityHumanReadable = new Date(Number(maturitySec)*1e3).toLocaleDateString('en-GB', { day: 'numeric', 
         month: 'short', 
@@ -131,7 +134,7 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    const withdrawalFeeBig = await state.contract.methods.withdrawFee().call();
+    const withdrawalFeeBig = await state.contract[state.selectedPoolAddress].methods.withdrawFee().call();
 
     const wFeeSmall = Number(withdrawalFeeBig) / 1000000000; // divide to remove 9 decimal places
     const wFeePercentage = wFeeSmall * 100; // the result is percentage
@@ -144,7 +147,7 @@ const actions = {
     }
 
     let activeAccount = rootState.accounts.activeAccount;
-    let balanceWei = await state.contract.methods.balanceOf(activeAccount).call();
+    let balanceWei = await state.contract[state.selectedPoolAddress].methods.balanceOf(activeAccount).call();
 
     let web3 = rootState.accounts.web3;
     let balance = web3.utils.fromWei(balanceWei, "ether");
@@ -161,7 +164,7 @@ const actions = {
     let balanceWei = "0";
 
     try {
-      balanceWei = await state.contract.methods.valueOf(activeAccount).call();
+      balanceWei = await state.contract[state.selectedPoolAddress].methods.valueOf(activeAccount).call();
     } catch(e) {
       console.log("The total pool balance is probably 0, which is why MetaMask may be showing the 'Internal JSON-RPC... division by 0' error.");
     }
@@ -174,10 +177,10 @@ const actions = {
   storeAbi({commit}) {
     commit("setAbi", LiquidityPool.abi);
   },
-  storeAddress({ commit, rootState }) {
+  storeAddress({ commit }) {
     //let chainIdDec = parseInt(rootState.accounts.chainId);
 
-    commit("setAddress", rootState.optionsExchange.getSelectedPoolAddr());
+    commit("setAddress", state.selectedPoolAddress);
   }
 };
 
