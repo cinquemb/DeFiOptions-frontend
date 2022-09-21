@@ -13,7 +13,7 @@ const state = {
   isConnected: false,
   providerW3m: null, // this is "provider" from Web3Modal
   web3Modal: null,
-  supportedChains: ["Kovan Testnet", "Polygon PoS Chain"],
+  supportedChains: ["Kovan Testnet", "Polygon PoS Chain", "Local Testnet"],
   lastSelectedTradePair: null,
   lastSelectedTradeMaturity: null,
   lastSelectedTradeType: null,
@@ -198,6 +198,9 @@ const mutations = {
         break;
       case "0x89":
         state.chainName = "Polygon";
+        break;
+      case "0xa868":
+        state.chainName = "Localhost";
         break;
       default:
         state.chainName = null;

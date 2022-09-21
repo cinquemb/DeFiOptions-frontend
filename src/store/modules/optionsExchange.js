@@ -1,4 +1,4 @@
-import OptionsExchange from "../../contracts/OptionsExchange.json";
+import OptionsExchange from "../../contracts/OptionsExchangeV2.json";
 import addresses from "../../contracts/addresses.json";
 
 const state = {
@@ -54,6 +54,9 @@ const getters = {
   },
   getSelectedPoolAddr(state) {
     return state.poolSymbolsAddrsMap[state.selectedPool];
+  },
+  getExchangeLiquidityPools(state) {
+    return state.exchangeLiquidityPools;
   }
 };
 
@@ -113,7 +116,7 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let chainIdDec = parseInt(rootState.accounts.chainId);
+    //let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = state.poolSymbolsAddrsMap[state.selectedPool];
     let balanceWei = await state.contract.methods.balanceOf(address).call();
 
@@ -168,11 +171,25 @@ const actions = {
 
     for (let pSymbol of poolSymbols) {
         let poolAddr = await state.contract.methods.getPoolAddress(pSymbol).call();
-        poolSymbolsAddrsMap[pSymbol] = poolAddr
+        poolSymbolsAddrsMap[pSymbol] = poolAddr;
+    }
+
+    let exchangePools = [];
+
+    if (poolSymbols[0] !== "") { // if the list is not empty        
+      for (let pool of poolSymbols) {
+        let symbol = pool;
+        let address = poolSymbolsAddrsMap[symbol];
+        
+        // option object
+        let poolObject = {symbol, address};
+        exchangePools.push(poolObject);
+      }
     }
 
     commit("setPoolSymbols", poolSymbols);
     commit("setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
+    commit("setExchangeLiquidityPools", exchangePools);
   },
   async fetchUserOptions({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -274,6 +291,9 @@ const mutations = {
   },
   setSelectedPool(state, poolSymbol) {
     state.selectedPool = poolSymbol;
+  },
+  setExchangeLiquidityPools(state, pools) {
+    state.exchangeLiquidityPools = pools;
   }
 };
 

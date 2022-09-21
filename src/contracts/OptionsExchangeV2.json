@@ -1,5 +1,5 @@
 {
-  "contractName": "OptionsExchange",
+  "contractName": "OptionsExchangeV2",
   "abi": [
     {
       "inputs": [],
