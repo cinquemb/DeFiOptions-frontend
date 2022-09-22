@@ -2,6 +2,7 @@
   <div>
     <div v-for="symbol in symbols" v-bind:key="symbol.strike">
       <h3>Add or Modify Existing Symbol </h3>
+      <input v-model="symbol.udlFeed" class="form-control deposit-input" placeholder="">
       <input v-model="symbol.strike" class="form-control deposit-input" placeholder="">
       <input v-model="symbol.maturity" class="form-control deposit-input"  placeholder="">
       <input v-model="symbol.optionType" class="form-control deposit-input" placeholder="">

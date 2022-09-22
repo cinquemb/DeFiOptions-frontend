@@ -85,7 +85,7 @@ import SetRange from '../components/manage/SetRange.vue';
 import SetParams from '../components/manage/SetParams.vue';
 import CreateOption from '../components/manage/CreateOption.vue';
 import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
-//import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
+import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
 
 export default {
   name: 'Portfolio',
@@ -93,11 +93,11 @@ export default {
     return {
       loading: false,
       setParams: { //gov
-        reserveRatio: null,
-        withdrawFee: null,
-        maturity: null,
-        leverageMultiplier: null,
-        hedgingManagerAddress: null,
+        reserveRatio: null, //slider as a percentage
+        withdrawFee: null, //slider as a percentage
+        maturity: null, //datetime picker
+        leverageMultiplier: null, //slider from 1-30? or manual with validation
+        hedgingManagerAddress: null, //toggle from hdeging manager addresses hardcoded in ui?
       },
       setRanges: [], //gov
       addSymbols: [],//gov
@@ -139,60 +139,122 @@ export default {
   methods: {
     addSymbol: function () {
       this.addSymbols.push({
-        address: null,
-        strike: null,
-        maturity: null, 
-        optionType: null,
-        t0: null,
-        t1: null,
-        x: null,
-        y: null,
-        bsStockSpread: null
+        udlFeed: null, // these can
+        strike: null, // be inputed from 
+        maturity: null, // avaiable options 
+        optionType: null, // in exchange
+        t0: null, //date time picker?
+        t1: null, //datetime picker
+        x: null, //manual, but needs conversion check
+        y: null,//manual but needs conversion check
+        bsStockSpread: null // manual for a[0], and a[1], but can be a slider for a[2]
       });
     },
     addRange: function () {
       this.setRanges.push({
-        symbol: null,
-        op: null,
-        start: null,
-        end: null
+        symbol: null,//toggle from avaiable options in pool
+        op: null,//button
+        start: null,//datetimepicker
+        end: null//datetimepicker
       });
     },
     addOption: function () {
       this.createOptions.push({
-        udlFeedAddr: null,
-        optType: null,
-        strike: null, 
-        maturity: null
+        udlFeedAddr: null,//button
+        optType: null, //button
+        strike: null, //manual?
+        maturity: null //datetimepicker
       });
     },
     removeSymbol: function () {
       this.removeSymbols.push({
-        value: null
+        value: null // toggle from available options in pool that have old maturity date greater than current unix time
       });
     },
+    validateSetParameters() {
+      for (const key in this.setParams) {
+        if (this.setParams[key] === null) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+
+    validateObj(obj) {
+      if (obj.length == 0)
+        return false;
+
+      for (let i =0; i < obj.length; i++) {
+        for (const key in obj[i]) {
+          if (obj[i][key] === null) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    },
+
     async createProposal () {
       let component = this;
-      //TODO: first need to seriralize data into list of strings, where each string is what the pool needs tp execute
 
-      /*for (let i =3; i<component.getLiquidityPoolAbi.length; i++) {
-        console.error(i);
-        console.error(component.getLiquidityPoolAbi[i]);
-      }*/
-
-      let addSymbolAbiJSON = component.getLiquidityPoolAbi[1];
+      let addSymbolAbiJSON = component.getLiquidityPoolAbi[31];
       let setRangeAbiJSON = component.getLiquidityPoolAbi[33];
       let setParametersAbiJSON = component.getLiquidityPoolAbi[26];
 
-      console.error(JSON.stringify(setRangeAbiJSON));
-      console.error(JSON.stringify(addSymbolAbiJSON));
-      console.error(JSON.stringify(setParametersAbiJSON));
+      let encodedData = [];
 
-      //const data = new component.getWeb3.eth.abi.encodeFunctionCall(abiJson, parameters);
+      //encode setParameters first if exists
+      if (component.validateSetParameters()) {
+        let parameters = [
+          component.setParams.reserveRatio, 
+          component.setParams.withdrawFee, 
+          component.setParams.maturity, 
+          component.setParams.leverageMultiplier, 
+          component.setParams.hedgingManagerAddress
+        ];
+        encodedData.push(
+          new component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols.udlFeed, 
+            component.addSymbols.strike,
+            component.addSymbols.maturity,
+            component.addSymbols.optionType,
+            component.addSymbols.t0,
+            component.addSymbols.t1,
+            component.addSymbols.x,
+            component.addSymbols.y,
+            component.addSymbols.bsStockSpread
+          ];
+          encodedData.push(
+            new component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges.symbol, 
+            component.setRanges.op,
+            component.setRanges.start,
+            component.setRanges.end
+          ];
+          encodedData.push(
+            new component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
       
-      //TODO: deploy proposal contract
-
-      /*
+      // deploy proposal contract
       let loadedPoolManagementProposalJSON = JSON.parse(PoolManagementProposalJSON);
       const poolManagmentProposalContract = new component.getWeb3.eth.Contract(loadedPoolManagementProposalJSON);
         
@@ -223,11 +285,39 @@ export default {
         console.log(error);
         component.loading = false;
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
-      }); */
-
+      });
 
       //TODO: save execution strings to proposal contract
-      //TODO: register proposal contract with proposal manager
+
+      deployPoolManagmentProposal.methods.setexecutionBytes(
+        encodedData
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Storing the proposal transactions was successfull. You will be promted to register the proposal");
+          
+        } else {
+          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+      
+
+      //TODO: register proposal contract with proposal manager (and choosing the params for such)
+
+      //TODO: voting on proposal
     }
   }
 }
