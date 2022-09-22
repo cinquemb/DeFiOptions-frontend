@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Liquidity pool: {{poolSymbol}}({{poolAddress.substring(0, 6)}}...{{ poolAddress.substring(38, 42)}})</h3>
+    <h3>Liquidity pool: {{getSelectedPool}}({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h3>
 
     <Card cardClass="card-green" title="Your Pool Balance" :text="'$'+Number(getUserPoolUsdValue).toFixed(2)" />
 
@@ -13,7 +13,6 @@
 <script>
 import { mapGetters } from "vuex";
 import Card from '../Card.vue';
-//import { signERC2612Permit } from 'eth-permit';
 
 export default {
   name: "LpData",
@@ -31,11 +30,11 @@ export default {
 
   computed: {
     ...mapGetters("optionsExchange", ["getLiquidityPoolBalance", "getSelectedPool"]),
-    ...mapGetters("liquidityPool", ["getApy", "getUserPoolUsdValue", "getselectedPoolAddress"]),
+    ...mapGetters("liquidityPool", ["getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
   },
 
   mounted() {
-    this.$root.$on('poolToggleEvent', this.handlpoolToggleEvent)
+    this.$root.$on('poolToggleEvent', this.handlpoolToggleEvent);
   },
 
   methods: {

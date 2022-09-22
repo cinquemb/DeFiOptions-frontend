@@ -13,7 +13,7 @@ const state = {
   underlyingPrice: null,
   availableLiquidityPools: [],
   poolSymbolsAddrsMap: {},
-  selectedPool: null
+  selectedPool: "N/A"
 };
 
 const getters = {
@@ -48,6 +48,9 @@ const getters = {
   },
   getUserExchangeBalanceAllowance(state) {
     return state.userExchangeBalanceAllowance;
+  },
+  getSelectedPool(state) {
+    return state.selectedPool;
   },
   getUserOptions(state) {
     return state.userOptions;

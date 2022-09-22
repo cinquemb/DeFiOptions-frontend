@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import Invest from "./pages/Invest";
 import Trade from "./pages/Trade";
+import PoolManagement from "./pages/PoolManagement"
 
 Vue.use(Router);
 
@@ -37,6 +38,11 @@ export default new Router({
             path: "/trade",
             name: "trade",
             component: Trade
+        },
+        {
+            path: "/manage",
+            name: "manage",
+            component: PoolManagement
         }
     ],
     linkActiveClass: "active"

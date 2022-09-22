@@ -7,7 +7,7 @@
     <!-- Pool data -->
     <div class="div-flex justify-content-center flex-wrap">
       <LpDataItem class="data-item" title="Symbol" :data="pool.symbol" :divider="true" />
-      <LpDataItem class="data-item" title="Address" :data="pool.address" :divider="true" />
+      <LpDataItem class="data-item" title="Address" :data="formatAddress" :divider="true" />
     </div>
 
     <!-- Action button -->
@@ -15,6 +15,10 @@
       <button @click="togglePool" class="btn btn-success">
         Select Pool
       </button>
+
+      <router-link to="/manage" class="btn btn-success">
+        Manage pool
+      </router-link>
 
       <span></span>
     </div>
@@ -25,7 +29,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 import LpDataItem from '../LpDataItem.vue';
 
 export default {
@@ -50,17 +54,15 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getWeb3"]),
-    ...mapMutations("optionsExchange", ["setSelectedPool"]),
-    ...mapMutations("liquidityPool", ["selectedPoolAddress"]),
+
+    formatAddress () {
+      return this.pool.address.substring(0, 6) + '...' + this.pool.address.substring(38, 42)
+    }, 
   },
 
   methods: {
     togglePool() {
       this.$root.$emit('poolToggleEvent', [this.pool.symbol, this.pool.address]);
-
-      //this.setSelectedPool(this.pool.symbol);
-      //this.selectedPoolAddress(this.pool.address);
-
       this.$store.commit("optionsExchange/setSelectedPool", this.pool.symbol);
       this.$store.commit("liquidityPool/setSelectedPoolAddress", this.pool.address);
       this.$store.dispatch("liquidityPool/fetchContract");

@@ -16,14 +16,14 @@ const state = {
   symbolsListJson: {},
   userBalance: {},
   userPoolUsdValue: {}, // USD value of the pool balance
-  selectedPoolAddress: null,
+  selectedPoolAddress: "N/A",
 };
 
 const getters = {
   getApy(state) {
     return state.apy[state.selectedPoolAddress];
   },
-  getselectedPoolAddress(state){
+  getSelectedPoolAddress(state){
     return state.selectedPoolAddress;
   },
   getDefaultMaturity(state) {

@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     ...mapGetters("accounts", ["isUserConnected", "getWeb3"]),
-    ...mapGetters("optionsExchange", ["getExchangeUserBalance", "getSelectedPoolAddr", "getExchangeLiquidityPools","getOptionsExchangeContract"]),
+    ...mapGetters("optionsExchange", ["getExchangeUserBalance", "getExchangeLiquidityPools","getOptionsExchangeContract"]),
 
   },
   created() {
