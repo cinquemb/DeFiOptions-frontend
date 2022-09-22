@@ -54,6 +54,11 @@
     "137":"0xa8353943cd1b9572d46ff927c8cfe89ba0b06b19",
     "43112": ""
   },
+  "ProposalManager": {
+    "42": "",
+    "137": "",
+    "43112":"0x8327F546ea88e7e66898e28Dd55b1Dc0D65f9906"
+  },
   "OptionsExchange": {
     "42":"0x1233a9d9a02eef1bc24675332684d4bfdd866f8a",
     "137":"0x69b38e5cd783cbeeb06e11b4ad29a95af14dbcc9",

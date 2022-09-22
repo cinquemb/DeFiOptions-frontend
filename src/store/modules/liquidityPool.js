@@ -75,6 +75,7 @@ const actions = {
 
     let contract = new web3.eth.Contract(LiquidityPool.abi, address);
     commit("setContract", contract);
+    commit("setAbi", LiquidityPool.abi);
   },
   async fetchApy({ commit, dispatch, state, rootState }) {
     if (!state.contract) {

@@ -11,6 +11,8 @@
       <input v-model="symbol.y" class="form-control deposit-input" placeholder="">
       <input v-model="symbol.bsStockSpread" class="form-control deposit-input" placeholder="0,0,0">
     </div>
+
+    <pre>{{ symbols | json }}</pre>
   </div>
 </template>
 

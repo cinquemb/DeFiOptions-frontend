@@ -41,7 +41,6 @@ export default {
     handlpoolToggleEvent (obj) {
       this.poolAddress = obj[1];
       this.poolSymbol = obj[0];
-      console.error(obj[1]);
     }
   }
 }
