@@ -199,6 +199,7 @@ export default {
     },
     async createProposal () {
       let component = this;
+      component.loading = true;
 
       let addSymbolAbiJSON = component.getLiquidityPoolAbi[31];
       let setRangeAbiJSON = component.getLiquidityPoolAbi[33];
@@ -209,14 +210,14 @@ export default {
       //encode setParameters first if exists
       if (component.validateSetParameters()) {
         let parameters = [
-          component.setParams.reserveRatio, 
-          component.setParams.withdrawFee, 
-          component.setParams.maturity, 
-          component.setParams.leverageMultiplier, 
-          component.setParams.hedgingManagerAddress
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%
+          Number(Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10)),//Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15
+          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
         ];
         encodedData.push(
-          new component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
         );
       }
 
@@ -235,7 +236,7 @@ export default {
             component.addSymbols.bsStockSpread
           ];
           encodedData.push(
-            new component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
           );
         }
       }
@@ -250,17 +251,17 @@ export default {
             component.setRanges.end
           ];
           encodedData.push(
-            new component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
           );
         }
       }
-      
+
       // deploy proposal contract
-      let loadedPoolManagementProposalJSON = JSON.parse(PoolManagementProposalJSON);
-      const poolManagmentProposalContract = new component.getWeb3.eth.Contract(loadedPoolManagementProposalJSON);
+      //let loadedPoolManagementProposalJSON = JSON.parse(PoolManagementProposalJSON);
+      const poolManagmentProposalContract = new component.getWeb3.eth.Contract(PoolManagementProposalJSON.abi);
         
       const deployPoolManagmentProposal = await poolManagmentProposalContract.deploy({
-        data: loadedPoolManagementProposalJSON.bytecode
+        data: PoolManagementProposalJSON.bytecode
       }).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
@@ -316,14 +317,19 @@ export default {
       });
       
 
-      //egister proposal contract with proposal manager (and choosing the params for such)
+      //register proposal contract with proposal manager (and choosing the params for such)
+
+      console.error("pool management proposal address");
+      console.error(deployPoolManagmentProposal.options.address);
+      console.error("pool addr");
+      console.error(component.getSelectedPoolAddress);
 
       await component.getProposalManagerContract.methods.registerProposal(
-        deployPoolManagmentProposal.address,
-        component.getSelectedPoolAddress(),
+        deployPoolManagmentProposal.options.address,
+        component.getSelectedPoolAddress,
         2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
         1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
-        Math.floor(Date.now() / 1000) + (60 * 60) //30 min to vote
+        Number(Math.floor(Date.now() / 1000) + (60 * 60)) //30 min to vote
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,

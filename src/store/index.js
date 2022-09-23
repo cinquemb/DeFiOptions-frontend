@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import accounts from "./modules/accounts";
 import optionsExchange from "./modules/optionsExchange";
 import liquidityPool from "./modules/liquidityPool";
+import proposalManager from "./modules/proposalManager";
 import creditToken from "./modules/creditToken";
 import dai from "./modules/dai";
 import usdc from "./modules/usdc";
@@ -15,6 +16,7 @@ export default new Vuex.Store({
         creditToken,
         dai,
         liquidityPool,
+        proposalManager,
         optionsExchange,
         usdc
     }

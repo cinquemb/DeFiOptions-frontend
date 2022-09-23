@@ -34,6 +34,8 @@ const actions = {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = addresses[ContractName][chainIdDec];
     let contract = new web3.eth.Contract(ProposalManagerJSON.abi, address);
+    console.error("proposal Manager Contract");
+    console.error(contract);
     commit("setContract", contract);
   },
 
@@ -48,21 +50,22 @@ const actions = {
     commit("setProposalCount", proposalCount);
 
   },
-  async fetchProposals({ commit, dispatch, state}) {
+  async fetchProposals({ commit, dispatch, state, rootState}) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
     //store a list of proposals with their information: wrapper addr. addr, governance token, vote type, status
     let proposals = [];
 
-    for(let i=0, i<state.proposalCount; i++){
+    for(let i=0; i<state.proposalCount; i++){
+      let web3 = rootState.accounts.web3;
       let proposal = {wrapperAddr: null, addr: null, govToken: null, voteType: null, status: null};
-      proposal[addr] = await state.contract.methods.resolveProposal(i).call();
-      proposal[wrapperAddr] = await state.contract.methods.resolve(proposal[addr]).call();
-      let pWrapperContract = new web3.eth.Contract(ProposalWrapperJSON.abi, proposal[wrapperAddr]);
-      proposal[govToken] = await pWrapperContract.methods.getGovernanceToken().call();
-      proposal[voteType] = await pWrapperContract.methods.getVoteType().call();
-      proposal[status] = await pWrapperContract.methods.getGovernanceToken().call();
+      proposal.addr = await state.contract.methods.resolveProposal(i).call();
+      proposal.wrapperAddr = await state.contract.methods.resolve(proposal.addr).call();
+      let pWrapperContract = new web3.eth.Contract(ProposalWrapperJSON.abi, proposal.wrapperAddr);
+      proposal.govToken = await pWrapperContract.methods.getGovernanceToken().call();
+      proposal.voteType = await pWrapperContract.methods.getVoteType().call();
+      proposal.status = await pWrapperContract.methods.getGovernanceToken().call();
 
       proposals.push(proposal);
     }
