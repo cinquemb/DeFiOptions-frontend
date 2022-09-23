@@ -20,7 +20,7 @@ import { mapGetters } from "vuex";
 import LpProposalList from '../components/invest/LpProposalList.vue';
 
 export default {
-  name: 'PoolManagement',
+  name: 'PoolGovernance',
   data() {
     return {
       loading: false
@@ -37,6 +37,8 @@ export default {
     filteredCurrentPoolProposals() {
       let filtered = [];
 
+      console.error(this.getProposals);
+
       for (let proposal of this.getProposals) {
         if (proposal.addr == this.getSelectedPoolAddress) {
           filtered.push(proposal);
@@ -51,6 +53,7 @@ export default {
       this.$router.push({ name: 'home'});
     }
     
+    this.$store.dispatch("proposalManager/fetchProposalCount");
     this.$store.dispatch("proposalManager/fetchProposals");
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("liquidityPool/fetchContract");
@@ -58,6 +61,8 @@ export default {
     this.$store.dispatch("liquidityPool/fetchUserBalance");
     this.$store.dispatch("liquidityPool/storeAddress");
     this.$store.dispatch("creditToken/fetchUserBalance");
+
+    console.error(this.getProposals);
   },
   methods: {}
 }

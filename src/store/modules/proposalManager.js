@@ -34,8 +34,6 @@ const actions = {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = addresses[ContractName][chainIdDec];
     let contract = new web3.eth.Contract(ProposalManagerJSON.abi, address);
-    console.error("proposal Manager Contract");
-    console.error(contract);
     commit("setContract", contract);
   },
 
@@ -47,17 +45,28 @@ const actions = {
     // check user's Exchange Balance allowance for the Liquidity Pool contract
     let proposalCount = await state.contract.methods.proposalCount().call();
 
+
     commit("setProposalCount", proposalCount);
+
+    console.error("state.proposalCount");
+    console.error(proposalCount);
 
   },
   async fetchProposals({ commit, dispatch, state, rootState}) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
+
+    if(!state.proposalCount) {
+        dispatch("fetchProposalCount");
+    } else {
+        console.error("state.proposalCount");
+        console.error(state.proposalCount);
+    }
     //store a list of proposals with their information: wrapper addr. addr, governance token, vote type, status
     let proposals = [];
 
-    for(let i=0; i<state.proposalCount; i++){
+    for(let i=2; i<state.proposalCount; i++){
       let web3 = rootState.accounts.web3;
       let proposal = {wrapperAddr: null, addr: null, govToken: null, voteType: null, status: null};
       proposal.addr = await state.contract.methods.resolveProposal(i).call();
