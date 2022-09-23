@@ -290,7 +290,7 @@ export default {
 
       // save execution strings to proposal contract
 
-      deployPoolManagmentProposal.methods.setexecutionBytes(
+      await deployPoolManagmentProposal.methods.setexecutionBytes(
         encodedData
       ).send({
         from: component.getActiveAccount,
@@ -318,13 +318,17 @@ export default {
 
       //egister proposal contract with proposal manager (and choosing the params for such)
 
-      component.getProposalManagerContract.methods.registerProposal(
+      await component.getProposalManagerContract.methods.registerProposal(
         deployPoolManagmentProposal.address,
         component.getSelectedPoolAddress(),
         2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
         1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
         Math.floor(Date.now() / 1000) + (60 * 60) //30 min to vote
-      ).on('transactionHash', function(hash){
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
         console.log("tx hash: " + hash);
         component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
       }).on('receipt', function(receipt){
@@ -356,7 +360,11 @@ export default {
             component.createOptions[i].optType,
             component.createOptions[i].strike,
             component.createOptions[i].maturity
-          ).on('transactionHash', function(hash){
+          ).send({
+            from: component.getActiveAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null
+          }).on('transactionHash', function(hash){
             console.log("tx hash: " + hash);
             component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
           }).on('receipt', function(receipt){
@@ -385,7 +393,11 @@ export default {
         for (let i=0; i < component.removeSymbols.length; i++) {
           component.getLiquidityPoolContract.methods.removeSymbol(
             component.removeSymbols[i].value
-          ).on('transactionHash', function(hash){
+          ).send({
+            from: component.getActiveAccount,
+            maxPriorityFeePerGas: null,
+            maxFeePerGas: null
+          }).on('transactionHash', function(hash){
             console.log("tx hash: " + hash);
             component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
           }).on('receipt', function(receipt){
