@@ -72,7 +72,8 @@
     <span></span>
 
     <button @click="createProposal" class="btn btn-success">
-        Create and Register Proposal
+      <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Create and Register Proposal
     </button>
 
   </div>
@@ -114,8 +115,9 @@ export default {
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
-    ...mapGetters("optionsExchange", ["getLiquidityPoolBalance", "getSelectedPool"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
+    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
+    ...mapGetters("proposalManager", ["getProposalManagerContract"]),
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -124,6 +126,7 @@ export default {
 
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("liquidityPool/fetchContract");
+    this.$store.dispatch("proposalManager/fetchContract");
     this.$store.dispatch("dai/fetchContract");
     this.$store.dispatch("usdc/fetchContract");
     this.$store.dispatch("creditToken/fetchContract");
@@ -180,7 +183,6 @@ export default {
 
       return true;
     },
-
     validateObj(obj) {
       if (obj.length == 0)
         return false;
@@ -195,7 +197,6 @@ export default {
 
       return true;
     },
-
     async createProposal () {
       let component = this;
 
@@ -276,7 +277,7 @@ export default {
           component.$toast.success("Initializing the proposal was successfull. You will be promted to save the pool proposal transactions now.");
           
         } else {
-          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          component.$toast.error("The initializing proposal transaction has failed. Please contact the DeFi Options support.");
         }
         
         component.loading = false;
@@ -287,7 +288,7 @@ export default {
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
 
-      //TODO: save execution strings to proposal contract
+      // save execution strings to proposal contract
 
       deployPoolManagmentProposal.methods.setexecutionBytes(
         encodedData
@@ -304,7 +305,7 @@ export default {
           component.$toast.success("Storing the proposal transactions was successfull. You will be promted to register the proposal");
           
         } else {
-          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          component.$toast.error("The storing proposal transactions tx has failed. Please contact the DeFi Options support.");
         }
         component.loading = false;
 
@@ -315,9 +316,96 @@ export default {
       });
       
 
-      //TODO: register proposal contract with proposal manager (and choosing the params for such)
+      //egister proposal contract with proposal manager (and choosing the params for such)
 
-      //TODO: voting on proposal
+      component.getProposalManagerContract.methods.registerProposal(
+        deployPoolManagmentProposal.address,
+        component.getSelectedPoolAddress(),
+        2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
+        1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
+        Math.floor(Date.now() / 1000) + (60 * 60) //30 min to vote
+      ).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page.");
+          
+        } else {
+          component.$toast.error("The register proposal tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+
+    },
+    async createSymbols () {
+      //TODO: BULK CREATION LATER, BOUNDED BY OPTIONS CONTRACT GAS COSTS * NUM SYMBOLS
+      //loop over symbols and ask user to keep pressing mm tx's
+      let component = this;
+
+      if (component.validateObj(component.createOptions)) {
+        for (let i=0; i < component.createOptions.length; i++) {
+          component.getOptionsExchangeContract.methods.createSymbol(
+            component.createOptions[i].udlFeedAddr,
+            component.createOptions[i].optType,
+            component.createOptions[i].strike,
+            component.createOptions[i].maturity
+          ).on('transactionHash', function(hash){
+            console.log("tx hash: " + hash);
+            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+          }).on('receipt', function(receipt){
+            console.log(receipt);
+            if (receipt.status) {
+              component.$toast.success("Create Symbol transaction was successfull.");
+              
+            } else {
+              component.$toast.error("The create symbol tx has failed. Please contact the DeFi Options support.");
+            }
+            component.loading = false;
+
+          }).on('error', function(error){
+            console.log(error);
+            component.loading = false;
+            component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+          });
+        }
+      }
+    },
+    async removeSymbols () {
+      //TODO: BULK REMOVAL LATER
+      //loop over removes and ask user to keep pressin mm tx's
+      let component = this;
+      if (component.validateObj(component.removeSymbols)) {
+        for (let i=0; i < component.removeSymbols.length; i++) {
+          component.getLiquidityPoolContract.methods.removeSymbol(
+            component.removeSymbols[i].value
+          ).on('transactionHash', function(hash){
+            console.log("tx hash: " + hash);
+            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+          }).on('receipt', function(receipt){
+            console.log(receipt);
+            if (receipt.status) {
+              component.$toast.success("Remove symbol transaction was successfull.");
+              
+            } else {
+              component.$toast.error("The remove symbol tx has failed. Please contact the DeFi Options support.");
+            }
+            component.loading = false;
+
+          }).on('error', function(error){
+            console.log(error);
+            component.loading = false;
+            component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+          });
+        }
+      }
+
     }
   }
 }
