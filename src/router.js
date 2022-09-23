@@ -5,6 +5,7 @@ import Portfolio from "./pages/Portfolio";
 import Invest from "./pages/Invest";
 import Trade from "./pages/Trade";
 import PoolManagement from "./pages/PoolManagement"
+import PoolGovernance from "./pages/PoolGovernance"
 
 Vue.use(Router);
 
@@ -43,6 +44,11 @@ export default new Router({
             path: "/manage",
             name: "manage",
             component: PoolManagement
+        },
+        {
+            path: "/pool-governance",
+            name: "pool-governance",
+            component: PoolGovernance
         }
     ],
     linkActiveClass: "active"

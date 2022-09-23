@@ -20,6 +20,10 @@
         Manage pool
       </router-link>
 
+      <router-link to="/pool-governance" class="btn btn-success">
+        Govern pool
+      </router-link>
+
       <span></span>
     </div>
   </div>

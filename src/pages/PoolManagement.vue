@@ -89,7 +89,7 @@ import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
 
 export default {
-  name: 'Portfolio',
+  name: 'PoolManagement',
   data() {
     return {
       loading: false,
@@ -377,7 +377,7 @@ export default {
         }
       }
     },
-    async removeSymbols () {
+    async removeAllSymbols () {
       //TODO: BULK REMOVAL LATER
       //loop over removes and ask user to keep pressin mm tx's
       let component = this;
