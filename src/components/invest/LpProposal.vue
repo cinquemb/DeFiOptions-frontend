@@ -15,7 +15,7 @@
 
      <!-- Action button -->
     <div>
-      <button @click="toggleForm" class="btn btn-success" v-if="!showForm">
+      <button @click="toggleForm" class="btn btn-success" v-if="!showForm && isClosable">
         Vote
         <i class="fas fa-chevron-down"></i>
         <i class="fas fa-chevron-up" v-if="showForm"></i>
