@@ -62,6 +62,10 @@ export default {
       this.$store.dispatch("optionsExchange/storeAddress");
       this.$store.dispatch("liquidityPool/fetchContract");
       this.$store.dispatch("liquidityPool/storeAddress");
+      this.$store.dispatch("proposalManager/fetchContract");
+      this.$store.dispatch("proposalManager/storeAddress");
+
+
       this.$store.dispatch("dai/fetchContract");
       this.$store.dispatch("dai/storeAddress");
       this.$store.dispatch("usdc/fetchContract");
@@ -90,6 +94,10 @@ export default {
       this.$store.dispatch("creditToken/fetchUserBalance");
 
       this.$store.dispatch("accounts/fetchActiveBalance");
+
+
+      this.$store.dispatch("proposalManager/fetchProposalCount");
+
     }
   }
 }

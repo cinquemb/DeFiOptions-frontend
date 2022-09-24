@@ -13,7 +13,7 @@
       <input v-model="symbol.bsStockSpread" class="form-control deposit-input" placeholder="0,0,0">
     </div>
 
-    <pre>{{ symbols | json }}</pre>
+    <pre>{{ symbols }}</pre>
   </div>
 </template>
 

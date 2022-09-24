@@ -16,7 +16,7 @@
         </div>
       </div>
 
-      <button @click="createProposal" class="btn btn-success">
+      <button @click="castVote" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Sumbit Vote
       </button>
@@ -42,11 +42,7 @@ export default {
     }
   },
 
-  created() {
-    if (!this.getWeb3 || !this.isUserConnected) {
-      this.$router.push({ name: 'home'});
-    }
-  },
+  created() {},
 
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getWeb3"]),
@@ -76,7 +72,7 @@ export default {
       }).on('receipt', function(receipt){
         console.log(receipt);
         if (receipt.status) {
-          component.$toast.success("You have successfully casted your vot.");
+          component.$toast.success("You have successfully casted your vote.");
           
         } else {
           component.$toast.error("The voting tx has failed. Please contact the DeFi Options support.");

@@ -65,7 +65,7 @@ export default {
   },
 
   methods: {
-    togglePool() {
+    async togglePool() {
       this.$root.$emit('poolToggleEvent', [this.pool.symbol, this.pool.address]);
       this.$store.commit("optionsExchange/setSelectedPool", this.pool.symbol);
       this.$store.commit("liquidityPool/setSelectedPoolAddress", this.pool.address);
@@ -78,7 +78,6 @@ export default {
       this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
       this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
       this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
-
     }
 
   }

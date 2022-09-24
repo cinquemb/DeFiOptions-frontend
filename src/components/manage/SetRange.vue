@@ -7,7 +7,7 @@
       <input v-model="range.start" class="form-control deposit-input" placeholder="">
       <input v-model="range.end" class="form-control deposit-input" placeholder="">
     </div>
-    <pre>{{ ranges | json }}</pre>
+    <pre>{{ ranges }}</pre>
   </div>
 </template>
 

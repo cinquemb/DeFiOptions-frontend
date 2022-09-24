@@ -6,7 +6,7 @@
     <input v-model="params.maturity" class="form-control deposit-input"  placeholder="">
     <input v-model="params.leverageMultiplier" class="form-control deposit-input" placeholder="">
     <input v-model="params.hedgingManagerAddress" class="form-control deposit-input" placeholder="">
-    <pre>{{ params | json }}</pre>
+    <pre>{{ params }}</pre>
   </div>
 </template>
 

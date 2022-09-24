@@ -56,6 +56,9 @@ export default {
 
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("optionsExchange/fetchLiquidityPools");
+    this.$store.dispatch("proposalManager/fetchContract");
+    this.$store.dispatch("proposalManager/fetchProposalCount");
+
     this.getFilteredPools();
     //this.$store.dispatch("liquidityPool/fetchContract");
     this.$store.dispatch("dai/fetchContract");
@@ -96,6 +99,8 @@ export default {
       this.$store.commit("optionsExchange/setPoolSymbols", poolSymbols);
       this.$store.commit("optionsExchange/setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
       this.$store.commit("optionsExchange/setExchangeLiquidityPools", exchangePools);
+      this.$store.dispatch("proposalManager/fetchProposals");
+
       this.poolSyms =  exchangePools;
     }
   }

@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <!-- Sell option form -->
+  <!-- Proposal Vote form -->
   <ProposalVote v-if="showForm" class="sell-form" :proposal="proposal" />
   
 </div>
@@ -65,16 +65,16 @@ export default {
 
       let status;
       switch(this.proposal.status){
-        case 0:
+        case "0":
           status = "pending";
           break;
-        case 1:
+        case "1":
           status = "open";
           break;
-        case 2:
+        case "2":
           status = "approved";
           break;
-        case 3:
+        case "3":
           status = "rejected";
       }
 

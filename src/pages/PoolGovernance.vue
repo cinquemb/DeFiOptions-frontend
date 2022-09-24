@@ -36,15 +36,11 @@ export default {
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposals"]),
     filteredCurrentPoolProposals() {
       let filtered = [];
-
-      console.error(this.getProposals);
-
       for (let proposal of this.getProposals) {
-        if (proposal.addr == this.getSelectedPoolAddress) {
+        if (proposal.govToken == this.getSelectedPoolAddress) {
           filtered.push(proposal);
         }
       }
-
       return filtered;
     },
   },
@@ -53,16 +49,12 @@ export default {
       this.$router.push({ name: 'home'});
     }
     
-    this.$store.dispatch("proposalManager/fetchProposalCount");
-    this.$store.dispatch("proposalManager/fetchProposals");
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("liquidityPool/fetchContract");
     this.$store.dispatch("optionsExchange/fetchLiquidityPools");
     this.$store.dispatch("liquidityPool/fetchUserBalance");
     this.$store.dispatch("liquidityPool/storeAddress");
     this.$store.dispatch("creditToken/fetchUserBalance");
-
-    console.error(this.getProposals);
   },
   methods: {}
 }

@@ -7,7 +7,7 @@
       <input v-model="option.strike" class="form-control deposit-input" placeholder="">
       <input v-model="option.maturity" class="form-control deposit-input" placeholder="">
     </div>
-    <pre>{{ options | json }}</pre>
+    <pre>{{ options }}</pre>
   </div>
 </template>
 
