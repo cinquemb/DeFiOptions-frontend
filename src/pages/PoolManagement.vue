@@ -156,7 +156,7 @@ export default {
     addRange: function () {
       this.setRanges.push({
         symbol: null,//toggle from avaiable options in pool
-        op: null,//button
+        op: null,//toggle button from: none, buy, sell
         start: null,//datetimepicker
         end: null//datetimepicker
       });
@@ -226,14 +226,19 @@ export default {
         for(let i=0; i<component.addSymbols.length; i++) {
           let parameters = [
             component.addSymbols.udlFeed, 
-            component.addSymbols.strike,
-            component.addSymbols.maturity,
-            component.addSymbols.optionType,
-            component.addSymbols.t0,
-            component.addSymbols.t1,
-            component.addSymbols.x,
-            component.addSymbols.y,
-            component.addSymbols.bsStockSpread
+            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            (component.addSymbols.optionType == "CALL") ? 0 : 1, //0 if optionType == 'CALL' else 1
+            component.addSymbols.t0, // unix timestamp format
+            component.addSymbols.t1, //unix timestamp format
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18)));,// x * (10**EXCHG['decimals'])
+            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            [
+              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
@@ -246,9 +251,9 @@ export default {
         for(let i=0; i<component.setRanges.length; i++) {
           let parameters = [
             component.setRanges.symbol, 
-            component.setRanges.op,
-            component.setRanges.start,
-            component.setRanges.end
+            component.setRanges.op, //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
@@ -318,12 +323,6 @@ export default {
       
 
       //register proposal contract with proposal manager (and choosing the params for such)
-
-      console.error("pool management proposal address");
-      console.error(deployPoolManagmentProposal.options.address);
-      console.error("pool addr");
-      console.error(component.getSelectedPoolAddress);
-
       await component.getProposalManagerContract.methods.registerProposal(
         deployPoolManagmentProposal.options.address,
         component.getSelectedPoolAddress,
@@ -359,13 +358,17 @@ export default {
       //loop over symbols and ask user to keep pressing mm tx's
       let component = this;
 
+      Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            (component.addSymbols.optionType == "CALL") ? 0 : 1, //0 if optionType == 'CALL' else 1
+
       if (component.validateObj(component.createOptions)) {
         for (let i=0; i < component.createOptions.length; i++) {
           component.getOptionsExchangeContract.methods.createSymbol(
             component.createOptions[i].udlFeedAddr,
-            component.createOptions[i].optType,
-            component.createOptions[i].strike,
-            component.createOptions[i].maturity
+            (component.createOptions[i].optType == "CALL") ? 0 : 1, //0 if optionType == 'CALL' else 1
+            Number(Number(component.createOptions[i].strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.createOptions[i].maturity //unix timestamp format
           ).send({
             from: component.getActiveAccount,
             maxPriorityFeePerGas: null,
