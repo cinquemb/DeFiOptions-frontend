@@ -1,6 +1,8 @@
 <template>
   <div>
 
+    <h1> Current Pool: {{getSelectedPoolAddress}}</h1>
+
     <!------ Adding/modifying pool paramters ------>
 
     <div class="section-big row mt-4 mx-3">
@@ -231,12 +233,12 @@ export default {
             (component.addSymbols.optionType == "CALL") ? 0 : 1, //0 if optionType == 'CALL' else 1
             component.addSymbols.t0, // unix timestamp format
             component.addSymbols.t1, //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18)));,// x * (10**EXCHG['decimals'])
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
             component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
             [
               Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
               Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7))
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
             ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
 
           ];
@@ -357,10 +359,6 @@ export default {
       //TODO: BULK CREATION LATER, BOUNDED BY OPTIONS CONTRACT GAS COSTS * NUM SYMBOLS
       //loop over symbols and ask user to keep pressing mm tx's
       let component = this;
-
-      Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            (component.addSymbols.optionType == "CALL") ? 0 : 1, //0 if optionType == 'CALL' else 1
 
       if (component.validateObj(component.createOptions)) {
         for (let i=0; i < component.createOptions.length; i++) {
