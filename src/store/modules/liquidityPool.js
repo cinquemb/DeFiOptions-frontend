@@ -2,20 +2,20 @@ import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
 //import addresses from "../../contracts/addresses.json";
 
 const state = {
-  abi: {},
-  address: {},
-  apy: {},
-  contract: {},
-  defaultPair: {},
-  defaultType: {},
-  defaultSide: {},
-  defaultMaturity: {},
-  poolFreeBalance: {},
-  poolMaturityDate: {},
-  poolWithdrawalFee: {},
-  symbolsListJson: {},
-  userBalance: {},
-  userPoolUsdValue: {}, // USD value of the pool balance
+  abi: {undefined:null},
+  address: {undefined:null},
+  apy: {undefined:null},
+  contract: {undefined:null},
+  defaultPair: {undefined:null},
+  defaultType: {undefined:null},
+  defaultSide: {undefined:null},
+  defaultMaturity: {undefined:null},
+  poolFreeBalance: {undefined:null},
+  poolMaturityDate: {undefined:null},
+  poolWithdrawalFee: {undefined:null},
+  symbolsListJson: {undefined:null},
+  userBalance: {undefined:null},
+  userPoolUsdValue: {undefined:null}, // USD value of the pool balance
   selectedPoolAddress: "N/A",
 };
 
@@ -82,16 +82,21 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    const apy = await state.contract[state.selectedPoolAddress].methods.yield(365 * 24 * 60 * 60).call();
-    let apyBig = ((apy-1e9)/1e9)*100;
+    try{
+      const apy = await state.contract[state.selectedPoolAddress].methods.yield(365 * 24 * 60 * 60).call();
+      let apyBig = ((apy-1e9)/1e9)*100;
 
-    if (parseInt(rootState.accounts.chainId) === 137) {
-      // needed for the soft launch in Nov 2021 to reset yield to 0%
-      const base = 1262535945;
-      apyBig = (apy / base  - 1) * 100;
+      if (parseInt(rootState.accounts.chainId) === 137) {
+        // needed for the soft launch in Nov 2021 to reset yield to 0%
+        const base = 1262535945;
+        apyBig = (apy / base  - 1) * 100;
+      }
+
+      commit("setApy", apyBig);
+    } catch {
+      commit("setApy", 0);
     }
 
-    commit("setApy", apyBig);
   },
   async fetchSymbolsList({ commit, dispatch, state, rootState }) {
     if (!state.contract) {

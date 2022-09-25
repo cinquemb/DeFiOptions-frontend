@@ -94,6 +94,29 @@ export default {
           // option object
           let poolObject = {symbol, address};
           exchangePools.push(poolObject);
+
+          for(let lKey in this.$store.state.liquidityPool) {
+            let tKey = lKey;
+
+            console.error(this.$store.state.liquidityPool[tKey]);
+
+            if(typeof this.$store.state.liquidityPool[tKey] === 'object') {
+              if (!(poolAddr in this.$store.state.liquidityPool[tKey])) {
+                this.$store.state.liquidityPool[tKey][poolAddr] = null;
+              }
+            }
+          }
+
+          this.$store.commit("liquidityPool/setSelectedPoolAddress", poolAddr);
+          this.$store.dispatch("liquidityPool/fetchContract");
+          this.$store.dispatch("liquidityPool/fetchUserBalance");
+          this.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
+          this.$store.dispatch("liquidityPool/fetchApy");
+          this.$store.dispatch("liquidityPool/storeAddress");
+          this.$store.dispatch("liquidityPool/fetchUserPoolUsdValue");
+          this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
+          this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
+          this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
       }
 
       this.$store.commit("optionsExchange/setPoolSymbols", poolSymbols);

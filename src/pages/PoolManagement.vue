@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <h1> Current Pool: {{getSelectedPoolAddress}}</h1>
+    <h1> Current Pool: ({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h1>
 
     <!------ Adding/modifying pool paramters ------>
 
