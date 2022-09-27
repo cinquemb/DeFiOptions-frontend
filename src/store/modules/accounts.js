@@ -203,7 +203,8 @@ const mutations = {
         state.chainName = "Localhost";
         break;
       case "0x13881":
-        state.chainName = "Mumbai"
+        state.chainName = "Mumbai";
+        break
       default:
         state.chainName = null;
         break;

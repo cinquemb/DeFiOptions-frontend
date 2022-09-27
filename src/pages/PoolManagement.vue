@@ -94,6 +94,15 @@ export default {
   name: 'PoolManagement',
   data() {
     return {
+      optTypes: {
+        "CALL" : 0,
+        "PUT": 1
+      },
+      marketOpTypes: {
+        "NONE": 0,
+        "BUY": 1,
+        "SELL":2
+      },
       loading: false,
       setParams: { //gov
         reserveRatio: null, //slider as a percentage
@@ -212,10 +221,10 @@ export default {
       //encode setParameters first if exists
       if (component.validateSetParameters()) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
           Number(Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10)),//Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
           component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
         ];
         encodedData.push(
@@ -298,7 +307,7 @@ export default {
 
       // save execution strings to proposal contract
 
-      await deployPoolManagmentProposal.methods.setexecutionBytes(
+      await deployPoolManagmentProposal.methods.setExecutionBytes(
         encodedData
       ).send({
         from: component.getActiveAccount,

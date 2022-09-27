@@ -2,7 +2,17 @@
   <div>
     <div class="d-flex flex-wrap mt-3">
 
-      <div class="form-button-mobile">
+      <!-- More Proposal data -->
+
+      <div v-for="detail in details" v-bind:key="detail.function">
+        <div class="div-flex justify-content-center flex-wrap">
+        <LpProposalItem class="data-item" title="Pool Function" :data="detail.function" :divider="true" />
+        <LpProposalItem class="data-item" title="Pool Function Input" :data="detail.inputs" :divider="true" />
+      </div>
+
+      </div>
+      
+      <div class="form-button-mobile" v-if="isClosable">
         <div class="btn-group" aria-describedby="button-text">
           <button type="button" class="btn btn-outline-success dropdown-toggle text-uppercase" data-bs-toggle="dropdown" aria-expanded="false">
             {{(vote == true)? "YEA" : "NAY"}}
@@ -16,7 +26,7 @@
         </div>
       </div>
 
-      <button @click="castVote" class="btn btn-success">
+      <button @click="castVote" class="btn btn-success" v-if="isClosable">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Sumbit Vote
       </button>
@@ -27,13 +37,14 @@
 </template>
 
 <script>
+import LpProposalItem from '../LpProposalItem.vue';
 import { mapGetters } from "vuex";
 import ProposalWrapperJSON from "../../contracts/ProposalWrapper.json";
 
 
 export default {
   name: "ProposalVote",
-  props: ["proposal"],
+  props: ["proposal", "details"],
 
   data() {
     return {
@@ -44,11 +55,17 @@ export default {
 
   created() {},
 
+  components: { 
+    LpProposalItem
+  },
+
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getWeb3"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserCollateralSurplus", "getUserExchangeBalanceAllowance", "getUserOptions"])
-
+    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserCollateralSurplus", "getUserExchangeBalanceAllowance", "getUserOptions"]),
+    isClosable () {
+      return this.proposal.status == "1";
+    },
   },
 
 

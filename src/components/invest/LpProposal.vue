@@ -15,10 +15,16 @@
 
      <!-- Action button -->
     <div>
-      <button @click="toggleForm" class="btn btn-success" v-if="!showForm && isClosable">
-        Vote
+      <button @click="toggleForm" class="btn btn-success" v-if="!showForm">
+        View Details
         <i class="fas fa-chevron-down"></i>
         <i class="fas fa-chevron-up" v-if="showForm"></i>
+      </button>
+
+      <button @click="toggleForm" class="btn btn-success" v-if="showForm">
+        Hide Details
+        <i class="fas fa-chevron-down"></i>
+        <i class="fas fa-chevron-up" v-if="!showForm"></i>
       </button>
 
       <button @click="closeVote" class="btn btn-success" v-if="!showForm && isClosable">
@@ -30,7 +36,7 @@
   </div>
 
   <!-- Proposal Vote form -->
-  <ProposalVote v-if="showForm" class="sell-form" :proposal="proposal" />
+  <ProposalVote v-if="showForm" class="sell-form" :proposal="proposal" :details=details />
   
 </div>
   
@@ -41,6 +47,8 @@ import { mapGetters } from "vuex";
 import LpProposalItem from '../LpProposalItem.vue';
 import ProposalVote from './ProposalVote.vue';
 import ProposalWrapperJSON from "../../contracts/ProposalWrapper.json";
+import PoolManagementProposalJSON from "../../contracts/PoolManagementProposal.json";
+import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
 
 
 export default {
@@ -48,6 +56,7 @@ export default {
   props: ["proposal"],
   data() {
     return {
+      details: [],
       showForm: false
     }
   },
@@ -58,10 +67,12 @@ export default {
   },
 
   created() {
+    this.getProposalDetails()
   },
 
   computed: {
     ...mapGetters("accounts", ["getWeb3", "getActiveAccount"]),
+    ...mapGetters("liquidityPool", ["getSelectedPoolAddress"]),
     formatAddress () {
       return this.proposal.addr.substring(0, 6) + '...' + this.proposal.addr.substring(38, 42)
     },
@@ -126,6 +137,29 @@ export default {
         component.loading = false;
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
+    },
+
+    async getProposalDetails(){
+      let component = this;
+
+      let details = [];
+      const poolManagmentProposalContract = new component.getWeb3.eth.Contract(PoolManagementProposalJSON.abi, this.proposal.addr);
+      const poolContract = new component.getWeb3.eth.Contract(LiquidityPool.abi, component.getSelectedPoolAddress);
+      const executionBytes = await poolManagmentProposalContract.methods.getExecutionBytes().call();
+
+      for (let i=0; i<Object.values(executionBytes).length; i++) {
+        let eBytes = executionBytes[i];
+        let funcSignature = eBytes.slice(0, 10);
+        let funcInputs = `0x${eBytes.substr(10)}`;
+        let funcAbi = poolContract.options.jsonInterface.find(({ signature }) => signature === funcSignature);
+        let funcName = funcAbi.name;
+        let funcInputsDecoded = component.getWeb3.eth.abi.decodeParameters(funcAbi.inputs, funcInputs);
+
+        details.push({"function": funcName, "inputs": funcInputsDecoded});
+
+      }
+
+      this.details = details;
     }
   }
 }
