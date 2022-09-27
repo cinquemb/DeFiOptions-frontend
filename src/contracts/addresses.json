@@ -50,13 +50,13 @@
   "CreditToken": {
     "42":"0xae7512c5d996b12830a282eeb9eecb4cf01207d2",
     "137":"0x045f70e2e63907000c0ff511862c936fc0857979",
-    "80001":"",
+    "80001":"0x74C70020791e02c6D217760be31550b998177cE6",
     "43112": "0xEd886704A5e2a923614f0938bAC133f5d0DD5dDF"
   },
   "Dai": {
     "42":"0xB51E93aA4B4B411A36De9343128299B483DBA133",
     "137":"0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
-    "80001":"",
+    "80001":"0x4E5bd742faa068f01Ff4ac46C344a2ADCD6e73B7",
     "43112": ""
   },
   "LinearLiquidityPool": {
@@ -68,13 +68,13 @@
   "ProposalManager": {
     "42": "",
     "137": "",
-    "80001":"",
+    "80001":"0x902aDB4a11E8C9C4BD4bEfdB747aA0Af8F952BC6",
     "43112":"0x772a5d3dB248089F9B6dfCD8d4723797d23Cb51D"
   },
   "OptionsExchange": {
     "42":"0x1233a9d9a02eef1bc24675332684d4bfdd866f8a",
     "137":"0x69b38e5cd783cbeeb06e11b4ad29a95af14dbcc9",
-    "80001":"",
+    "80001":"0x73cC3B48584FaD7F84d5A2103bE11a10B2B4696a",
     "43112": "0xc6e393D9a32B6f9ab57e4574a26eEa98A2008a41"
   },
   "Tether": {
@@ -86,7 +86,7 @@
   "USDC": {
     "42":"0x2154bce9A2bfaC75Fe97E17BCf9F003BA74CFDaE",
     "137":"0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
-    "80001":"",
+    "80001":"0x32140eFd4247064c8187C18abf42646CbE7e77C3",
     "43112": "0x351D75454225010b2d2EeBd0E96762291661CDcB"
   }
 }
