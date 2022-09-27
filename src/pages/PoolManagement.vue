@@ -223,7 +223,7 @@ export default {
         let parameters = [
           Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
           Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10)),//Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
           Number(component.setParams.leverageMultiplier), // 15, 1 to 30
           component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
         ];
@@ -239,9 +239,9 @@ export default {
             component.addSymbols.udlFeed, 
             Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
             component.addSymbols.maturity, //unix timestamp format
-            (component.addSymbols.optionType == "CALL") ? 0 : 1, //0 if optionType == 'CALL' else 1
-            component.addSymbols.t0, // unix timestamp format
-            component.addSymbols.t1, //unix timestamp format
+            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols.t0), // unix timestamp format
+            Number(component.addSymbols.t1), //unix timestamp format
             component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
             component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
             [
@@ -262,7 +262,7 @@ export default {
         for(let i=0; i<component.setRanges.length; i++) {
           let parameters = [
             component.setRanges.symbol, 
-            component.setRanges.op, //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
             Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
             Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
           ];
@@ -373,7 +373,7 @@ export default {
         for (let i=0; i < component.createOptions.length; i++) {
           component.getOptionsExchangeContract.methods.createSymbol(
             component.createOptions[i].udlFeedAddr,
-            (component.createOptions[i].optType == "CALL") ? 0 : 1, //0 if optionType == 'CALL' else 1
+            component.optTypes[component.createOptions[i].optType], //0 if optionType == 'CALL' else 1
             Number(Number(component.createOptions[i].strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
             component.createOptions[i].maturity //unix timestamp format
           ).send({
