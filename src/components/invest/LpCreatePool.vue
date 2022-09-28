@@ -120,7 +120,8 @@ export default {
 
           //TODO: may want to set this to the selected liquidity pool
           //TODO: update liquidity pool address list
-          this.$store.dispatch("optionsExchange/fetchLiquidityPools");
+          receipt = null;
+          component.$store.dispatch("optionsExchange/fetchLiquidityPools");
           
           component.nameSuffix = null;
           component.symbolSuffix = null;
