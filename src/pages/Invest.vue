@@ -19,6 +19,7 @@
     </div>
 
     <div class="section-big row mt-4 mx-3">
+      <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
       <div class="col-md-12">
         <LpToggle :pools="poolSyms" />
       </div>
@@ -71,7 +72,8 @@ export default {
 
   data() {
     return { 
-      poolSyms: []
+      poolSyms: [],
+      loading: true
     }
   },
 
@@ -125,6 +127,7 @@ export default {
       this.$store.dispatch("proposalManager/fetchProposals");
 
       this.poolSyms =  exchangePools;
+      this.loading = false;
     }
   }
 }
