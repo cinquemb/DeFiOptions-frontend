@@ -109,6 +109,8 @@ import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.
     function SetVolatilityPeriod(uint _volatilityPeriod) external //SetUint.vue
     function SetSwapRouterTolerance(uint r, uint b) external//SetRate.vue
     function SetSwapRouterInfo(address router, address token) external //SetAddressMap.vue
+    function SetBaseIncentivisation(uint amount) external //SetUint.vue
+
 
     //multi op
     function SetTokenRate(address token, uint v, uint b) external//SetTokenRate.vue
@@ -121,7 +123,6 @@ import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.
     function SetDexAggIncentiveBlacklist(address dexAggAddress, bool isIncentivizable) external//SetAddressBoolable.vue
     function SetDexOracleTwapPeriod(address dexOracleAddress, uint256 _twapPeriod) external//SetDexOracleTwapPeriod.vue
     function SetUdlCollateralManager(address udlFeed, address ctlMngr) external //SetAddressMap.vue
-    function SetBaseIncentivisation(uint amount) external //SetUint.vue
     function SetAllowedHedgingManager(address hedgeMngr, bool val) external//SetAddressBoolable.vue
     function SetAllowedCustomPoolLeverage(address poolAddr, bool val) external//SetAddressBoolable.vue
     function TransferBalance(address to, uint amount) external//Transfer.vue
@@ -133,27 +134,59 @@ export default {
   name: 'ProtocolSettingsManagement',
   data() {
     return {
-      optTypes: {
-        "CALL" : 0,
-        "PUT": 1
-      },
-      marketOpTypes: {
-        "NONE": 0,
-        "BUY": 1,
-        "SELL":2
-      },
       loading: false,
-      setParams: { //gov
-        reserveRatio: null, //slider as a percentage
-        withdrawFee: null, //slider as a percentage
-        maturity: null, //datetime picker
-        leverageMultiplier: null, //slider from 1-30? or manual with validation
-        hedgingManagerAddress: null, //toggle from hdeging manager addresses hardcoded in ui?
+      setCirculatingSupply: {
+        field_name: "supply",
+        value: null,
       },
-      setRanges: [], //gov
-      addSymbols: [],//gov
-      removeSymbols: [],//non gov
-      createOptions: []//non gov
+      setMinShareForProposal: {
+        base: null,
+        value: null,
+      },
+      setDebtInterestRate: {
+        base: null,
+        value: null,
+      },
+      setCreditInterestRate: {
+        base: null,
+        value: null,
+      },
+      setProcessingFee: {
+        base: null,
+        value: null,
+      },
+      setVolatilityPeriod: {
+        name: "volatilityPeriod",
+        value: null,
+      },
+      setSwapRouterTolerance: {
+        base: null,
+        value: null,
+      },
+      setSwapRouterInfo: {
+        field_name1: "router",
+        value1: null,
+        field_name2: "token",
+        value2: null,
+      },
+      setBaseIncentivisation: {
+        name: "amount",
+        value: null,
+      },
+      setTokenRates: [], //gov
+      setAllowedTokens: [],//gov
+      setUdlFeeds: [],//non gov
+      setSwapPaths: [], //gov
+      setPoolBuyCreditTradables: [], //gov
+      setPoolSellCreditTradables: [], //gov
+      setUdlIncentiveBlacklists: [], //gov
+      setDexAggIncentiveBlacklists: [], //gov
+      setDexOracleTwapPeriods: [], //gov
+      setUdlCollateralManagers: [], //gov
+      setAllowedHedgingManagers: [], //gov
+      setAllowedCustomPoolLeverages: [], //gov
+      transferBalances: [], //gov
+      transferGovTokens: []
     }
   },
   components: {
@@ -178,57 +211,97 @@ export default {
       this.$router.push({ name: 'home'});
     }
 
-    this.$store.dispatch("optionsExchange/fetchContract");
-    this.$store.dispatch("liquidityPool/fetchContract");
-    this.$store.dispatch("proposalManager/fetchContract");
-    this.$store.dispatch("dai/fetchContract");
-    this.$store.dispatch("usdc/fetchContract");
-    this.$store.dispatch("creditToken/fetchContract");
-    this.$store.dispatch("optionsExchange/fetchLiquidityPools");
-    this.$store.dispatch("liquidityPool/fetchUserBalance");
-    this.$store.dispatch("liquidityPool/storeAddress");
-    this.$store.dispatch("dai/fetchUserBalance");
-    this.$store.dispatch("usdc/fetchUserBalance");
-    this.$store.dispatch("creditToken/fetchUserBalance");
-    this.$store.dispatch("accounts/fetchActiveBalance");
   },
 
   methods: {
-    addSymbol: function () {
-      this.addSymbols.push({
-        udlFeed: null, // these can
-        strike: null, // be inputed from 
-        maturity: null, // avaiable options 
-        optionType: null, // in exchange
-        t0: null, //date time picker?
-        t1: null, //datetime picker
-        x: null, //manual, but needs conversion check
-        y: null,//manual but needs conversion check
-        bsStockSpread: null // manual for a[0], and a[1], but can be a slider for a[2]
+    addTokenRate: function () {
+      this.setTokenRates.push({
+        token: null,
+        value: null,
+        base: null,
+      });
+    }, //gov
+    addAllowedToken: function () {
+      this.setAllowedTokens.push({
+        token: null,
+        value: null,
+        base: null,
+      });
+    },//gov
+    addUdlFeed: function () {
+      this.setUdlFeeds.push({
+        addr: null,
+        value: null
+      });
+    },//non gov
+    addSwapPath: function () {
+      this.setSwapPaths.push({
+        from: null,
+        to: null,
+        path: [],
+      });
+    }, //gov
+    addPoolBuyCreditTradable: function () {
+      this.setPoolBuyCreditTradables.push({
+        poolAddress: null,
+        isTradable: null,
+      });
+    }, //gov
+    addPoolSellCreditTradable: function () {
+      this.setPoolSellCreditTradables.push({
+        poolAddress: null,
+        isTradable: null,
+      });
+    }, //gov
+    addUdlIncentiveBlacklist: function () {
+      this.setUdlIncentiveBlacklists.push({
+        udlAddr: null,
+        isIncentivizable: null,
+      });
+    }, //gov
+    addDexAggIncentiveBlacklist: function () {
+      this.setDexAggIncentiveBlacklists.push({
+        dexAggAddress: null,
+        isIncentivizable: null,
+      });
+    }, //gov
+    addDexOracleTwapPeriod: function () {
+      this.setDexOracleTwapPeriods.push({
+        dexOracleAddress: null,//toggle from avaiable options in pool
+        _twapPeriod: null,//toggle button from: none, buy, sell
+      });
+    }, //gov
+    addUdlCollateralManager: function () {
+      this.setUdlCollateralManagers.push({
+        udlFeed: null,//toggle from avaiable options in pool
+        ctlMngr: null,//toggle button from: none, buy, sell
+      });
+    }, //gov
+    addAllowedHedgingManager: function () {
+      this.setAllowedHedgingManagers.push({
+        hedgeMngr: null,//toggle from avaiable options in pool
+        val: null,//toggle button from: none, buy, sell
+      });
+    }, //gov
+    addAllowedCustomPoolLeverage: function () {
+      this.setAllowedCustomPoolLeverages.push({
+        poolAddr: null,//toggle from avaiable options in pool
+        val: null,//toggle button from: none, buy, sell
+      });
+    }, //gov
+    addTransfer: function () {
+      this.transferBalances.push({
+        to: null,//toggle from avaiable options in pool
+        amount: null,//toggle button from: none, buy, sell
+      });
+    }, //gov
+    addTransferGov: function () {
+      this.transferGovTokens.push({
+        to: null,//toggle from avaiable options in pool
+        amount: null,//toggle button from: none, buy, sell
       });
     },
-    addRange: function () {
-      this.setRanges.push({
-        symbol: null,//toggle from avaiable options in pool
-        op: null,//toggle button from: none, buy, sell
-        start: null,//datetimepicker
-        end: null//datetimepicker
-      });
-    },
-    addOption: function () {
-      this.createOptions.push({
-        udlFeedAddr: null,//button
-        optType: null, //button
-        strike: null, //manual?
-        maturity: null //datetimepicker
-      });
-    },
-    removeSymbol: function () {
-      this.removeSymbols.push({
-        value: null // toggle from available options in pool that have old maturity date greater than current unix time
-      });
-    },
-    validateSetParameters() {
+    validateSingle() {
       for (const key in this.setParams) {
         if (this.setParams[key] === null) {
           return false;
