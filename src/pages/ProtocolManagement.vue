@@ -1,16 +1,11 @@
 <template>
   <div>
 
-
-
-
-
-
-    <!------ Adding/modifying pool paramters ------>
+    <!------ Setting circulating supply ------>
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
-        <SetParams :params="setParams" />
+        <SetUint :data="setCirculatingSupply" />
         <span></span>
       </div>
     </div>
@@ -28,51 +23,6 @@
         Add New Options To Exchange
       </button>
     </div>
-    <span></span>
-    <span></span>
-
-
-    <!------ Remove symbol from pool (if expired) ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <RemoveSymbol :symbols="removeSymbols" />
-        <span></span>
-      </div>
-      <button @click="removeSymbol" class="btn btn-success">
-        Remove Symbol
-      </button>
-    </div>
-    <span></span>
-    <span></span>
-
-
-    <!------ Adding/modifying tradeable price ranges ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <SetRange :ranges="setRanges" />
-        <span></span>
-      </div>
-      <button @click="addRange" class="btn btn-success">
-        Add/Modify Range
-      </button>
-    </div>
-    <span></span>
-    <span></span>
-
-    <!------ Adding/modifying symbols ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <AddSymbol :symbols="addSymbols" />
-        <span></span>
-      </div>
-      <button @click="addSymbol" class="btn btn-success">
-        Add/Modify Symbol
-      </button>
-    </div>
-
     <span></span>
     <span></span>
 
@@ -138,30 +88,37 @@ export default {
       setCirculatingSupply: {
         field_name: "supply",
         value: null,
+        desc: "Circulating supply of DOD"
       },
       setMinShareForProposal: {
         base: null,
         value: null,
+        desc: "Min % needed to make DOD governance proposal"
       },
       setDebtInterestRate: {
         base: null,
         value: null,
+        desc: "Interest rate on any DOD debt incured"
       },
       setCreditInterestRate: {
         base: null,
         value: null,
+        desc: "Interest rate on any DOD credit tokens issued  (and redeemed)"
       },
       setProcessingFee: {
         base: null,
         value: null,
+        desc: "How much to charge for settlement of options and swaps"
       },
       setVolatilityPeriod: {
         name: "volatilityPeriod",
         value: null,
+        desc: "The default number of days to look back to calculate volitility"
       },
       setSwapRouterTolerance: {
         base: null,
         value: null,
+        desc: "Amount of slippage to incur during dex liquidation"
       },
       setSwapRouterInfo: {
         field_name1: "router",
@@ -172,6 +129,7 @@ export default {
       setBaseIncentivisation: {
         name: "amount",
         value: null,
+        desc: "How much to credit protocol actions that are incentivized directly"
       },
       setTokenRates: [], //gov
       setAllowedTokens: [],//gov
@@ -478,77 +436,6 @@ export default {
         component.loading = false;
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
-
-    },
-    async createSymbols () {
-      //TODO: BULK CREATION LATER, BOUNDED BY OPTIONS CONTRACT GAS COSTS * NUM SYMBOLS
-      //loop over symbols and ask user to keep pressing mm tx's
-      let component = this;
-
-      if (component.validateObj(component.createOptions)) {
-        for (let i=0; i < component.createOptions.length; i++) {
-          component.getOptionsExchangeContract.methods.createSymbol(
-            component.createOptions[i].udlFeedAddr,
-            component.optTypes[component.createOptions[i].optType], //0 if optionType == 'CALL' else 1
-            Number(Number(component.createOptions[i].strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.createOptions[i].maturity //unix timestamp format
-          ).send({
-            from: component.getActiveAccount,
-            maxPriorityFeePerGas: null,
-            maxFeePerGas: null
-          }).on('transactionHash', function(hash){
-            console.log("tx hash: " + hash);
-            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
-          }).on('receipt', function(receipt){
-            console.log(receipt);
-            if (receipt.status) {
-              component.$toast.success("Create Symbol transaction was successfull.");
-              
-            } else {
-              component.$toast.error("The create symbol tx has failed. Please contact the DeFi Options support.");
-            }
-            component.loading = false;
-
-          }).on('error', function(error){
-            console.log(error);
-            component.loading = false;
-            component.$toast.error("There has been an error. Please contact the DeFi Options support.");
-          });
-        }
-      }
-    },
-    async removeAllSymbols () {
-      //TODO: BULK REMOVAL LATER
-      //loop over removes and ask user to keep pressin mm tx's
-      let component = this;
-      if (component.validateObj(component.removeSymbols)) {
-        for (let i=0; i < component.removeSymbols.length; i++) {
-          component.getLiquidityPoolContract.methods.removeSymbol(
-            component.removeSymbols[i].value
-          ).send({
-            from: component.getActiveAccount,
-            maxPriorityFeePerGas: null,
-            maxFeePerGas: null
-          }).on('transactionHash', function(hash){
-            console.log("tx hash: " + hash);
-            component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
-          }).on('receipt', function(receipt){
-            console.log(receipt);
-            if (receipt.status) {
-              component.$toast.success("Remove symbol transaction was successfull.");
-              
-            } else {
-              component.$toast.error("The remove symbol tx has failed. Please contact the DeFi Options support.");
-            }
-            component.loading = false;
-
-          }).on('error', function(error){
-            console.log(error);
-            component.loading = false;
-            component.$toast.error("There has been an error. Please contact the DeFi Options support.");
-          });
-        }
-      }
 
     }
   }
