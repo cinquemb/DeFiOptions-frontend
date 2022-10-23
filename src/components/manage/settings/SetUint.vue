@@ -1,10 +1,8 @@
 <template>
   <div>
-    <div v-for="node in data" v-bind:key="node.field_name">
-      <h3>{{ node.field_name }} </h3>
-      <input v-model="node.value" class="form-control deposit-input" placeholder="{{ node.desc }}">
-    </div>
-    <pre>{{ ranges }}</pre>
+    <h3>{{ data.field_name }} </h3>
+    <input v-model="data.value" class="form-control deposit-input" placeholder="{{ data.desc }}">
+    <pre>{{ data }}</pre>
   </div>
 </template>
 

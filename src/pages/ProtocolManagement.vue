@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <!------ Setting circulating supply ------>
 
     <div class="section-big row mt-4 mx-3">
@@ -12,7 +11,95 @@
     <span></span>
     <span></span>
 
-    <!------ Create option in exchnage ------>
+    <!------ Min DOD needed for proposal------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetRate :data="setMinShareForProposal" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Debt interest ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetRate :data="setDebtInterestRate" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Credit token interest ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetRate :data="setCreditInterestRate" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Processing Fee ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetRate :data="setProcessingFee" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Volitility period ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetRate :data="setVolatilityPeriod" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Slippage for liquidation swaps ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetRate :data="setSwapRouterTolerance" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Swap info ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetAddressMap :data="setSwapRouterInfo" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Incentives ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetUint :data="setBaseIncentivisation" />
+        <span></span>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Create option in exchange ------>
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
@@ -125,6 +212,7 @@ export default {
         value1: null,
         field_name2: "token",
         value2: null,
+        desc: "Router address to be used with token address"
       },
       setBaseIncentivisation: {
         name: "amount",

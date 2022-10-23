@@ -1,11 +1,9 @@
 <template>
   <div>
-    <div v-for="node in data" v-bind:key="node.desc">
-      <h3>{{ node.desc }} </h3>
-      <input v-model="node.base" class="form-control deposit-input" placeholder="Denominator">
-      <input v-model="node.value" class="form-control deposit-input" placeholder="Numerator">
-    </div>
-    <pre>{{ ranges }}</pre>
+    <h3>{{ data.desc }} </h3>
+    <input v-model="data.base" class="form-control deposit-input" placeholder="Denominator">
+    <input v-model="data.value" class="form-control deposit-input" placeholder="Numerator">
+    <pre>{{ data }}</pre>
   </div>
 </template>
 
