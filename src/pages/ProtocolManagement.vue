@@ -166,6 +166,73 @@
     <span></span>
     <span></span>
 
+    <!------ Add/modify what pools are allowed to buy options on exchange credit------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="pool in setPoolBuyCreditTradables" v-bind:key="pool.addr">
+          <SetAddressBoolable :data="pool" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addPoolBuyCreditTradable" class="btn btn-success">
+        Add/Modify ability for pool to buy options on exchange credit
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Add/modify what pools are allowed to sell options on exchange credit------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="pool in setPoolSellCreditTradables" v-bind:key="pool.addr">
+          <SetAddressBoolable :data="pool" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addPoolSellCreditTradable" class="btn btn-success">
+        Add/Modify ability for pool to sell options on exchange credit
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Add/modify what chanlink feeds are incentivized ------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="feed in setUdlIncentiveBlacklists" v-bind:key="feed.addr">
+          <SetAddressBoolable :data="feed" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addUdlIncentiveBlacklist" class="btn btn-success">
+        Add/Modify ability for chainlink underlying feed to have incentives
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Add/modify what pools are allowed to sell options on exchange credit------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="dexFeed in setDexAggIncentiveBlacklists" v-bind:key="dexFeed.addr">
+          <SetAddressBoolable :data="dexFeed" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addDexAggIncentiveBlacklist" class="btn btn-success">
+        Add/Modify ability for dex based underlying feed to have incentives
+      </button>
+    </div>
+    <span></span>
+    <span></span>
 
     <button @click="createProposal" class="btn btn-success">
       <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -343,26 +410,30 @@ export default {
     }, //gov
     addPoolBuyCreditTradable: function () {
       this.setPoolBuyCreditTradables.push({
-        poolAddress: null,
-        isTradable: null,
+        addr: null,
+        bool: null,
+        desc: "Allow/Dissallow pool to buy options on exchange credit"
       });
     }, //gov
     addPoolSellCreditTradable: function () {
       this.setPoolSellCreditTradables.push({
-        poolAddress: null,
-        isTradable: null,
+        addr: null,
+        bool: null,
+        desc: "Allow/dissallow pool to sell options on exchange credit"
       });
     }, //gov
     addUdlIncentiveBlacklist: function () {
       this.setUdlIncentiveBlacklists.push({
-        udlAddr: null,
-        isIncentivizable: null,
+        addr: null,
+        bool: null,
+        desc: "Allow/Dissallow chainlink based underlying feed management to be incentivized"
       });
     }, //gov
     addDexAggIncentiveBlacklist: function () {
       this.setDexAggIncentiveBlacklists.push({
-        dexAggAddress: null,
-        isIncentivizable: null,
+        addr: null,
+        bool: null,
+        desc: "Allow/Dissallow dex underlying feed management to be incentivized"
       });
     }, //gov
     addDexOracleTwapPeriod: function () {
