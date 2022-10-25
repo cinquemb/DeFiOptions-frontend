@@ -149,6 +149,23 @@
     <span></span>
     <span></span>
 
+    <!------ Add/modify swap path------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="path in setSwapPaths" v-bind:key="path.from">
+          <SetSwapPath :data="path" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addSwapPath" class="btn btn-success">
+        Add/Modify swap path of underlying token (for liquidations)
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
 
     <button @click="createProposal" class="btn btn-success">
       <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
