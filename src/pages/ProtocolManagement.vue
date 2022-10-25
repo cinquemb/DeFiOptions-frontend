@@ -99,19 +99,56 @@
     <span></span>
     <span></span>
 
-    <!------ Create option in exchange ------>
+    <!------ Modify existing stablecoin token rates (if they have changed) ------>
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
-        <CreateOption :options="createOptions" />
+        <div v-for="rate in setTokenRates" v-bind:key="rate.token">
+          <SetTokenRate :data="rate" />
+        </div>
         <span></span>
       </div>
-      <button @click="addOption" class="btn btn-success">
-        Add New Options To Exchange
+      <button @click="addTokenRate" class="btn btn-success">
+        Edit aditional allowed stablcoin
       </button>
     </div>
     <span></span>
     <span></span>
+
+    <!------ Add allowed stablecoins to exchange------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="rate in setAllowedTokens" v-bind:key="rate.token">
+          <SetTokenRate :data="rate" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addAllowedToken" class="btn btn-success">
+        Add New Stablecoin to exchange
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Add/modify underlying feed------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="udlfeed in setUdlFeeds" v-bind:key="udlfeed.addr">
+          <SetUdlFeed :data="udlfeed" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addUdlFeed" class="btn btn-success">
+        Add/Modify Underlying Feed to exchange
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
 
     <button @click="createProposal" class="btn btn-success">
       <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -362,6 +399,9 @@ export default {
 
       for (let i =0; i < obj.length; i++) {
         for (const key in obj[i]) {
+          if (key === "desc") {
+            continue;
+          }
           if (obj[i][key] === null) {
             return false;
           }
