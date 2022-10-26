@@ -294,7 +294,7 @@
         </div>
         <span></span>
       </div>
-      <button @click="addDexAggIncentiveBlacklist" class="btn btn-success">
+      <button @click="addAllowedCustomPoolLeverage" class="btn btn-success">
         Add/Modify ability for liquidity pools to set their own leverage
       </button>
     </div>

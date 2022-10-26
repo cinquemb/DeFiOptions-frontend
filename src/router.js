@@ -7,6 +7,9 @@ import Trade from "./pages/Trade";
 import PoolManagement from "./pages/PoolManagement"
 import PoolGovernance from "./pages/PoolGovernance"
 import ProtocolManagement from "./pages/ProtocolManagement"
+import ProtocolGovernance from "./pages/ProtocolGovernance"
+import DODGovernance from "./pages/DODGovernance"
+
 
 Vue.use(Router);
 
@@ -55,6 +58,16 @@ export default new Router({
             path: "/manage-dod",
             name: "manage-dod",
             component: ProtocolManagement
+        },
+        {
+            path: "/dod-governance",
+            name: "dod-governance",
+            component: ProtocolGovernance
+        },
+        {
+            path: "/governance",
+            name: "governance",
+            component: DODGovernance
         },
     ],
     linkActiveClass: "active"

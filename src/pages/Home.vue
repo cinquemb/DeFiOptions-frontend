@@ -29,6 +29,11 @@
         <router-link to="/portfolio" style="text-decoration: none">
           <a class="btn btn-success m-1" href="/portfolio">Portfolio</a>
         </router-link>
+
+        <router-link to="/governance" style="text-decoration: none">
+          <a class="btn btn-success m-1" href="/governance">DOD On-Chain Governance</a>
+        </router-link>
+
       </div> 
 
       <div class="d-flex flex-wrap flex-row justify-content-center text-uppercase hero-buttons" v-if="!isUserConnected">

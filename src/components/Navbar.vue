@@ -40,6 +40,14 @@
           </router-link>
           <!-- END Nav Item - Portfolio -->
 
+          <!-- Nav Item - DOD onchain Governance -->
+          <router-link to="/governance" style="text-decoration: none" v-if="isUserConnected">
+            <li class="nav-item">
+                <a class="nav-link" :class="{active:this.$route.name === 'governance'}" href="/governance">DOD On-Chain Governance</a>
+            </li>
+          </router-link>
+          <!-- END Nav Item - DOD onchain Governance -->
+
           <li class="nav-item dropdown" v-if="isUserConnected">
             <a class="nav-link dropdown-toggle primary-color" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               More
