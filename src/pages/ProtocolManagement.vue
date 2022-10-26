@@ -234,6 +234,107 @@
     <span></span>
     <span></span>
 
+    <!------ Add/modify a dex oralces twap period----->
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="dexOracle in setDexOracleTwapPeriods" v-bind:key="dexOracle.addr">
+          <SetDexOracleTwapPeriod :data="dexOracle" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addDexOracleTwapPeriod" class="btn btn-success">
+        Add/Modify Dex Oracle TWAP Period
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ udl collateral manager info ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="udlCtlmngrMap in setUdlCollateralManagers" v-bind:key="udlCtlmngrMap.value1">
+          <SetAddressMap :data="udlCtlmngrMap" />
+        </div>
+        <span></span>
+        <button @click="addUdlCollateralManager" class="btn btn-success">
+        Map (Dex) Underlying Feed to Collateral Manager
+      </button>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Add/modify what pools are allowed to sell options on exchange credit ------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="hdgMngr in setAllowedHedgingManagers" v-bind:key="hdgMngr.addr">
+          <SetAddressBoolable :data="hdgMngr" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addAllowedHedgingManager" class="btn btn-success">
+        Add/Modify allowed hedging manager contracts
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Add/modify what pools are allowed to sell options on exchange credit------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="poolLeverage in setAllowedCustomPoolLeverages" v-bind:key="poolLeverage.addr">
+          <SetAddressBoolable :data="poolLeverage" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addDexAggIncentiveBlacklist" class="btn btn-success">
+        Add/Modify ability for liquidity pools to set their own leverage
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Transfer DAO exchange balance ------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="transfer in transferBalances" v-bind:key="transfer.to">
+          <Transfer :data="transfer" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addTransfer" class="btn btn-success">
+        Add exchange balance transfer operation from DAO
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Transefer DAO DOD balance ------>
+
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <div v-for="transferGov in transferGovTokens" v-bind:key="transferGov.to">
+          <Transfer :data="transferGov" />
+        </div>
+        <span></span>
+      </div>
+      <button @click="addTransferGov" class="btn btn-success">
+        Add DOD balance transfer operation from DAO
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
     <button @click="createProposal" class="btn btn-success">
       <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
       Create and Register Proposal
@@ -266,7 +367,7 @@ import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.
     function SetProcessingFee(uint f, uint b) external//SetRate.vue
     function SetVolatilityPeriod(uint _volatilityPeriod) external //SetUint.vue
     function SetSwapRouterTolerance(uint r, uint b) external//SetRate.vue
-    function SetSwapRouterInfo(address router, address token) external //SetAddressMap.vue
+    function (address router, address token) external //SetAddressMap.vue
     function SetBaseIncentivisation(uint amount) external //SetUint.vue
 
 
@@ -439,25 +540,30 @@ export default {
     addDexOracleTwapPeriod: function () {
       this.setDexOracleTwapPeriods.push({
         dexOracleAddress: null,//toggle from avaiable options in pool
-        _twapPeriod: null,//toggle button from: none, buy, sell
+        twapPeriod: null,//between 1 hour and 24 hours in seconds
       });
     }, //gov
     addUdlCollateralManager: function () {
       this.setUdlCollateralManagers.push({
-        udlFeed: null,//toggle from avaiable options in pool
-        ctlMngr: null,//toggle button from: none, buy, sell
+        field_name1: "Underlying Feed Address",
+        value1: null,
+        field_name2: "Collateral Manager Addr",
+        value2: null,
+        desc: "underlying Feeed address to be used with collateral manager address"
       });
     }, //gov
     addAllowedHedgingManager: function () {
       this.setAllowedHedgingManagers.push({
-        hedgeMngr: null,//toggle from avaiable options in pool
-        val: null,//toggle button from: none, buy, sell
+        addr: null,
+        bool: null,
+        desc: "Allow/Dissallow hedging manager addresss
       });
     }, //gov
     addAllowedCustomPoolLeverage: function () {
       this.setAllowedCustomPoolLeverages.push({
-        poolAddr: null,//toggle from avaiable options in pool
-        val: null,//toggle button from: none, buy, sell
+        addr: null,
+        bool: null,
+        desc: "Allow/Dissallow liquidity pool to have custom leverage factor for hedging"
       });
     }, //gov
     addTransfer: function () {
