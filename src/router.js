@@ -6,6 +6,7 @@ import Invest from "./pages/Invest";
 import Trade from "./pages/Trade";
 import PoolManagement from "./pages/PoolManagement"
 import PoolGovernance from "./pages/PoolGovernance"
+import ProtocolManagement from "./pages/ProtocolManagement"
 
 Vue.use(Router);
 
@@ -49,7 +50,12 @@ export default new Router({
             path: "/pool-governance",
             name: "pool-governance",
             component: PoolGovernance
-        }
+        },
+        {
+            path: "/manage-dod",
+            name: "manage-dod",
+            component: ProtocolManagement
+        },
     ],
     linkActiveClass: "active"
 });

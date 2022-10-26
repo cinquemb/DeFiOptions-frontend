@@ -556,7 +556,7 @@ export default {
       this.setAllowedHedgingManagers.push({
         addr: null,
         bool: null,
-        desc: "Allow/Dissallow hedging manager addresss
+        desc: "Allow/Dissallow hedging manager addresss"
       });
     }, //gov
     addAllowedCustomPoolLeverage: function () {
@@ -669,11 +669,11 @@ export default {
       }
 
       // deploy proposal contract
-      //let loadedPoolManagementProposalJSON = JSON.parse(PoolManagementProposalJSON);
-      const poolManagmentProposalContract = new component.getWeb3.eth.Contract(PoolManagementProposalJSON.abi);
+      //let loadedProtocolSettingsProposalJSON = JSON.parse(ProtocolSettingsProposalJSON);
+      const protocolSettingsProposalContract = new component.getWeb3.eth.Contract(ProtocolSettingsProposalJSON.abi);
         
-      const deployPoolManagmentProposal = await poolManagmentProposalContract.deploy({
-        data: PoolManagementProposalJSON.bytecode
+      const deployProtocolSettingsProposal = await protocolSettingsProposalContract.deploy({
+        data: ProtocolSettingsProposalJSON.bytecode
       }).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
@@ -703,7 +703,7 @@ export default {
 
       // save execution strings to proposal contract
 
-      await deployPoolManagmentProposal.methods.setExecutionBytes(
+      await deployProtocolSettingsProposal.methods.setExecutionBytes(
         encodedData
       ).send({
         from: component.getActiveAccount,
@@ -731,7 +731,7 @@ export default {
 
       //register proposal contract with proposal manager (and choosing the params for such)
       await component.getProposalManagerContract.methods.registerProposal(
-        deployPoolManagmentProposal.options.address,
+        deployProtocolSettingsProposal.options.address,
         component.getSelectedPoolAddress,
         2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
         1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
