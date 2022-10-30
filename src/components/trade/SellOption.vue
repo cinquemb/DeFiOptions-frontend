@@ -76,7 +76,7 @@
       </div>
     </div>
 
-     <!-- write to open (sell) -->
+     <!-- write to open and sell option -->
     <div class="d-flex flex-row" v-if="!getSellType">
       <div class="p-2" v-if="(!getCoveredType) && (!isBuyWithExchangeBalance)">
         <button @click="approveStablecoinCollateralDeposit" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status || isEnoughAllowance) || (writingStepTx > 0)">
@@ -113,25 +113,10 @@
       <div class="p-2" v-if="getCoveredType">
         <button @click="writeCovered" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || (writingStepTx < 1)">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Write Covered
+          Write Covered and Sell for ${{getTotal.toFixed(2)}}
         </button>
       </div>
       <!-- <div></div> -->
-    </div>
-
-     <!-- sell to pool -->
-    <div class="row mt-3" v-if="getSellType">
-      <button v-if="isEnoughAllowance" @click="sellOption" class="btn btn-success form-control" :disabled="isOptionSizeNotValid.status">
-        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Sell for ${{getTotal.toFixed(2)}}
-      </button>
-      <div></div>
-
-      <button v-if="!isEnoughAllowance" @click="approveAllowanceOption" class="btn btn-success form-control" :disabled="isOptionSizeNotValid.status">
-        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Approve the sell (${{getTotal.toFixed(2)}})
-      </button>
-      <div></div>
     </div>
 
     <small v-if="allowanceNeeded && getSellType" class="show-text form-text text-center">
@@ -311,10 +296,7 @@ export default {
 
     isEnoughAllowance() {
       if (Number(this.optionAllowance) >= Number(this.selectedOptionSize)) {
-        this.writingStepTx = 1;
         return true;
-      } else {
-        this.writingStepTx = 0;
       }
 
       return false;
@@ -375,7 +357,7 @@ export default {
         console.log(receipt);
 
         if (receipt.status) {
-          component.$toast.success("The approval was successfull. You can write the option now.");
+          component.$toast.success("The approval was successfull. You can sell the option now.");
 
           component.underlyingAllowance = allowanceValue; // manually increase the allowance amount
           component.writingStepTx = 1;
@@ -494,7 +476,7 @@ export default {
           console.log(receipt);
 
           if (receipt.status) {
-            component.$toast.success("The approval was successfull. You can write the option now.");
+            component.$toast.success("The approval was successfull. You can sell the option now.");
             component.writingStepTx = 1;
             component.collateralDepositValue = String(component.collateralNeededRaw.toFixed(4));
 
@@ -652,54 +634,6 @@ export default {
       }
     },
 
-    async sellOption() {
-      const component = this;
-      component.loading = true;
-
-      await component.setSellData(); // fetch price again to avoid errors 
-
-      const optionSizeWei = component.getWeb3.utils.toWei(String(component.option.holding), "ether");
-      const optionUnitPrice = component.getWeb3.utils.toWei(String(component.selectedOptionPrice), "ether");
-
-      // sell option transaction
-      await component.getLiquidityPoolContract.methods.sell(
-        component.option.symbol, // symbol
-        optionUnitPrice, // price per one option
-        optionSizeWei, // volume a.k.a. user's selected option size
-      ).send({
-        from: component.getActiveAccount,
-        maxPriorityFeePerGas: null,
-        maxFeePerGas: null
-      }).on('transactionHash', function(hash){
-        console.log("tx hash: " + hash);
-        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
-
-      }).on('receipt', function(receipt){
-        console.log(receipt);
-
-        if (receipt.status) {
-          component.$toast.success("You have successfully sold an option. Please reload the website to refresh values.");
-
-          // reduce the amount of options user can sell
-          // needs to be reduced manually, because Polygon nodes have a lag
-          // BigNumber needs to be used to avoid precision errors
-          let bnHolding = component.getWeb3.utils.toBN(component.getWeb3.utils.toWei(String(component.option.holding), "ether"));
-          let bnSold = component.getWeb3.utils.toBN(component.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether"));
-          component.option.holding = component.getWeb3.utils.fromWei(bnHolding.sub(bnSold), "ether").toString();
-        } else {
-          component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
-        }
-        
-        component.loading = false;
-
-      }).on('error', function(error){
-        console.log(error);
-        component.loading = false;
-        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
-      });
-
-    },
-
     setBuyWith(choice) {
       this.buyWith = choice;
     },
@@ -758,21 +692,21 @@ export default {
       let component = this;
       component.loading = true;
 
-      let priceFeedType = this.option.pair;
-
-      // get underlying balance in wei
-      const feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
+      // get options size in wei
       const optionSizeWei = this.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether");
-      const strikeInWei = this.getWeb3.utils.toWei(String(component.option.strikeRaw / 10 **18), "ether");
 
       // write covered option transaction
       try {
-        await component.getOptionsExchangeContract.methods.writeCovered(
-          feedAddress, // feed address
-          component.getWeb3.utils.toBN(optionSizeWei), // volume of options to write,
-          component.getWeb3.utils.toBN(strikeInWei), // strike price of option
-          Number(component.option.timestamp), // maturity of option in utc
-          component.getActiveAccount, // option writer
+        await component.getOptionsExchangeContract.methods.openExposure(
+          [
+            [this.option.symbol],//string[] symbols;
+            [component.getWeb3.utils.toBN(optionSizeWei)],//uint[] volume;
+            [1],//bool[] isShort; 1 is true 0 is false
+            [1],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
+            [component.getLiquidityPoolContract.address],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"],//address[] paymentTokens; only needed for buying options
+          ],
+          component.getActiveAccount
         ).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,
@@ -785,7 +719,7 @@ export default {
           console.log(receipt);
 
           if (receipt.status) {
-            component.$toast.success("You have successfully wrote an option. Now you may sell it. ");
+            component.$toast.success("You have successfully wrote and sold option.");
             component.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
             component.writingStepTx = 0;
           } else {
@@ -811,22 +745,21 @@ export default {
       let component = this;
       component.loading = true;
 
-      let priceFeedType = this.option.pair;
-
-      // get underlying balance in wei
-      const feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
+      // get options size in wei
       const optionSizeWei = component.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether");
-      const strikeInWei = component.getWeb3.utils.toWei(String(component.option.strikeRaw / 10 **18), "ether");
 
       // write stablecoin collateral options transaction
       try {
-        await component.getOptionsExchangeContract.methods.writeOptions(
-          feedAddress, // feed address
-          component.getWeb3.utils.toBN(optionSizeWei), // volume of options to write
-          (component.option.type === "CALL") ? 0 : 1, //option type
-          component.getWeb3.utils.toBN(strikeInWei), // srtike price of option
-          Number(component.option.timestamp), // maturity of option in utc
-          component.getActiveAccount, // option writer
+        await component.getOptionsExchangeContract.methods.openExposure(
+          [
+            [this.option.symbol],//string[] symbols;
+            [component.getWeb3.utils.toBN(optionSizeWei)],//uint[] volume;
+            [1],//bool[] isShort; 1 is true 0 is false
+            [0],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
+            [component.getLiquidityPoolContract.address],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"],//address[] paymentTokens; only needed for buying options
+          ],
+          component.getActiveAccount
         ).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,
@@ -839,7 +772,7 @@ export default {
           console.log(receipt);
 
           if (receipt.status) {
-            component.$toast.success("You have successfully wrote an option. Now you may sell it. Please reload the website to refresh values.");
+            component.$toast.success("You have successfully wrote and sold and option");
             component.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
             component.writingStepTx = 0;
           } else {
