@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import accounts from "./modules/accounts";
 import optionsExchange from "./modules/optionsExchange";
+import protocolSettings from "./modules/protocolSettings";
 import liquidityPool from "./modules/liquidityPool";
 import proposalManager from "./modules/proposalManager";
 import creditToken from "./modules/creditToken";
@@ -18,6 +19,7 @@ export default new Vuex.Store({
         liquidityPool,
         proposalManager,
         optionsExchange,
+        protocolSettings,
         usdc
     }
 });

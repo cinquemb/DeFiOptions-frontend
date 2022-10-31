@@ -354,41 +354,8 @@ import SetDexOracleTwapPeriod from '../components/manage/settings/SetDexOracleTw
 import SetUdlFeed from '../components/manage/settings/SetUdlFeed.vue';
 import SetSwapPath from '../components/manage/settings/SetSwapPath.vue';
 import Transfer from '../components/manage/settings/Transfer.vue';
-import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.json";
+//import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.json";
 
-
-/*    
-
-    //single op
-    function SetCirculatingSupply(uint supply) external //SetUint.vue
-    function SetMinShareForProposal(uint s, uint b) external //SetRate.vue
-    function SetDebtInterestRate(uint i, uint b) external//SetRate.vue
-    function SetCreditInterestRate(uint i, uint b) external//SetRate.vue
-    function SetProcessingFee(uint f, uint b) external//SetRate.vue
-    function SetVolatilityPeriod(uint _volatilityPeriod) external //SetUint.vue
-    function SetSwapRouterTolerance(uint r, uint b) external//SetRate.vue
-    function (address router, address token) external //SetAddressMap.vue
-    function SetBaseIncentivisation(uint amount) external //SetUint.vue
-
-
-    //multi op
-    function SetTokenRate(address token, uint v, uint b) external//SetTokenRate.vue
-    function SetAllowedToken(address token, uint v, uint b) external//SetTokenRate.vue
-    function SetUdlFeed(address addr, int v) external //SetUdlFeed.vue
-    function SetSwapPath(address from, address to, address[] calldata path) external //SetSwapPath.vue
-    function SetPoolBuyCreditTradable(address poolAddress, bool isTradable) external//SetAddressBoolable.vue
-    function SetPoolSellCreditTradable(address poolAddress, bool isTradable) external//SetAddressBoolable.vue
-    function SetUdlIncentiveBlacklist(address udlAddr, bool isIncentivizable) external//SetAddressBoolable.vue
-    function SetDexAggIncentiveBlacklist(address dexAggAddress, bool isIncentivizable) external//SetAddressBoolable.vue
-    function SetDexOracleTwapPeriod(address dexOracleAddress, uint256 _twapPeriod) external//SetDexOracleTwapPeriod.vue
-    function SetUdlCollateralManager(address udlFeed, address ctlMngr) external //SetAddressMap.vue
-    function SetAllowedHedgingManager(address hedgeMngr, bool val) external//SetAddressBoolable.vue
-    function SetAllowedCustomPoolLeverage(address poolAddr, bool val) external//SetAddressBoolable.vue
-    function TransferBalance(address to, uint amount) external//Transfer.vue
-    function TransferGovTokens(address to, uint amount) external//Transfer.vue
-
-
-*/
 export default {
   name: 'ProtocolSettingsManagement',
   data() {
@@ -471,12 +438,15 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
+    ...mapGetters("protocolSettings", ["getProtocolSettingsContract", "getProtocolSettingsAbi"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract"]),
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
+
+      this.$store.dispatch("protocolSettings/fetchContract");
+      this.$store.dispatch("protocolSettings/storeAbi");
     }
 
   },
@@ -578,11 +548,31 @@ export default {
         amount: null,//toggle button from: none, buy, sell
       });
     },
-    validateSingle() {
-      for (const key in this.setParams) {
-        if (this.setParams[key] === null) {
-          return false;
-        }
+    validateUint(obj) {
+      if (obj.value === null){
+        return false;
+      }
+
+      return true;
+    },
+    validateRate(obj) {
+      if (obj.value === null){
+        return false;
+      }
+
+      if (obj.base === null){
+        return false;
+      }
+      
+      return true;
+    },
+    validateAddressMap(obj) {
+      if (obj.value1 === null){
+        return false;
+      }
+      
+      if (obj.value2 === null){
+        return false;
       }
 
       return true;
@@ -608,14 +598,173 @@ export default {
       let component = this;
       component.loading = true;
 
-      let addSymbolAbiJSON = component.getLiquidityPoolAbi[31];
-      let setRangeAbiJSON = component.getLiquidityPoolAbi[33];
-      let setParametersAbiJSON = component.getLiquidityPoolAbi[26];
 
+      /*    
+
+        //single op
+        function SetMinShareForProposal(uint s, uint b) external //SetRate.vue
+        function SetDebtInterestRate(uint i, uint b) external//SetRate.vue
+        function SetCreditInterestRate(uint i, uint b) external//SetRate.vue
+        function SetProcessingFee(uint f, uint b) external//SetRate.vue
+        function SetVolatilityPeriod(uint _volatilityPeriod) external //SetUint.vue
+        function SetSwapRouterTolerance(uint r, uint b) external//SetRate.vue
+        function SetSwapRouterInfo(address router, address token) external //SetAddressMap.vue
+        function SetBaseIncentivisation(uint amount) external //SetUint.vue
+
+
+        //multi op
+        function SetTokenRate(address token, uint v, uint b) external//SetTokenRate.vue
+        function SetAllowedToken(address token, uint v, uint b) external//SetTokenRate.vue
+        function SetUdlFeed(address addr, int v) external //SetUdlFeed.vue
+        function SetSwapPath(address from, address to, address[] calldata path) external //SetSwapPath.vue
+        function SetPoolBuyCreditTradable(address poolAddress, bool isTradable) external//SetAddressBoolable.vue
+        function SetPoolSellCreditTradable(address poolAddress, bool isTradable) external//SetAddressBoolable.vue
+        function SetUdlIncentiveBlacklist(address udlAddr, bool isIncentivizable) external//SetAddressBoolable.vue
+        function SetDexAggIncentiveBlacklist(address dexAggAddress, bool isIncentivizable) external//SetAddressBoolable.vue
+        function SetDexOracleTwapPeriod(address dexOracleAddress, uint256 _twapPeriod) external//SetDexOracleTwapPeriod.vue
+        function SetUdlCollateralManager(address udlFeed, address ctlMngr) external //SetAddressMap.vue
+        function SetAllowedHedgingManager(address hedgeMngr, bool val) external//SetAddressBoolable.vue
+        function SetAllowedCustomPoolLeverage(address poolAddr, bool val) external//SetAddressBoolable.vue
+        function TransferBalance(address to, uint amount) external//Transfer.vue
+        function TransferGovTokens(address to, uint amount) external//Transfer.vue
+
+      */
+
+      let setCirculatingSupplyABI = component.getProtocolSettingsAbi[19];
+      let setMinShareForProposalABI = component.getProtocolSettingsAbi[27];
+      let setDebtInterestRateABI = component.getProtocolSettingsAbi[30];
+      let setCreditInterestRateABI = component.getProtocolSettingsAbi[34];
+      let setProcessingFeeABI = component.getProtocolSettingsAbi[36];
+      let setVolatilityPeriodABI = component.getProtocolSettingsAbi[39];
+      let setSwapRouterToleranceABI = component.getProtocolSettingsAbi[43];
+      let setSwapRouterInfoABI = component.getProtocolSettingsAbi[41];
+      let setBaseIncentivisationABI = component.getProtocolSettingsAbi[63];
+
+      let setTokenRateABI = component.getProtocolSettingsAbi[21];
+      let setAllowedTokenABI = component.getProtocolSettingsAbi[23];
+      let setUdlFeedABI = component.getProtocolSettingsAbi[38];
+      let setSwapPathABI = component.getProtocolSettingsAbi[45];
+      let setPoolBuyCreditTradableABI = component.getProtocolSettingsAbi[51];
+      let setPoolSellCreditTradableABI = component.getProtocolSettingsAbi[53];
+      let setUdlIncentiveBlacklistABI = component.getProtocolSettingsAbi[55];
+      let setDexAggIncentiveBlacklistABI = component.getProtocolSettingsAbi[57];
+      let setDexOracleTwapPeriodABI = component.getProtocolSettingsAbi[59];
+      let setUdlCollateralManagerABI = component.getProtocolSettingsAbi[61];
+      let setAllowedHedgingManagerABI = component.getProtocolSettingsAbi[65];
+      let setAllowedCustomPoolLeverageABI = component.getProtocolSettingsAbi[67];
+      let transferBalanceABI = component.getProtocolSettingsAbi[47];
+      let transferGovTokensABI = component.getProtocolSettingsAbi[48];
+
+      /*
       let encodedData = [];
 
-      //encode setParameters first if exists
-      if (component.validateSetParameters()) {
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
+        let parameters = [
+          Number(Number(component.setCirculatingSupply.value) * (10** 18)), //1 to 100M
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setCirculatingSupplyABI, parameters)
+        );
+      }
+
+      //encode setMinShareForProposal first if exists
+      if (component.validateUint(component.setMinShareForProposal)) {
+        let parameters = [
+          Number(component.setMinShareForProposal.value),
+          Number(component.setMinShareForProposal.base),
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setMinShareForProposalABI, parameters)
+        );
+      }
+
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      //encode setCirculatingSupply first if exists
+      if (component.validateUint(component.setCirculatingSupply)) {
         let parameters = [
           Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
           Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
@@ -667,6 +816,250 @@ export default {
           );
         }
       }
+
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols.udlFeed, 
+            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols.t0), // unix timestamp format
+            Number(component.addSymbols.t1), //unix timestamp format
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
+            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            [
+              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges.symbol, 
+            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols.udlFeed, 
+            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols.t0), // unix timestamp format
+            Number(component.addSymbols.t1), //unix timestamp format
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
+            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            [
+              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges.symbol, 
+            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols.udlFeed, 
+            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols.t0), // unix timestamp format
+            Number(component.addSymbols.t1), //unix timestamp format
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
+            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            [
+              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges.symbol, 
+            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols.udlFeed, 
+            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols.t0), // unix timestamp format
+            Number(component.addSymbols.t1), //unix timestamp format
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
+            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            [
+              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges.symbol, 
+            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols.udlFeed, 
+            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols.t0), // unix timestamp format
+            Number(component.addSymbols.t1), //unix timestamp format
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
+            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            [
+              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges.symbol, 
+            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols.udlFeed, 
+            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols.maturity, //unix timestamp format
+            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols.t0), // unix timestamp format
+            Number(component.addSymbols.t1), //unix timestamp format
+            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
+            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            [
+              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges.symbol, 
+            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      */
+
+      /*
 
       // deploy proposal contract
       //let loadedProtocolSettingsProposalJSON = JSON.parse(ProtocolSettingsProposalJSON);
@@ -733,8 +1126,8 @@ export default {
       await component.getProposalManagerContract.methods.registerProposal(
         deployProtocolSettingsProposal.options.address,
         component.getSelectedPoolAddress,
-        2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
-        1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
+        1, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
+        0, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
         Number(Math.floor(Date.now() / 1000) + (60 * 60)) //30 min to vote
       ).send({
         from: component.getActiveAccount,
@@ -758,6 +1151,8 @@ export default {
         component.loading = false;
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
+
+      */
 
     }
   }

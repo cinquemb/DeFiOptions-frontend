@@ -28,6 +28,9 @@ export default {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
+
+    this.$store.dispatch("protocolSettings/fetchContract");
+    this.$store.dispatch("protocolSettings/storeAbi");
   },
 }
 </script>
