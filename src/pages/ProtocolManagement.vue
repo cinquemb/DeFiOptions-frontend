@@ -669,7 +669,7 @@ export default {
       }
 
       //encode setMinShareForProposal first if exists
-      if (component.validateUint(component.setMinShareForProposal)) {
+      if (component.validateRate(component.setMinShareForProposal)) {
         let parameters = [
           Number(component.setMinShareForProposal.value),
           Number(component.setMinShareForProposal.base),
@@ -679,103 +679,83 @@ export default {
         );
       }
 
-      //encode setCirculatingSupply first if exists
-      if (component.validateUint(component.setCirculatingSupply)) {
+      //encode setDebtInterestRate first if exists
+      if (component.validateRate(component.setDebtInterestRate)) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          Number(component.setDebtInterestRate.value),
+          Number(component.setDebtInterestRate.base),
         ];
         encodedData.push(
-          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setDebtInterestRateABI, parameters)
         );
       }
 
-      //encode setCirculatingSupply first if exists
-      if (component.validateUint(component.setCirculatingSupply)) {
+      //encode setCreditInterestRate first if exists
+      if (component.validateRate(component.setCreditInterestRate)) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          Number(component.setCreditInterestRate.value),
+          Number(component.setCreditInterestRate.base),
         ];
         encodedData.push(
-          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setCreditInterestRateABI, parameters)
         );
       }
 
-      //encode setCirculatingSupply first if exists
-      if (component.validateUint(component.setCirculatingSupply)) {
+
+      //encode setProcessingFee first if exists
+      if (component.validateRate(component.setProcessingFee)) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          Number(component.setProcessingFee.value),
+          Number(component.setProcessingFee.base),
         ];
         encodedData.push(
-          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setProcessingFeeABI, parameters)
         );
       }
 
-      //encode setCirculatingSupply first if exists
-      if (component.validateUint(component.setCirculatingSupply)) {
+      //encode setVolatilityPeriod first if exists
+      if (component.validateUint(component.setVolatilityPeriod)) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          Number(component.setVolatilityPeriod.value), //number of days 1 <, default is 90?
         ];
         encodedData.push(
-          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setVolatilityPeriodABI, parameters)
         );
       }
 
-      //encode setCirculatingSupply first if exists
-      if (component.validateUint(component.setCirculatingSupply)) {
+      //encode setSwapRouterTolerance first if exists, TODO, NEED TO CHECK DECIMALS?
+      if (component.validateRate(component.setSwapRouterTolerance)) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          Number(component.setSwapRouterTolerance.value),
+          Number(component.setSwapRouterTolerance.base),
         ];
         encodedData.push(
-          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setSwapRouterToleranceABI, parameters)
         );
       }
 
-      //encode setCirculatingSupply first if exists
-      if (component.validateUint(component.setCirculatingSupply)) {
+      //encode setSwapRouterInfo first if exists
+      if (component.validateAddressMap(component.setSwapRouterInfo)) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          component.setParams.value1,
+          component.setParams.value2,
         ];
         encodedData.push(
-          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setSwapRouterInfoABI, parameters)
         );
       }
 
-      //encode setCirculatingSupply first if exists
-      if (component.validateUint(component.setCirculatingSupply)) {
+      //encode setBaseIncentivisation first if exists
+      if (component.validateUint(component.setBaseIncentivisation)) {
         let parameters = [
-          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
-          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
-          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
-          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          Number(Number(component.setBaseIncentivisation.value) * (10** 18)), //in dollars, greater than 0
         ];
         encodedData.push(
-          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+          component.getWeb3.eth.abi.encodeFunctionCall(setBaseIncentivisationABI, parameters)
         );
       }
+
+      /* MULTI ALLOWED AT ONCE */
 
       //encode all addSymbols
       if (component.validateObj(component.addSymbols)) {
