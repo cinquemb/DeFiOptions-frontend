@@ -236,18 +236,18 @@ export default {
       if (component.validateObj(component.addSymbols)) {
         for(let i=0; i<component.addSymbols.length; i++) {
           let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            component.addSymbols[i].udlFeed, 
+            Number(Number(component.addSymbols[i].strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            component.addSymbols[i].maturity, //unix timestamp format
+            component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols[i].t0), // unix timestamp format
+            Number(component.addSymbols[i].t1), //unix timestamp format
+            component.addSymbols[i].x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
+            component.addSymbols[i].y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
             [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
+              Number(Number(component.addSymbols[i].bsStockSpread[0] * (10 ** 18))),
+              Number(Number(component.addSymbols[i].bsStockSpread[1] * (10 ** 18))),
+              Number(Number(component.addSymbols[i].bsStockSpread[2] * (10 ** 7)))
             ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
 
           ];
@@ -261,10 +261,10 @@ export default {
       if (component.validateObj(component.setRanges)) {
         for(let i=0; i<component.setRanges.length; i++) {
           let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+            component.setRanges[i].symbol, 
+            component.marketOpTypes[component.setRanges[i].op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            Number(Number(component.setRanges[i].start) * (10**18)), //price * 10 ** 18
+            Number(Number(component.setRanges[i].end) * (10**18)) //price * 10 ** 18
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
