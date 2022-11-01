@@ -5,7 +5,7 @@
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
-        <LpProposalList :proposals="filteredCurrentPoolProposals" />
+        <ProtocolProposalList :proposals="filteredCurrentPoolProposals" />
         <span></span>
       </div>
     </div>
@@ -27,7 +27,7 @@ export default {
     }
   },
   components: {
-    LpProposalList
+    ProtocolProposalList
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
