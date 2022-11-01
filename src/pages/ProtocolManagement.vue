@@ -354,7 +354,7 @@ import SetDexOracleTwapPeriod from '../components/manage/settings/SetDexOracleTw
 import SetUdlFeed from '../components/manage/settings/SetUdlFeed.vue';
 import SetSwapPath from '../components/manage/settings/SetSwapPath.vue';
 import Transfer from '../components/manage/settings/Transfer.vue';
-//import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.json";
+import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.json";
 
 export default {
   name: 'ProtocolSettingsManagement',
@@ -566,6 +566,32 @@ export default {
       
       return true;
     },
+    validateTokenRate(obj) {
+      if (obj.token === null){
+        return false;
+      }
+
+      if (obj.value === null){
+        return false;
+      }
+
+      if (obj.base === null){
+        return false;
+      }
+      
+      return true;
+    },
+    validateUdlFeed(obj) {
+      if (obj.addr === null){
+        return false;
+      }
+
+      if (obj.value === null){
+        return false;
+      }
+      
+      return true;
+    },
     validateAddressMap(obj) {
       if (obj.value1 === null){
         return false;
@@ -655,8 +681,8 @@ export default {
       let transferBalanceABI = component.getProtocolSettingsAbi[47];
       let transferGovTokensABI = component.getProtocolSettingsAbi[48];
 
-      /*
       let encodedData = [];
+
 
       //encode setCirculatingSupply first if exists
       if (component.validateUint(component.setCirculatingSupply)) {
@@ -757,292 +783,200 @@ export default {
 
       /* MULTI ALLOWED AT ONCE */
 
-      //encode all addSymbols
-      if (component.validateObj(component.addSymbols)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
-          let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
-            [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+      //encode all setTokenRates
+      if (component.validateObj(component.setTokenRates)) {
+        for(let i=0; i<component.setTokenRates.length; i++) {
+          if (component.validateTokenRate(component.setTokenRates[i])) {
+            let parameters = [
+              component.setTokenRates[i].token,
+              Number(component.setTokenRates[i].value),
+              Number(component.setTokenRates[i].base),
+            ];
+            encodedData.push(
+              component.getWeb3.eth.abi.encodeFunctionCall(setTokenRateABI, parameters)
+            );
+          }
+        }
+      }
 
+      //encode all setAllowedTokens
+      if (component.validateObj(component.setAllowedTokens)) {
+        for(let i=0; i<component.setAllowedTokens.length; i++) {
+          if (component.validateTokenRate(component.setAllowedTokens[i])) {
+            let parameters = [
+              component.setAllowedTokens[i].token,
+              Number(component.setAllowedTokens[i].value),
+              Number(component.setAllowedTokens[i].base),
+            ];
+            encodedData.push(
+              component.getWeb3.eth.abi.encodeFunctionCall(setAllowedTokenABI, parameters)
+            );
+          }
+        }
+      }
+
+      //encode all setUdlFeeds
+      if (component.validateObj(component.setUdlFeeds)) {
+        for(let i=0; i<component.setUdlFeeds.length; i++) {
+          if (component.validateUdlFeed(component.setUdlFeeds[i])) {
+            let parameters = [
+              component.setUdlFeeds[i].addr, 
+              Number(component.setUdlFeeds[i].value),
+            ];
+            encodedData.push(
+              component.getWeb3.eth.abi.encodeFunctionCall(setUdlFeedABI, parameters)
+            );
+          }
+        }
+      }
+
+      //encode all setSwapPaths
+      if (component.validateObj(component.setSwapPaths)) {
+        for(let i=0; i<component.setSwapPaths.length; i++) {
+          let parameters = [
+            component.setSwapPaths[i].from, 
+            component.setSwapPaths[i].to, 
+            component.setSwapPaths[i].path
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setSwapPathABI, parameters)
           );
         }
       }
 
-      //encode all setRanges
-      if (component.validateObj(component.setRanges)) {
-        for(let i=0; i<component.setRanges.length; i++) {
+
+      //encode all setPoolBuyCreditTradables
+      if (component.validateObj(component.setPoolBuyCreditTradables)) {
+        for(let i=0; i<component.setPoolBuyCreditTradables.length; i++) {
           let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+            component.setPoolBuyCreditTradables[i].addr, 
+            Number(component.setPoolBuyCreditTradables[i].bool)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setPoolBuyCreditTradableABI, parameters)
           );
         }
       }
 
-      //encode all addSymbols
-      if (component.validateObj(component.addSymbols)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
+      //encode all setPoolSellCreditTradables
+      if (component.validateObj(component.setPoolSellCreditTradables)) {
+        for(let i=0; i<component.setPoolSellCreditTradables.length; i++) {
           let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
-            [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
+            component.setPoolSellCreditTradables[i].addr, 
+            Number(component.setPoolSellCreditTradables[i].bool)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setPoolSellCreditTradableABI, parameters)
           );
         }
       }
 
-      //encode all setRanges
-      if (component.validateObj(component.setRanges)) {
-        for(let i=0; i<component.setRanges.length; i++) {
+      //encode all setUdlIncentiveBlacklists
+      if (component.validateObj(component.setUdlIncentiveBlacklists)) {
+        for(let i=0; i<component.setUdlIncentiveBlacklists.length; i++) {
           let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+            component.setUdlIncentiveBlacklists[i].addr, 
+            Number(component.setUdlIncentiveBlacklists[i].bool)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setUdlIncentiveBlacklistABI, parameters)
           );
         }
       }
 
-      //encode all addSymbols
-      if (component.validateObj(component.addSymbols)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
+      //encode all setDexAggIncentiveBlacklists
+      if (component.validateObj(component.setDexAggIncentiveBlacklists)) {
+        for(let i=0; i<component.setDexAggIncentiveBlacklists.length; i++) {
           let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
-            [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
+            component.setDexAggIncentiveBlacklists[i].addr, 
+            Number(component.setDexAggIncentiveBlacklists[i].bool)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setDexAggIncentiveBlacklistABI, parameters)
           );
         }
       }
 
-      //encode all setRanges
-      if (component.validateObj(component.setRanges)) {
-        for(let i=0; i<component.setRanges.length; i++) {
+      //encode all setDexOracleTwapPeriods
+      if (component.validateObj(component.setDexOracleTwapPeriods)) {
+        for(let i=0; i<component.setDexOracleTwapPeriods.length; i++) {
           let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+            component.setDexOracleTwapPeriods[i].dexOracleAddress, 
+            Number(component.setDexOracleTwapPeriods[i].twapPeriod)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setDexOracleTwapPeriodABI, parameters)
           );
         }
       }
 
-      //encode all addSymbols
-      if (component.validateObj(component.addSymbols)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
+      //encode all setUdlCollateralManagers
+      if (component.validateObj(component.setUdlCollateralManagers)) {
+        for(let i=0; i<component.setUdlCollateralManagers.length; i++) {
           let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
-            [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
+            component.setUdlCollateralManagers[i].addr, 
+            Number(component.setUdlCollateralManagers[i].bool)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setUdlCollateralManagerABI, parameters)
           );
         }
       }
 
-      //encode all setRanges
-      if (component.validateObj(component.setRanges)) {
-        for(let i=0; i<component.setRanges.length; i++) {
+      //encode all setAllowedHedgingManagers
+      if (component.validateObj(component.setAllowedHedgingManagers)) {
+        for(let i=0; i<component.setAllowedHedgingManagers.length; i++) {
           let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+            component.setUdlCollateralManagers[i].addr, 
+            Number(component.setAllowedHedgingManagers[i].bool)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setAllowedHedgingManagerABI, parameters)
           );
         }
       }
 
-      //encode all addSymbols
-      if (component.validateObj(component.addSymbols)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
+      //encode all setAllowedCustomPoolLeverages
+      if (component.validateObj(component.setAllowedCustomPoolLeverages)) {
+        for(let i=0; i<component.setAllowedCustomPoolLeverages.length; i++) {
           let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
-            [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
+            component.setAllowedCustomPoolLeverages[i].addr, 
+            Number(component.setAllowedCustomPoolLeverages[i].bool)
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(setAllowedCustomPoolLeverageABI, parameters)
           );
         }
       }
 
-      //encode all setRanges
-      if (component.validateObj(component.setRanges)) {
-        for(let i=0; i<component.setRanges.length; i++) {
+      //encode all transferBalances
+      if (component.validateObj(component.transferBalances)) {
+        for(let i=0; i<component.transferBalances.length; i++) {
           let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
+            component.transferBalances[i].to,
+            Number(Number(component.transferBalances[i].amount) * (10**18)) //price * 10 ** 18
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(transferBalanceABI, parameters)
           );
         }
       }
 
-      //encode all addSymbols
-      if (component.validateObj(component.addSymbols)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
+      //encode all transferGovTokens
+      if (component.validateObj(component.transferGovTokens)) {
+        for(let i=0; i<component.transferGovTokens.length; i++) {
           let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
-            [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
+            component.transferGovTokens[i].to,
+            Number(Number(component.transferGovTokens[i].amount) * (10**18)) //price * 10 ** 18
           ];
           encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+            component.getWeb3.eth.abi.encodeFunctionCall(transferGovTokensABI, parameters)
           );
         }
       }
 
-      //encode all setRanges
-      if (component.validateObj(component.setRanges)) {
-        for(let i=0; i<component.setRanges.length; i++) {
-          let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
-          ];
-          encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
-          );
-        }
-      }
-
-      //encode all addSymbols
-      if (component.validateObj(component.addSymbols)) {
-        for(let i=0; i<component.addSymbols.length; i++) {
-          let parameters = [
-            component.addSymbols.udlFeed, 
-            Number(Number(component.addSymbols.strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
-            component.addSymbols.maturity, //unix timestamp format
-            component.optTypes[component.addSymbols.optionType], //0 if optionType == 'CALL' else 1
-            Number(component.addSymbols.t0), // unix timestamp format
-            Number(component.addSymbols.t1), //unix timestamp format
-            component.addSymbols.x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols.y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
-            [
-              Number(Number(component.addSymbols.bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols.bsStockSpread[2] * (10 ** 7)))
-            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
-
-          ];
-          encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
-          );
-        }
-      }
-
-      //encode all setRanges
-      if (component.validateObj(component.setRanges)) {
-        for(let i=0; i<component.setRanges.length; i++) {
-          let parameters = [
-            component.setRanges.symbol, 
-            component.marketOpTypes[component.setRanges.op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges.start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges.end) * (10**18)) //price * 10 ** 18
-          ];
-          encodedData.push(
-            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
-          );
-        }
-      }
-
-      */
-
-      /*
 
       // deploy proposal contract
-      //let loadedProtocolSettingsProposalJSON = JSON.parse(ProtocolSettingsProposalJSON);
       const protocolSettingsProposalContract = new component.getWeb3.eth.Contract(ProtocolSettingsProposalJSON.abi);
         
       const deployProtocolSettingsProposal = await protocolSettingsProposalContract.deploy({
@@ -1131,8 +1065,6 @@ export default {
         component.loading = false;
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
-
-      */
 
     }
   }
