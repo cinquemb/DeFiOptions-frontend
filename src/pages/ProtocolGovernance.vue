@@ -17,10 +17,10 @@
 
 <script>
 import { mapGetters } from "vuex";
-import LpProposalList from '../components/invest/LpProposalList.vue';
+import ProtocolProposalList from '../components/invest/ProtocolProposalList.vue';
 
 export default {
-  name: 'PoolGovernance',
+  name: 'ProtocolGovernance',
   data() {
     return {
       loading: false
@@ -32,12 +32,12 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
+    ...mapGetters("protocolSettings", ["getProtocolSettingsContract", "getDODAddress"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposals"]),
     filteredCurrentPoolProposals() {
       let filtered = [];
       for (let proposal of this.getProposals) {
-        if (proposal.govToken == this.getSelectedPoolAddress) {
+        if (proposal.govToken == this.getDODAddress) {
           filtered.push(proposal);
         }
       }
@@ -48,13 +48,6 @@ export default {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
-    
-    this.$store.dispatch("optionsExchange/fetchContract");
-    this.$store.dispatch("liquidityPool/fetchContract");
-    this.$store.dispatch("optionsExchange/fetchLiquidityPools");
-    this.$store.dispatch("liquidityPool/fetchUserBalance");
-    this.$store.dispatch("liquidityPool/storeAddress");
-    this.$store.dispatch("creditToken/fetchUserBalance");
   },
   methods: {}
 }

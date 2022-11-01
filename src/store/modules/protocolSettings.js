@@ -16,6 +16,9 @@ const getters = {
   getProtocolSettingsAddress(state) {
     return state.address;
   },
+  getDODAddress(state) {
+    return state.DODaddress;
+  },
   getProtocolSettingsContract(state) {
     return state.contract;
   }
@@ -35,6 +38,10 @@ const actions = {
   storeAddress({ commit, rootState }) {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     commit("setAddress", addresses[ContractName][chainIdDec]);
+  },
+  storeDODAddress({ commit, rootState }) {
+    let chainIdDec = parseInt(rootState.accounts.chainId);
+    commit("setDODAddress", addresses["DOD"][chainIdDec]);
   }
 };
 
@@ -44,6 +51,9 @@ const mutations = {
   },
   setAddress(state, address) {
     state.address = address;
+  },
+  setDODAddress(state, address) {
+    state.DODaddress = address;
   },
   setContract(state, _contract) {
     state.contract = _contract;
