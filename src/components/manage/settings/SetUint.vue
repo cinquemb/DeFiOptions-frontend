@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>{{ data.field_name }} </h3>
-    <input v-model="data.value" class="form-control deposit-input" placeholder="data.desc">
+    <input v-model="data.value" class="form-control deposit-input" placeholder="getDesc">
     <pre>{{ data }}</pre>
   </div>
 </template>
@@ -13,6 +13,12 @@ export default {
   props: ["data"],
 
   components: { 
+  },
+
+  computed: {
+    getDesc() {
+      return this.data.desc
+    },
   },
 }
 </script>
