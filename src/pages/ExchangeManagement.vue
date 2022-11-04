@@ -113,19 +113,19 @@ export default {
       loading: false,
       IncrementRoundDexAgg: {
         addr: null,
-        desc: "Update DEX  Aggregator contracts"
+        desc: "Update DEX Aggregator contract"
       },
       PrefetchSample: {
         addr: null,
-        desc: "Set updated data for underlying feed"
+        desc: "Set Updated data for underlying feed"
       },
       PrefetchDailyPrice: {
         addr: null,
-        desc: "Set the daily price for the underlying feed"
+        desc: "Set daily price for the underlying feed"
       },
       PrefetchDailyVolatility: {
         addr: null,
-        desc: "Set the daily volitility for the underlying feed"
+        desc: "Set daily volitility for the underlying feed"
       },
       LiquidateExpired: {
         field_name1: "Option Token Address",
@@ -234,10 +234,10 @@ export default {
       //let priceFeedType = this.option.pair;
       //const feedAddress = addresses[priceFeedType][parseInt(component.getChainId)];
 
-      const feedContract = new component.getWeb3.eth.Contract(UnderlyingFeedJSON.abi, component.PrefetchDailyPrice.addr);
+      const feedContract = await new component.getWeb3.eth.Contract(UnderlyingFeedJSON.abi, component.PrefetchDailyPrice.addr);
 
       const feedAggrContractAddr = await feedContract.methods.getUnderlyingAggAddr().call();
-      const feedAggrContract = new component.getWeb3.eth.Contract(AggregatorV3InterfaceJSON.abi, feedAggrContractAddr);
+      const feedAggrContract = await new component.getWeb3.eth.Contract(AggregatorV3InterfaceJSON.abi, feedAggrContractAddr);
 
       //function latestRoundData() external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound );
 

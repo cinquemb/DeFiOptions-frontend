@@ -37,6 +37,9 @@ export default {
 
     this.$store.dispatch("protocolSettings/fetchContract");
     this.$store.dispatch("protocolSettings/storeAbi");
+
+    this.$store.dispatch("incentivized/fetchContract");
+    this.$store.dispatch("incentivized/storeAbi");
   },
 }
 </script>
