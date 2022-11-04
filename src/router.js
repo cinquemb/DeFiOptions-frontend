@@ -7,6 +7,7 @@ import Trade from "./pages/Trade";
 import PoolManagement from "./pages/PoolManagement"
 import PoolGovernance from "./pages/PoolGovernance"
 import ProtocolManagement from "./pages/ProtocolManagement"
+import ExchangeManagement from "./pages/ExchangeManagement"
 import ProtocolGovernance from "./pages/ProtocolGovernance"
 import DODGovernance from "./pages/DODGovernance"
 
@@ -58,6 +59,11 @@ export default new Router({
             path: "/manage-dod",
             name: "manage-dod",
             component: ProtocolManagement
+        },
+        {
+            path: "/manage-exchange",
+            name: "manage-exchange",
+            component: ExchangeManagement
         },
         {
             path: "/dod-governance",

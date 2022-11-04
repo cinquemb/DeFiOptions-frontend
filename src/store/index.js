@@ -5,6 +5,7 @@ import optionsExchange from "./modules/optionsExchange";
 import protocolSettings from "./modules/protocolSettings";
 import liquidityPool from "./modules/liquidityPool";
 import proposalManager from "./modules/proposalManager";
+import incentivized from "./modules/incentivized";
 import creditToken from "./modules/creditToken";
 import dai from "./modules/dai";
 import usdc from "./modules/usdc";
@@ -18,6 +19,7 @@ export default new Vuex.Store({
         dai,
         liquidityPool,
         proposalManager,
+        incentivized,
         optionsExchange,
         protocolSettings,
         usdc

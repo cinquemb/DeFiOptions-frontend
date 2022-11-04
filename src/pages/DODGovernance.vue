@@ -11,6 +11,12 @@
         Govern DOD
       </router-link>
     </div>
+
+    <div class="section-big row mt-4 mx-3">
+      <router-link to="/manage-exchange" class="btn btn-success">
+        Manage Exchange
+      </router-link>
+    </div>
   </div>
 </template>
 

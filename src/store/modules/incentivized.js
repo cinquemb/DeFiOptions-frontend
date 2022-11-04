@@ -1,26 +1,22 @@
-import ProtocolSettingsJSON from "../../contracts/ProtocolSettings.json";
+import IncentivizedJSON from "../../contracts/Incentivized.json";
 import addresses from "../../contracts/addresses.json";
 
-const ContractName = "ProtocolSettings";
+const ContractName = "Incentivized";
 
 const state = {
   abi: null,
   address: null,
-  DODaddress: null,
   contract: null,
 };
 
 const getters = {
-  getProtocolSettingsAbi(state) {
+  getIncentivizedAbi(state) {
     return state.abi;
   },
-  getProtocolSettingsAddress(state) {
+  getIncentivizedAddress(state) {
     return state.address;
   },
-  getDODAddress(state) {
-    return state.DODaddress;
-  },
-  getProtocolSettingsContract(state) {
+  getIncentivizedContract(state) {
     return state.contract;
   }
 };
@@ -30,20 +26,16 @@ const actions = {
     let web3 = rootState.accounts.web3;
     let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = addresses[ContractName][chainIdDec];
-    let contract = new web3.eth.Contract(ProtocolSettingsJSON.abi, address);
+    let contract = new web3.eth.Contract(IncentivizedJSON.abi, address);
     commit("setContract", contract);
   },
   storeAbi({commit}) {
-    commit("setAbi", ProtocolSettingsJSON.abi);
+    commit("setAbi", IncentivizedJSON.abi);
   },
   storeAddress({ commit, rootState }) {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     commit("setAddress", addresses[ContractName][chainIdDec]);
   },
-  storeDODAddress({ commit, rootState }) {
-    let chainIdDec = parseInt(rootState.accounts.chainId);
-    commit("setDODAddress", addresses["DOD"][chainIdDec]);
-  }
 };
 
 const mutations = {
@@ -52,9 +44,6 @@ const mutations = {
   },
   setAddress(state, address) {
     state.address = address;
-  },
-  setDODAddress(state, address) {
-    state.DODaddress = address;
   },
   setContract(state, _contract) {
     state.contract = _contract;
