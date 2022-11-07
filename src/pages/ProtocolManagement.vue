@@ -99,6 +99,20 @@
     <span></span>
     <span></span>
 
+    <!------ Dex feed ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetTriAddressMap :data="setCreateDexFeed" />
+        <span></span>
+        <button @click="createDexFeed" class="btn btn-success">
+          Create DEX TWAP Underlying Feed
+        </button>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
     <!------ Modify existing stablecoin token rates (if they have changed) ------>
 
     <div class="section-big row mt-4 mx-3">
@@ -348,6 +362,7 @@ import { mapGetters } from "vuex";
 import SetUint from '../components/manage/settings/SetUint.vue';
 import SetRate from '../components/manage/settings/SetRate.vue';
 import SetAddressMap from '../components/manage/settings/SetAddressMap.vue';
+import SetTriAddressMap from '../components/manage/settings/SetTriAddressMap.vue';
 import SetTokenRate from '../components/manage/settings/SetTokenRate.vue';
 import SetAddressBoolable from '../components/manage/settings/SetAddressBoolable.vue';
 import SetDexOracleTwapPeriod from '../components/manage/settings/SetDexOracleTwapPeriod.vue';
@@ -408,6 +423,15 @@ export default {
         value: null,
         desc: "How much to credit protocol actions that are incentivized directly"
       },
+      setCreateDexFeed: {
+        field_name1: "underlying",
+        value1: null,
+        field_name2: "stablecoin",
+        value2: null,
+        field_name3: "dex token pair",
+        value3: null,
+        desc: "Create DEX TWAP Underlying Feed (must contain a stablecoin used by the exchange)"
+      },
       setTokenRates: [], //gov
       setAllowedTokens: [],//gov
       setUdlFeeds: [],//non gov
@@ -428,6 +452,7 @@ export default {
     SetUint,
     SetRate,
     SetAddressMap,
+    SetTriAddressMap,
     SetTokenRate,
     SetAddressBoolable,
     SetDexOracleTwapPeriod,
@@ -598,6 +623,21 @@ export default {
       }
       
       if (obj.value2 === null){
+        return false;
+      }
+
+      return true;
+    },
+    validateTriAddressMap(obj) {
+      if (obj.value1 === null){
+        return false;
+      }
+      
+      if (obj.value2 === null){
+        return false;
+      }
+
+      if (obj.value3 === null){
         return false;
       }
 
@@ -1065,7 +1105,42 @@ export default {
         component.loading = false;
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
+    },
+    async createDexFeed () {
+      //function createDexFeed(address underlying, address stable, address dexTokenPair) external returns (address) 
+      let component = this;
+      component.loading = true;
 
+      if (component.validateTriAddressMap(component.setCreateDexFeed)) {
+        await component.getExchangeContract.methods.createDexFeed(
+          component.setCreateDexFeed.value1,
+          component.setCreateDexFeed.value2,
+          component.setCreateDexFeed.value3
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            component.$toast.success("Creating DEX TWAP Underlying feed was successfull.");
+            
+          } else {
+            component.$toast.error("createDexFeed tx has failed. Please contact the DeFi Options support.");
+          }
+          component.loading = false;
+
+        }).on('error', function(error){
+          console.log(error);
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      } else {
+        component.loading = false;
+      }
     }
   }
 }
