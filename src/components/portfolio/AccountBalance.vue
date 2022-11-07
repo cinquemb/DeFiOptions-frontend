@@ -161,7 +161,7 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getWeb3"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getUserExchangeBalanceAllowance"]), 
-     ...mapGetters("dai", ["getUserDaiBalance", "getDaiContract", "getExchangeDaiAllowance"]),
+     ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract", "getExchangeDaiAllowance"]),
     ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract", "getExchangeUsdcAllowance"]),
 
     isDepositValueNotValid() { // validation for deposit value
@@ -240,7 +240,10 @@ export default {
 
       let tokensWei = this.getWeb3.utils.toWei(this.withdrawValue, "ether");
 
-      await this.getOptionsExchangeContract.methods.withdrawTokens(tokensWei).send({
+      await this.getOptionsExchangeContract.methods.withdrawTokens(
+        [component.getDaiAddress],
+        [tokensWei]
+      ).send({
         from: this.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
