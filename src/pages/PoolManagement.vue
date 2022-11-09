@@ -3,6 +3,47 @@
 
     <h1> Current Pool: ({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h1>
 
+    <!------ create hedging manager ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <button @click="createHedgingManager" class="btn btn-success">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Create Hedging Manager
+        </button>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ transfer excess stables in hedging manager (TODO: SHOW ONLY IF HEDGING MANAGER ADDR IS SET FOR POOL) ------>
+
+    <div class="section-big row mt-4 mx-3" v-if="setParams.hedgingManagerAddress != null">
+      <div class="col-md-12">
+        <SetAddress :data="TransferTokensToCreditProvider" />
+        <span></span>
+        <button @click="transferTokensToCreditProvider" class="btn btn-success">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Settle Hedging Manager Token Balance
+        </button>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ balance pool exposure (TODO: SHOW ONLY IF HEDGING MANAGER ADDR IS SET FOR POOL) ------>
+
+    <div class="section-big row mt-4 mx-3" v-if="setParams.hedgingManagerAddress != null">
+      <div class="col-md-12">
+        <button @click="balanceExposure" class="btn btn-success">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Manually Balance Pool Options Exposure
+        </button>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
     <!------ Adding/modifying pool paramters ------>
 
     <div class="section-big row mt-4 mx-3">
@@ -86,9 +127,13 @@ import { mapGetters } from "vuex";
 import AddSymbol from '../components/manage/AddSymbol.vue';
 import SetRange from '../components/manage/SetRange.vue';
 import SetParams from '../components/manage/SetParams.vue';
+import SetAddress from '../components/manage/exchange/SetAddress.vue';
 import CreateOption from '../components/manage/CreateOption.vue';
 import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
+import BaseHedgingManagerJSON from "../contracts/BaseHedgingManager.json";
+import MetavaultHedgingManagerFactoryJSON from "../contracts/MetavaultHedgingManagerFactory.json";
+import addresses from "../contracts/addresses.json";
 
 export default {
   name: 'PoolManagement',
@@ -102,6 +147,10 @@ export default {
         "NONE": 0,
         "BUY": 1,
         "SELL":2
+      },
+      TransferTokensToCreditProvider: {
+        addr: null,
+        desc: "If there are tokens in hedging contract left over from hedging, this will pay them back to the DAO"
       },
       loading: false,
       setParams: { //gov
@@ -119,6 +168,7 @@ export default {
   },
   components: {
     AddSymbol,
+    SetAddress,
     SetRange,
     SetParams,
     CreateOption,
@@ -148,6 +198,7 @@ export default {
     this.$store.dispatch("usdc/fetchUserBalance");
     this.$store.dispatch("creditToken/fetchUserBalance");
     this.$store.dispatch("accounts/fetchActiveBalance");
+    this.setHedgingManagerAddr();
   },
 
   methods: {
@@ -185,6 +236,13 @@ export default {
         value: null // toggle from available options in pool that have old maturity date greater than current unix time
       });
     },
+    validateAddr(obj) {
+      if (obj.addr === null){
+        return false;
+      }
+
+      return true;
+    },
     validateSetParameters() {
       for (const key in this.setParams) {
         if (this.setParams[key] === null) {
@@ -207,6 +265,10 @@ export default {
       }
 
       return true;
+    },
+    async setHedgingManagerAddr() {
+      const hedgingManagerAddr = await this.getLiquidityPoolContract.methods.getHedgingManager().call();
+      this.setParams.hedgingManagerAddress = (hedgingManagerAddr.length > 0) ? hedgingManagerAddr : null;
     },
     async createProposal () {
       let component = this;
@@ -434,6 +496,105 @@ export default {
         }
       }
 
+    },
+    async createHedgingManager() {
+      let component = this;
+        component.loading = true;
+        const mvhedgingManagerFactoryAddr = addresses["MetavaultHedgingManagerFactory"][parseInt(component.getChainId)];
+
+        const mvhedgingManagerFactoryContract = await new component.getWeb3.eth.Contract(MetavaultHedgingManagerFactoryJSON.abi, mvhedgingManagerFactoryAddr);
+
+        const hedgingContractAddr = await mvhedgingManagerFactoryContract.methods.create(
+          component.getSelectedPoolAddress,
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            component.$toast.success("Hedging Manager Creation Succeeded, Please Set the Pool Parameters Again With the Hedging Manager Contract Address From This TX");
+          } else {
+            component.$toast.error("The create on MetavaultHedgingManagerFactory tx has failed. Please contact the DeFi Options support.");
+          }
+          component.loading = false;
+
+        }).on('error', function(error){
+          console.log(error);
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+
+        component.setParams.hedgingManagerAddress = hedgingContractAddr;
+
+    },
+    async balanceExposure() {
+      let component = this;
+
+      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
+
+      const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
+
+      hedgingManagerContract.methods.balanceExposure().send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Manual Balancing Pool Exposure Initiated");
+        } else {
+          component.$toast.error("The balanceExposure tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+
+    },
+    async transferTokensToCreditProvider() {
+      let component = this;
+      if (component.validateAddr(component.TransferTokensToCreditProvider)) {
+        component.loading = true;
+
+
+        const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
+
+        const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
+
+        hedgingManagerContract.methods.transferTokensToCreditProvider(
+          component.TransferTokensToCreditProvider.addr
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            component.$toast.success("Settled Hedging Manager Balance For Token Succeeded");
+          } else {
+            component.$toast.error("The transferTokensToCreditProvider tx has failed. Please contact the DeFi Options support.");
+          }
+          component.loading = false;
+
+        }).on('error', function(error){
+          console.log(error);
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      }
     }
   }
 }

@@ -105,6 +105,8 @@ import SetAddressMap from '../components/manage/exchange/SetAddressMap.vue';
 import SetAddressMapMultiple from '../components/manage/exchange/SetAddressMapMultiple.vue';
 import UnderlyingFeedJSON from "../contracts/UnderlyingFeed.json";
 import AggregatorV3InterfaceJSON from '../contracts/AggregatorV3Interface.json';
+import addresses from "../contracts/addresses.json";
+
 
 export default {
   name: 'ExchangeManagement',
