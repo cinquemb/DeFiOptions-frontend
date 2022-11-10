@@ -11,6 +11,7 @@
 
     <MintFakeStablecoin v-if="getChainName === 'Kovan'" class="mb-5" />
     <MintFakeStablecoin v-if="getChainName === 'Mumbai'" class="mb-5" />
+    <MintFakeStablecoin v-if="getChainName === 'Localhost'" class="mb-5" />
 
   </div>
 </template>

@@ -371,6 +371,7 @@ import SetSwapPath from '../components/manage/settings/SetSwapPath.vue';
 import Transfer from '../components/manage/settings/Transfer.vue';
 import ProtocolSettingsProposalJSON from "../contracts/ProtocolSettingsProposal.json";
 
+
 export default {
   name: 'ProtocolSettingsManagement',
   data() {
@@ -463,17 +464,18 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
-    ...mapGetters("protocolSettings", ["getProtocolSettingsContract", "getProtocolSettingsAbi"]),
+    ...mapGetters("protocolSettings", ["getProtocolSettingsContract", "getProtocolSettingsAbi","getDODAddress"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract"]),
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
-
-      this.$store.dispatch("protocolSettings/fetchContract");
-      this.$store.dispatch("protocolSettings/storeAbi");
     }
 
+    this.$store.dispatch("protocolSettings/fetchContract");
+    this.$store.dispatch("protocolSettings/storeAddress");
+    this.$store.dispatch("protocolSettings/storeAbi");
+    console.error(this.getDODAddress);
   },
 
   methods: {
@@ -727,7 +729,7 @@ export default {
       //encode setCirculatingSupply first if exists
       if (component.validateUint(component.setCirculatingSupply)) {
         let parameters = [
-          Number(Number(component.setCirculatingSupply.value) * (10** 18)), //1 to 100M
+          component.getWeb3.utils.toWei(component.setCirculatingSupply.value, "ether"), //1 to 100M
         ];
         encodedData.push(
           component.getWeb3.eth.abi.encodeFunctionCall(setCirculatingSupplyABI, parameters)
@@ -846,7 +848,7 @@ export default {
             let parameters = [
               component.setAllowedTokens[i].token,
               Number(component.setAllowedTokens[i].value),
-              Number(component.setAllowedTokens[i].base),
+              parseInt(10**(18 - Number(component.setAllowedTokens[i].base))),
             ];
             encodedData.push(
               component.getWeb3.eth.abi.encodeFunctionCall(setAllowedTokenABI, parameters)
@@ -1079,10 +1081,10 @@ export default {
       //register proposal contract with proposal manager (and choosing the params for such)
       await component.getProposalManagerContract.methods.registerProposal(
         deployProtocolSettingsProposal.options.address,
-        component.getSelectedPoolAddress,
+        component.getDODAddress,
         1, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
         0, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
-        Number(Math.floor(Date.now() / 1000) + (60 * 60)) //30 min to vote
+        Number(Math.floor(Date.now() / 1000) + (60 * 60 * 48)) //48h to vote
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,

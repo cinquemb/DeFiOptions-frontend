@@ -39,6 +39,7 @@ const actions = {
   storeAddress({ commit, rootState }) {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     commit("setAddress", addresses[ContractName][chainIdDec]);
+    commit("setDODAddress", addresses["DOD"][chainIdDec]);
   },
   storeDODAddress({ commit, rootState }) {
     let chainIdDec = parseInt(rootState.accounts.chainId);

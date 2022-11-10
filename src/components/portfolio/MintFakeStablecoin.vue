@@ -1,6 +1,6 @@
 <template>
   <div class="section-big row mt-4 mx-3">
-    <h3>Mint fake stablecoins (Kovan network only)</h3>
+    <h3>Mint fake stablecoins (Testnet network(s) only)</h3>
 
     <div class="row">
       <div class="col">

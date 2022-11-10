@@ -6,8 +6,8 @@
 
       <div v-for="detail in details" v-bind:key="detail.function">
         <div class="div-flex justify-content-center flex-wrap">
-        <LpProposalItem class="data-item" title="Pool Function" :data="detail.function" :divider="true" />
-        <LpProposalItem class="data-item" title="Pool Function Input" :data="detail.inputs" :divider="true" />
+        <LpProposalItem class="data-item" title="Function" :data="detail.function" :divider="true" />
+        <LpProposalItem class="data-item" title="Function Input" :data="detail.inputs" :divider="true" />
       </div>
 
       </div>
