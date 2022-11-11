@@ -175,7 +175,7 @@ export default {
     RemoveSymbol,
   },
   computed: {
-    ...mapGetters("accounts", ["getActiveAccount", "getChainName", "getWeb3", "isUserConnected"]),
+    ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract"]),
@@ -516,6 +516,8 @@ export default {
         }).on('receipt', function(receipt){
           console.log(receipt);
           if (receipt.status) {
+            console.log(receipt.events.NewHedgingManager.returnValues.hedgingManager);
+            component.setParams.hedgingManagerAddress = receipt.events.NewHedgingManager.returnValues.hedgingManager;
             component.$toast.success("Hedging Manager Creation Succeeded, Please Set the Pool Parameters Again With the Hedging Manager Contract Address From This TX");
           } else {
             component.$toast.error("The create on MetavaultHedgingManagerFactory tx has failed. Please contact the DeFi Options support.");
@@ -528,7 +530,7 @@ export default {
           component.$toast.error("There has been an error. Please contact the DeFi Options support.");
         });
 
-        component.setParams.hedgingManagerAddress = hedgingContractAddr;
+        
 
     },
     async balanceExposure() {
