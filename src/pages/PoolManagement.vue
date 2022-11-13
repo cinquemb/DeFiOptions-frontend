@@ -504,7 +504,7 @@ export default {
 
         const mvhedgingManagerFactoryContract = await new component.getWeb3.eth.Contract(MetavaultHedgingManagerFactoryJSON.abi, mvhedgingManagerFactoryAddr);
 
-        const hedgingContractAddr = await mvhedgingManagerFactoryContract.methods.create(
+        await mvhedgingManagerFactoryContract.methods.create(
           component.getSelectedPoolAddress,
         ).send({
           from: component.getActiveAccount,

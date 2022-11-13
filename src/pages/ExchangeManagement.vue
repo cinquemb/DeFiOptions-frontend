@@ -105,7 +105,6 @@ import SetAddressMap from '../components/manage/exchange/SetAddressMap.vue';
 import SetAddressMapMultiple from '../components/manage/exchange/SetAddressMapMultiple.vue';
 import UnderlyingFeedJSON from "../contracts/UnderlyingFeed.json";
 import AggregatorV3InterfaceJSON from '../contracts/AggregatorV3Interface.json';
-import addresses from "../contracts/addresses.json";
 
 
 export default {
@@ -233,9 +232,6 @@ export default {
       let component = this;
       component.loading = true;
 
-      //let priceFeedType = this.option.pair;
-      //const feedAddress = addresses[priceFeedType][parseInt(component.getChainId)];
-
       const feedContract = await new component.getWeb3.eth.Contract(UnderlyingFeedJSON.abi, component.PrefetchDailyPrice.addr);
 
       const feedAggrContractAddr = await feedContract.methods.getUnderlyingAggAddr().call();
@@ -309,7 +305,7 @@ export default {
 
       await component.getIncentivizedContract.methods.liquidateExpired(
         component.LiquidateExpired.value1,
-        component.LiquidateExpired.value2,
+        component.LiquidateExpired.value2.split(","),
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
