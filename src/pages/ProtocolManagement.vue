@@ -1036,7 +1036,7 @@ export default {
         console.log(receipt);
 
         if (receipt.status) {
-          component.$toast.success("Initializing the proposal was successfull. You will be promted to save the pool proposal transactions now.");
+          component.$toast.success("Initializing the proposal was successfull. You will be promted to save the DOD proposal transaction(s) now.");
           
         } else {
           component.$toast.error("The initializing proposal transaction has failed. Please contact the DeFi Options support.");
@@ -1095,7 +1095,7 @@ export default {
       }).on('receipt', function(receipt){
         console.log(receipt);
         if (receipt.status) {
-          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page.");
+          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the "Govern DOD" page.");
           
         } else {
           component.$toast.error("The register proposal tx has failed. Please contact the DeFi Options support.");
