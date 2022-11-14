@@ -1095,7 +1095,7 @@ export default {
       }).on('receipt', function(receipt){
         console.log(receipt);
         if (receipt.status) {
-          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the "Govern DOD" page.");
+          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the \"Govern DOD\" page.");
           
         } else {
           component.$toast.error("The register proposal tx has failed. Please contact the DeFi Options support.");
