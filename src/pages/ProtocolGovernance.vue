@@ -1,6 +1,8 @@
 <template>
   <div>
 
+    <h1>Governance Proposals</h1>
+
     <!------ Proposals for current pool ------>
 
     <div class="section-big row mt-4 mx-3">
