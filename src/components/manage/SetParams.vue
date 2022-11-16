@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Set Pool Parameters</h3>
+    <h3>Set Pool Parameters (GOV REQUIRED)</h3>
     <input v-model="params.reserveRatio" class="form-control deposit-input" placeholder="Reserve Ratio (Float: from 0 to 100, Ex: 2)">
     <input v-model="params.withdrawFee" class="form-control deposit-input" placeholder="Early withdraw fee - % (Float: from 0 to 100, Ex: 2)">
     <input v-model="params.maturity" class="form-control deposit-input"  placeholder="Pool Maturity (Unix Timestamp, Ex: 1979397234)">

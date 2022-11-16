@@ -16,9 +16,9 @@
     <span></span>
     <span></span>
 
-    <!------ transfer excess stables in hedging manager (TODO: SHOW ONLY IF HEDGING MANAGER ADDR IS SET FOR POOL) ------>
+    <!------ transfer excess stables in hedging manager ------>
 
-    <div class="section-big row mt-4 mx-3" v-if="setParams.hedgingManagerAddress != null">
+    <div class="section-big row mt-4 mx-3" v-if="isHedgingManagerReady">
       <div class="col-md-12">
         <SetAddress :data="TransferTokensToCreditProvider" />
         <span></span>
@@ -31,9 +31,9 @@
     <span></span>
     <span></span>
 
-    <!------ balance pool exposure (TODO: SHOW ONLY IF HEDGING MANAGER ADDR IS SET FOR POOL) ------>
+    <!------ balance pool exposure ------>
 
-    <div class="section-big row mt-4 mx-3" v-if="setParams.hedgingManagerAddress != null">
+    <div class="section-big row mt-4 mx-3" v-if="isHedgingManagerReady">
       <div class="col-md-12">
         <button @click="balanceExposure" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -68,37 +68,6 @@
       <button @click="createSymbols" class="btn btn-success">
        Submit New Options
       </button>
-      createSymbols
-    </div>
-    <span></span>
-    <span></span>
-
-
-    <!------ Remove symbol from pool (if expired) ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <RemoveSymbol :symbols="removeSymbols" />
-        <span></span>
-      </div>
-      <button @click="removeSymbol" class="btn btn-success">
-        Remove Symbol
-      </button>
-    </div>
-    <span></span>
-    <span></span>
-
-
-    <!------ Adding/modifying tradeable price ranges ------>
-
-    <div class="section-big row mt-4 mx-3">
-      <div class="col-md-12">
-        <SetRange :ranges="setRanges" />
-        <span></span>
-      </div>
-      <button @click="addRange" class="btn btn-success">
-        Add/Modify Range
-      </button>
     </div>
     <span></span>
     <span></span>
@@ -111,10 +80,39 @@
         <span></span>
       </div>
       <button @click="addSymbol" class="btn btn-success">
-        Add/Modify Symbol
+        Add/Modify Symbol (GOV REQUIRED)
       </button>
     </div>
 
+    <span></span>
+    <span></span>
+
+
+    <!------ Adding/modifying tradeable price ranges ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetRange :ranges="setRanges" />
+        <span></span>
+      </div>
+      <button @click="addRange" class="btn btn-success">
+        Add/Modify Range (GOV REQUIRED)
+      </button>
+    </div>
+    <span></span>
+    <span></span>
+
+    <!------ Remove symbol from pool (if expired) ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <RemoveSymbol :symbols="removeSymbols" />
+        <span></span>
+      </div>
+      <button @click="removeSymbol" class="btn btn-success">
+        Remove Symbol
+      </button>
+    </div>
     <span></span>
     <span></span>
 
@@ -154,7 +152,7 @@ export default {
       },
       TransferTokensToCreditProvider: {
         addr: null,
-        desc: "If there are tokens in hedging contract left over from hedging, this will pay them back to the DAO"
+        desc: "If there are tokens in hedging contract left over from hedging, this will pay them back to the DAO (token address)"
       },
       loading: false,
       setParams: { //gov
@@ -183,6 +181,21 @@ export default {
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract"]),
+
+    isHedgingManagerReady(){
+
+      if(this.setParams.hedgingManagerAddress != null) {
+        return false;
+      }
+
+      if(this.setParams.hedgingManagerAddress === "0x0000000000000000000000000000000000000000") {
+        return false;
+      }
+      
+
+      return true;
+
+    },
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -297,23 +310,22 @@ export default {
           component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
         );
       }
-
       //encode all addSymbols
       if (component.validateObj(component.addSymbols)) {
         for(let i=0; i<component.addSymbols.length; i++) {
           let parameters = [
             component.addSymbols[i].udlFeed, 
-            Number(Number(component.addSymbols[i].strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            String((component.addSymbols[i].strike * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
             component.addSymbols[i].maturity, //unix timestamp format
             component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
             Number(component.addSymbols[i].t0), // unix timestamp format
             Number(component.addSymbols[i].t1), //unix timestamp format
-            component.addSymbols[i].x.map(val => Number(Number(val) * (10 ** 18))),// x * (10**EXCHG['decimals'])
-            component.addSymbols[i].y.map(val => Number(Number(val) * (10 ** 18))),// y * (10**EXCHG['decimals'])
+            component.addSymbols[i].x.map(val => String((val * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
+            component.addSymbols[i].y.map(val => String((val * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
             [
-              Number(Number(component.addSymbols[i].bsStockSpread[0] * (10 ** 18))),
-              Number(Number(component.addSymbols[i].bsStockSpread[1] * (10 ** 18))),
-              Number(Number(component.addSymbols[i].bsStockSpread[2] * (10 ** 7)))
+              String((component.addSymbols[i].bsStockSpread[0] * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((component.addSymbols[i].bsStockSpread[1] * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((component.addSymbols[i].bsStockSpread[2] * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
             ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
 
           ];
@@ -329,8 +341,8 @@ export default {
           let parameters = [
             component.setRanges[i].symbol, 
             component.marketOpTypes[component.setRanges[i].op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            Number(Number(component.setRanges[i].start) * (10**18)), //price * 10 ** 18
-            Number(Number(component.setRanges[i].end) * (10**18)) //price * 10 ** 18
+            this.getWeb3.utils.fromWei(String(component.setRanges[i].start), "ether"), //price * 10 ** 18
+            this.getWeb3.utils.fromWei(String(component.setRanges[i].end), "ether") //price * 10 ** 18
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
@@ -440,7 +452,7 @@ export default {
           component.getOptionsExchangeContract.methods.createSymbol(
             component.createOptions[i].udlFeedAddr,
             component.optTypes[component.createOptions[i].optType], //0 if optionType == 'CALL' else 1
-            Number(Number(component.createOptions[i].strike) * (10 ** 18)),//strike * (10**EXCHG['decimals'])
+            String((parseInt(component.createOptions[i].strike) * (10**18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
             component.createOptions[i].maturity //unix timestamp format
           ).send({
             from: component.getActiveAccount,
