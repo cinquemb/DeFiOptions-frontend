@@ -63,8 +63,12 @@
         <span></span>
       </div>
       <button @click="addOption" class="btn btn-success">
-        Add New Options To Exchange
+        Add More Options To Exchange
       </button>
+      <button @click="createSymbols" class="btn btn-success">
+       Submit New Options
+      </button>
+      createSymbols
     </div>
     <span></span>
     <span></span>
