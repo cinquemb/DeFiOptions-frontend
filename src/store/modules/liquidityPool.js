@@ -108,7 +108,7 @@ const actions = {
     }
 
     let web3 = rootState.accounts.web3;
-    let symbolsRaw = await state.contract[state.selectedPoolAddress].methods.listSymbols().call();
+    let symbolsRaw = state.pool[state.selectedPoolAddress]["poolSymbolList"];//await state.contract[state.selectedPoolAddress].methods.listSymbols().call();
 
     commit("setSymbolsList", {web3, symbolsRaw});
   },

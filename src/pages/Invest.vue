@@ -101,6 +101,7 @@ export default {
           let userPoolUsdValue = poolData[6][i];
           let poolMaturityDate = poolData[7][i];
           let poolWithdrawalFee = poolData[8][i];
+          let poolSymbolList = poolData[9][i];
 
           let tmpPoolData = {
             "poolApy": poolApy,
@@ -109,7 +110,8 @@ export default {
             "userPoolBalance": userPoolBalance,
             "userPoolUsdValue": userPoolUsdValue,
             "poolMaturityDate": poolMaturityDate,
-            "poolWithdrawalFee": poolWithdrawalFee
+            "poolWithdrawalFee": poolWithdrawalFee,
+            "poolSymbolList": poolSymbolList
           };
 
           poolSymbolsAddrsMap[pSym] = poolAddr;

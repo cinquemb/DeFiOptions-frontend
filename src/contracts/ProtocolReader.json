@@ -57,6 +57,11 @@
               "internalType": "uint256[]",
               "name": "poolWithdrawalFee",
               "type": "uint256[]"
+            },
+            {
+              "internalType": "string[]",
+              "name": "poolSymbolList",
+              "type": "string[]"
             }
           ],
           "internalType": "struct IProtocolReader.poolData",
