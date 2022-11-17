@@ -6,22 +6,65 @@
       "name": "listPoolsData",
       "outputs": [
         {
-          "internalType": "string[]",
+          "components": [
+            {
+              "internalType": "string[]",
+              "name": "poolSymbols",
+              "type": "string[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "poolAddrs",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolApy",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolBalance",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolFreeBalance",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "userPoolBalance",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "userPoolUsdValue",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolMaturityDate",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolWithdrawalFee",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct IProtocolReader.poolData",
           "name": "",
-          "type": "string[]"
-        },
-        {
-          "internalType": "address[]",
-          "name": "",
-          "type": "address[]"
+          "type": "tuple"
         }
       ],
       "stateMutability": "view",
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.0+commit.26b70077\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"listPoolsData\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"},{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IProtocolReader.sol\":\"IProtocolReader\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IProtocolReader.sol\":{\"keccak256\":\"0xa8b209b3066d3becb9fe3702e78c2b68aa0c12a8c25b109efeb990b86f0657a5\",\"urls\":[\"bzz-raw://685e4115289349b71bb82275a4df6ff25e3d4e739ad5bbdfb4c7ebe9c97aa6f4\",\"dweb:/ipfs/QmZPmLf3Ucu5Vzkmw42VC6iT86KvGWE2iHkh3deU8JG7zP\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.0+commit.26b70077\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"listPoolsData\",\"outputs\":[{\"components\":[{\"internalType\":\"string[]\",\"name\":\"poolSymbols\",\"type\":\"string[]\"},{\"internalType\":\"address[]\",\"name\":\"poolAddrs\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolApy\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolBalance\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolFreeBalance\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"userPoolBalance\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"userPoolUsdValue\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolMaturityDate\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolWithdrawalFee\",\"type\":\"uint256[]\"}],\"internalType\":\"struct IProtocolReader.poolData\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IProtocolReader.sol\":\"IProtocolReader\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IProtocolReader.sol\":{\"keccak256\":\"0xdc4fc38fbd211251b755647acd34ffa750d035de70a6e9996a6bf11d41c1c19f\",\"urls\":[\"bzz-raw://0eb054ab00fb87245363df664ab26bc1eddfc88cd994439e395f5bd168b23fd6\",\"dweb:/ipfs/QmXjgTGaiUxFYhYxMruuB8sP37J4nSqDmE8UKqMne41Uc4\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
-  "sourceMap": ""
-  }
+  "sourceMap": "",
+  "deployedSourceMap": ""
+}

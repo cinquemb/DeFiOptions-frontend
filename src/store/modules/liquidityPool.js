@@ -15,6 +15,7 @@ const state = {
   poolWithdrawalFee: {undefined:null},
   symbolsListJson: {undefined:null},
   userBalance: {undefined:null},
+  pool: {undefined: null},
   userPoolUsdValue: {undefined:null}, // USD value of the pool balance
   selectedPoolAddress: "N/A",
 };
@@ -66,6 +67,9 @@ const getters = {
     return state.userPoolUsdValue[state.selectedPoolAddress];
   }
 };
+/*
+            "poolBalance": poolBalance,
+*/
 
 const actions = {
   async fetchContract({ commit, rootState }) {
@@ -83,7 +87,7 @@ const actions = {
     }
 
     try{
-      const apy = await state.contract[state.selectedPoolAddress].methods.yield(365 * 24 * 60 * 60).call();
+      const apy = state.pool[state.selectedPoolAddress]["poolApy"];//await state.contract[state.selectedPoolAddress].methods.yield(365 * 24 * 60 * 60).call();
       let apyBig = ((apy-1e9)/1e9)*100;
 
       if (parseInt(rootState.accounts.chainId) === 137) {
@@ -104,9 +108,7 @@ const actions = {
     }
 
     let web3 = rootState.accounts.web3;
-
-    const operation = { BUY: "1" }
-    let symbolsRaw = await state.contract[state.selectedPoolAddress].methods.listSymbols(operation.BUY).call();
+    let symbolsRaw = await state.contract[state.selectedPoolAddress].methods.listSymbols().call();
 
     commit("setSymbolsList", {web3, symbolsRaw});
   },
@@ -115,7 +117,7 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let freeBalanceWei = await state.contract[state.selectedPoolAddress].methods.calcFreeBalance().call();
+    let freeBalanceWei = state.pool[state.selectedPoolAddress]["poolFreeBalance"];//await state.contract[state.selectedPoolAddress].methods.calcFreeBalance().call();
 
     let web3 = rootState.accounts.web3;
     let balance = web3.utils.fromWei(freeBalanceWei, "ether");
@@ -127,7 +129,7 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let maturitySec = await state.contract[state.selectedPoolAddress].methods.maturity().call();
+    let maturitySec = state.pool[state.selectedPoolAddress]["poolMaturityDate"];//await state.contract[state.selectedPoolAddress].methods.maturity().call();
 
     let maturityHumanReadable = new Date(Number(maturitySec)*1e3).toLocaleDateString('en-GB', { day: 'numeric', 
         month: 'short', 
@@ -140,7 +142,7 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    const withdrawalFeeBig = await state.contract[state.selectedPoolAddress].methods.withdrawFee().call();
+    const withdrawalFeeBig = state.pool[state.selectedPoolAddress]["poolWithdrawalFee"];//await state.contract[state.selectedPoolAddress].methods.withdrawFee().call();
     console.error("withdrawalFeeBig:" + withdrawalFeeBig);
 
     const wFeeSmall = Number(withdrawalFeeBig) / 1000000000; // divide to remove 9 decimal places
@@ -153,8 +155,8 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let activeAccount = rootState.accounts.activeAccount;
-    let balanceWei = await state.contract[state.selectedPoolAddress].methods.balanceOf(activeAccount).call();
+    //let activeAccount = rootState.accounts.activeAccount;
+    let balanceWei = state.pool[state.selectedPoolAddress]["userPoolBalance"];//await state.contract[state.selectedPoolAddress].methods.balanceOf(activeAccount).call();
 
     let web3 = rootState.accounts.web3;
     let balance = web3.utils.fromWei(balanceWei, "ether");
@@ -166,12 +168,12 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let activeAccount = rootState.accounts.activeAccount;
+    //let activeAccount = rootState.accounts.activeAccount;
 
     let balanceWei = "0";
 
     try {
-      balanceWei = await state.contract[state.selectedPoolAddress].methods.valueOf(activeAccount).call();
+      balanceWei = state.pool[state.selectedPoolAddress]["userPoolUsdValue"];//await state.contract[state.selectedPoolAddress].methods.valueOf(activeAccount).call();
     } catch(e) {
       console.log("The total pool balance is probably 0, which is why MetaMask may be showing the 'Internal JSON-RPC... division by 0' error.");
     }
@@ -203,6 +205,9 @@ const mutations = {
   },
   setContract(state, _contract) {
     state.contract[state.selectedPoolAddress] = _contract;
+  },
+  setPoolData(state, poolAddr, poolData) {
+    state.pool[poolAddr] = poolData;
   },
   setDefaultMaturity(state, maturity) {
     state.defaultMaturity[state.selectedPoolAddress] = maturity;

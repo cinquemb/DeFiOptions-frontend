@@ -94,6 +94,23 @@ export default {
       for (var i=0; i < poolData[0].length; i++) {
           let pSym = poolData[0][i];
           let poolAddr = poolData[1][i];
+          let poolApy = poolData[2][i];
+          let poolBalance = poolData[3][i];
+          let poolFreeBalance = poolData[4][i];
+          let userPoolBalance = poolData[5][i];
+          let userPoolUsdValue = poolData[6][i];
+          let poolMaturityDate = poolData[7][i];
+          let poolWithdrawalFee = poolData[8][i];
+
+          let tmpPoolData = {
+            "poolApy": poolApy,
+            "poolBalance": poolBalance,
+            "poolFreeBalance": poolFreeBalance,
+            "userPoolBalance": userPoolBalance,
+            "userPoolUsdValue": userPoolUsdValue,
+            "poolMaturityDate": poolMaturityDate,
+            "poolWithdrawalFee": poolWithdrawalFee
+          }
 
           poolSymbolsAddrsMap[pSym] = poolAddr;
           poolSymbols.push(pSym);
@@ -102,6 +119,9 @@ export default {
           // option object
           let poolObject = {symbol, address};
           exchangePools.push(poolObject);
+
+          this.$store.commit("liquidityPool/setPoolData", poolAddr, tmpPoolData);
+
 
           for(let lKey in this.$store.state.liquidityPool) {
             let tKey = lKey;
@@ -115,16 +135,20 @@ export default {
             }
           }
 
+          this.$store.commit("liquidityPool/setPoolData", poolAddr, tmpPoolData);
           this.$store.commit("liquidityPool/setSelectedPoolAddress", poolAddr);
-          this.$store.dispatch("liquidityPool/fetchContract");
-          this.$store.dispatch("liquidityPool/fetchUserBalance");
-          this.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
-          this.$store.dispatch("liquidityPool/fetchApy");
           this.$store.dispatch("liquidityPool/storeAddress");
+          this.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
+          this.$store.dispatch("liquidityPool/fetchContract");
+          
+          /*
+          this.$store.dispatch("liquidityPool/fetchUserBalance");
+          this.$store.dispatch("liquidityPool/fetchApy");
           this.$store.dispatch("liquidityPool/fetchUserPoolUsdValue");
           this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
           this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
           this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
+          */
       }
 
       this.$store.commit("optionsExchange/setPoolSymbols", poolSymbols);
