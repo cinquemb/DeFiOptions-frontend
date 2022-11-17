@@ -816,7 +816,7 @@ export default {
       //encode setBaseIncentivisation first if exists
       if (component.validateUint(component.setBaseIncentivisation)) {
         let parameters = [
-          Number(Number(component.setBaseIncentivisation.value) * (10** 18)), //in dollars, greater than 0
+          String((component.setBaseIncentivisation.value * (10** 18)).toLocaleString('fullwide', {useGrouping:false})), //in dollars, greater than 0
         ];
         encodedData.push(
           component.getWeb3.eth.abi.encodeFunctionCall(setBaseIncentivisationABI, parameters)
@@ -848,7 +848,7 @@ export default {
             let parameters = [
               component.setAllowedTokens[i].token,
               Number(component.setAllowedTokens[i].value),
-              parseInt(10**(18 - Number(component.setAllowedTokens[i].base))),
+              String(parseInt(10**(18 - Number(component.setAllowedTokens[i].base))).toLocaleString('fullwide', {useGrouping:false})),
             ];
             encodedData.push(
               component.getWeb3.eth.abi.encodeFunctionCall(setAllowedTokenABI, parameters)
@@ -996,7 +996,7 @@ export default {
         for(let i=0; i<component.transferBalances.length; i++) {
           let parameters = [
             component.transferBalances[i].to,
-            Number(Number(component.transferBalances[i].amount) * (10**18)) //price * 10 ** 18
+            String((component.transferBalances[i].amount * (10**18)).toLocaleString('fullwide', {useGrouping:false})) //price * 10 ** 18
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(transferBalanceABI, parameters)
@@ -1009,7 +1009,7 @@ export default {
         for(let i=0; i<component.transferGovTokens.length; i++) {
           let parameters = [
             component.transferGovTokens[i].to,
-            Number(Number(component.transferGovTokens[i].amount) * (10**18)) //price * 10 ** 18
+            String((component.transferGovTokens[i].amount * (10**18)).toLocaleString('fullwide', {useGrouping:false})) //price * 10 ** 18
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(transferGovTokensABI, parameters)

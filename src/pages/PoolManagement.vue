@@ -341,8 +341,8 @@ export default {
           let parameters = [
             component.setRanges[i].symbol, 
             component.marketOpTypes[component.setRanges[i].op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            this.getWeb3.utils.fromWei(String(component.setRanges[i].start), "ether"), //price * 10 ** 18
-            this.getWeb3.utils.fromWei(String(component.setRanges[i].end), "ether") //price * 10 ** 18
+            String((component.setRanges[i].start * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18
+            String((component.setRanges[i].end *  (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))//price * 10 ** 18
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
