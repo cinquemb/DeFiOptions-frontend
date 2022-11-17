@@ -171,7 +171,6 @@ const actions = {
     //let activeAccount = rootState.accounts.activeAccount;
 
     let balanceWei = "0";
-
     try {
       balanceWei = state.pool[state.selectedPoolAddress]["userPoolUsdValue"];//await state.contract[state.selectedPoolAddress].methods.valueOf(activeAccount).call();
     } catch(e) {

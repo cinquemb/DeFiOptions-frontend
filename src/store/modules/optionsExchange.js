@@ -1,4 +1,6 @@
 import OptionsExchange from "../../contracts/OptionsExchangeV2.json";
+import ProtocolReaderJSON from "../../contracts/ProtocolReader.json";
+
 import addresses from "../../contracts/addresses.json";
 
 const state = {
@@ -170,10 +172,12 @@ const actions = {
     let poolSymbolsAddrsMap = {};
     let exchangePools = [];
 
-    let poolSymbolsMaxLen = await state.contract.methods.totalPoolSymbols().call();
-    for (var i=0; i < poolSymbolsMaxLen; i++) {
-        let pSym = await state.contract.methods.poolSymbols(i).call();
-        let poolAddr = await state.contract.methods.getPoolAddress(String(pSym)).call();
+    let protocolReaderAddr = addresses["ProtocolReader"][parseInt(this.getChainId)];
+    const protocolReaderContract = await new this.getWeb3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
+    let poolData = await protocolReaderContract.methods.listPoolsData(this.getActiveAccount).call();
+    for (var i=0; i < poolData[0].length; i++) {
+        let pSym = poolData[0][i];
+        let poolAddr = poolData[1][i];
 
         poolSymbolsAddrsMap[pSym] = poolAddr;
         poolSymbols.push(pSym);

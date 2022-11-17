@@ -48,7 +48,7 @@ export default {
     LpToggle
   },
   computed: {
-    ...mapGetters("accounts", ["isUserConnected", "getWeb3", "getChainId"]),
+    ...mapGetters("accounts", ["getActiveAccount", "isUserConnected", "getWeb3", "getChainId"]),
     ...mapGetters("optionsExchange", ["getExchangeUserBalance", "getExchangeLiquidityPools","getOptionsExchangeContract"]),
 
   },
@@ -89,7 +89,7 @@ export default {
       let protocolReaderAddr = addresses["ProtocolReader"][parseInt(this.getChainId)];
       const protocolReaderContract = await new this.getWeb3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
 
-      let poolData = await protocolReaderContract.methods.listPoolsData().call();
+      let poolData = await protocolReaderContract.methods.listPoolsData(this.getActiveAccount).call();
 
       for (var i=0; i < poolData[0].length; i++) {
           let pSym = poolData[0][i];
@@ -110,7 +110,7 @@ export default {
             "userPoolUsdValue": userPoolUsdValue,
             "poolMaturityDate": poolMaturityDate,
             "poolWithdrawalFee": poolWithdrawalFee
-          }
+          };
 
           poolSymbolsAddrsMap[pSym] = poolAddr;
           poolSymbols.push(pSym);
@@ -120,35 +120,18 @@ export default {
           let poolObject = {symbol, address};
           exchangePools.push(poolObject);
 
-          this.$store.commit("liquidityPool/setPoolData", poolAddr, tmpPoolData);
 
 
           for(let lKey in this.$store.state.liquidityPool) {
             let tKey = lKey;
-
-            console.error(this.$store.state.liquidityPool[tKey]);
-
             if(typeof this.$store.state.liquidityPool[tKey] === 'object') {
               if (!(poolAddr in this.$store.state.liquidityPool[tKey])) {
                 this.$store.state.liquidityPool[tKey][poolAddr] = null;
               }
             }
           }
-
-          this.$store.commit("liquidityPool/setPoolData", poolAddr, tmpPoolData);
-          this.$store.commit("liquidityPool/setSelectedPoolAddress", poolAddr);
-          this.$store.dispatch("liquidityPool/storeAddress");
-          this.$store.dispatch("optionsExchange/fetchLiquidityPoolBalance");
-          this.$store.dispatch("liquidityPool/fetchContract");
-          
-          /*
-          this.$store.dispatch("liquidityPool/fetchUserBalance");
-          this.$store.dispatch("liquidityPool/fetchApy");
-          this.$store.dispatch("liquidityPool/fetchUserPoolUsdValue");
-          this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
-          this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
-          this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
-          */
+          //hack because that commit shit doesn't work
+          this.$store.state.liquidityPool["pool"][poolAddr] = tmpPoolData;
       }
 
       this.$store.commit("optionsExchange/setPoolSymbols", poolSymbols);

@@ -2,7 +2,13 @@
   "contractName": "IProtocolReader",
   "abi": [
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
       "name": "listPoolsData",
       "outputs": [
         {
