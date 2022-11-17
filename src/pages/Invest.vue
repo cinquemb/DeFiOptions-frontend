@@ -35,6 +35,8 @@ import LpDeposit from '../components/invest/LpDeposit.vue';
 import LpWithdraw from '../components/invest/LpWithdraw.vue';
 import LpCreatePool from '../components/invest/LpCreatePool.vue';
 import LpToggle from '../components/invest/LpToggle.vue';
+import addresses from '../contracts/addresses.json';
+import ProtocolReaderJSON from '../contracts/ProtocolReader.json';
 
 export default {
   name: 'Invest',
@@ -46,7 +48,7 @@ export default {
     LpToggle
   },
   computed: {
-    ...mapGetters("accounts", ["isUserConnected", "getWeb3"]),
+    ...mapGetters("accounts", ["isUserConnected", "getWeb3", "getChainId"]),
     ...mapGetters("optionsExchange", ["getExchangeUserBalance", "getExchangeLiquidityPools","getOptionsExchangeContract"]),
 
   },
@@ -84,10 +86,14 @@ export default {
       let poolSymbolsAddrsMap = {};
       let exchangePools = [];
 
-      let poolSymbolsMaxLen = await this.getOptionsExchangeContract.methods.totalPoolSymbols().call();
-      for (var i=0; i < poolSymbolsMaxLen; i++) {
-          let pSym = await this.getOptionsExchangeContract.methods.poolSymbols(i).call();
-          let poolAddr = await this.getOptionsExchangeContract.methods.getPoolAddress(String(pSym)).call();
+      let protocolReaderAddr = addresses["ProtocolReader"][parseInt(this.getChainId)];
+      const protocolReaderContract = await new this.getWeb3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
+
+      let poolData = await protocolReaderContract.methods.listPoolsData().call();
+
+      for (var i=0; i < poolData[0].length; i++) {
+          let pSym = poolData[0][i];
+          let poolAddr = poolData[1][i];
 
           poolSymbolsAddrsMap[pSym] = poolAddr;
           poolSymbols.push(pSym);

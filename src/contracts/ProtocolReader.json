@@ -1,0 +1,27 @@
+{
+  "contractName": "IProtocolReader",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "listPoolsData",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        },
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.0+commit.26b70077\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"listPoolsData\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"},{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IProtocolReader.sol\":\"IProtocolReader\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IProtocolReader.sol\":{\"keccak256\":\"0xa8b209b3066d3becb9fe3702e78c2b68aa0c12a8c25b109efeb990b86f0657a5\",\"urls\":[\"bzz-raw://685e4115289349b71bb82275a4df6ff25e3d4e739ad5bbdfb4c7ebe9c97aa6f4\",\"dweb:/ipfs/QmZPmLf3Ucu5Vzkmw42VC6iT86KvGWE2iHkh3deU8JG7zP\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": ""
+  }
