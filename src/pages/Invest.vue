@@ -113,7 +113,6 @@ export default {
             "poolWithdrawalFee": poolWithdrawalFee,
             "poolSymbolList": poolSymbolList
           };
-
           poolSymbolsAddrsMap[pSym] = poolAddr;
           poolSymbols.push(pSym);
           let symbol = poolSymbols[i];

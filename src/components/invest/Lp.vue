@@ -79,6 +79,8 @@ export default {
       this.$store.dispatch("liquidityPool/fetchPoolFreeBalance");
       this.$store.dispatch("liquidityPool/fetchPoolMaturityDate");
       this.$store.dispatch("liquidityPool/fetchPoolWithdrawalFee");
+      this.$store.dispatch("liquidityPool/fetchSymbolsList");
+
 
       this.$store.commit("liquidityPool/setSelectedPoolAddress", this.pool.address);
 

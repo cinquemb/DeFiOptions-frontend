@@ -258,18 +258,18 @@ const mutations = {
       // pair
       let pair = itemList[0];
       let udlSymbol = pair.split("/")[0];
-      state.defaultPair = pair
+      state.defaultPair[state.selectedPoolAddress] = pair
 
       // type
       let typeName = "CALL";
       if (itemList[1] === "EP") {
         typeName = "PUT";
       }
-      state.defaultType = typeName;
+      state.defaultType[state.selectedPoolAddress] = typeName;
 
       // side
       let sideName = "BUY";
-      state.defaultSide = sideName;
+      state.defaultSide[state.selectedPoolAddress] = sideName;
 
       // maturity
       let maturityHumanReadable = new Date(Number(itemList[3])*1e3).toLocaleDateString('en-GB', 
@@ -280,7 +280,7 @@ const mutations = {
           month: 'short', 
           year: 'numeric' 
         });
-      state.defaultMaturity = maturityHumanReadable;
+      state.defaultMaturity[state.selectedPoolAddress] = maturityHumanReadable;
       
       // strike price
       let strikePriceBigUnit = Math.round(web3.utils.fromWei(Number(itemList[2]).toString(16), "ether")*100)/100;
