@@ -134,8 +134,24 @@ export default {
     this.$store.dispatch("usdc/fetchUserBalance");
     this.$store.dispatch("usdc/storeAddress");
 
-    this.unsubscribe = this.$store.subscribe((mutation) => {
-      if (mutation.type === 'liquidityPool/setSymbolsList' && Object.keys(this.getSymbolsListJson).length > 0) {
+    this.loadOptionsAndMarkets();
+
+    
+  },
+  data() {
+    return {
+      maturities: null,
+      pairs: null,
+      selectedMaturity: null,
+      selectedPair: null,
+      selectedType: null,
+      selectedSide: null,
+      typeNames: null // PUT, CALL
+    }
+  },
+  methods: {
+    loadOptionsAndMarkets() {
+      if (Object.keys(this.getSymbolsListJson).length > 0) {
         // extract values from getSymbolsListJson and pre-populate dropdowns (pair, maturity, type)
         this.pairs = Object.keys(this.getSymbolsListJson);
         this.selectedPair = this.pairs[0];
@@ -177,20 +193,7 @@ export default {
         }
         
       }
-    });
-  },
-  data() {
-    return {
-      maturities: null,
-      pairs: null,
-      selectedMaturity: null,
-      selectedPair: null,
-      selectedType: null,
-      selectedSide: null,
-      typeNames: null // PUT, CALL
-    }
-  },
-  methods: {
+    },
     changePair(pair) {
       this.selectedPair = pair;
       this.$store.commit("accounts/setLastSelectedTradePair", pair);
