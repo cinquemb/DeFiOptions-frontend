@@ -315,17 +315,17 @@ export default {
         for(let i=0; i<component.addSymbols.length; i++) {
           let parameters = [
             component.addSymbols[i].udlFeed, 
-            String((component.addSymbols[i].strike * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
+            String((parseInt(component.addSymbols[i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
             component.addSymbols[i].maturity, //unix timestamp format
             component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
             Number(component.addSymbols[i].t0), // unix timestamp format
             Number(component.addSymbols[i].t1), //unix timestamp format
-            component.addSymbols[i].x.map(val => String((val * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
-            component.addSymbols[i].y.map(val => String((val * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
+            component.addSymbols[i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
+            component.addSymbols[i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
             [
-              String((component.addSymbols[i].bsStockSpread[0] * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((component.addSymbols[i].bsStockSpread[1] * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
-              String((component.addSymbols[i].bsStockSpread[2] * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
             ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
 
           ];
@@ -341,8 +341,8 @@ export default {
           let parameters = [
             component.setRanges[i].symbol, 
             component.marketOpTypes[component.setRanges[i].op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
-            String((component.setRanges[i].start * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18
-            String((component.setRanges[i].end *  (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))//price * 10 ** 18
+            String((parseInt(component.setRanges[i].start) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18
+            String((parseInt(component.setRanges[i].end) *  (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))//price * 10 ** 18
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
