@@ -174,8 +174,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -188,8 +187,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -213,8 +211,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -257,8 +254,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -271,8 +267,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -285,8 +280,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -299,8 +293,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -332,8 +325,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -395,8 +387,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -409,8 +400,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -423,8 +413,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -437,8 +426,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -451,30 +439,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "depositTokens",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -493,26 +457,6 @@
           "internalType": "uint256",
           "name": "value",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "deadline",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint8",
-          "name": "v",
-          "type": "uint8"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "r",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "s",
-          "type": "bytes32"
         }
       ],
       "name": "depositTokens",
@@ -537,8 +481,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -656,20 +599,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "withdrawTokens",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -759,8 +688,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -779,8 +707,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -828,74 +755,46 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "udlFeed",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "volume",
-          "type": "uint256"
-        },
-        {
-          "internalType": "enum IOptionsExchange.OptionType",
-          "name": "optType",
-          "type": "uint8"
-        },
-        {
-          "internalType": "uint256",
-          "name": "strike",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "maturity",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        }
-      ],
-      "name": "writeOptions",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "_tk",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "udlFeed",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "volume",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "strike",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "maturity",
-          "type": "uint256"
+          "components": [
+            {
+              "internalType": "string[]",
+              "name": "symbols",
+              "type": "string[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "volume",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "isShort",
+              "type": "bool[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "isCovered",
+              "type": "bool[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "poolAddrs",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "paymentTokens",
+              "type": "address[]"
+            }
+          ],
+          "internalType": "struct IOptionsExchange.OpenExposureInputs",
+          "name": "oEi",
+          "type": "tuple"
         },
         {
           "internalType": "address",
@@ -903,14 +802,8 @@
           "type": "address"
         }
       ],
-      "name": "writeCovered",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "_tk",
-          "type": "address"
-        }
-      ],
+      "name": "openExposure",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -987,48 +880,6 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_tk",
-          "type": "address"
-        },
-        {
-          "internalType": "address[]",
-          "name": "owners",
-          "type": "address[]"
-        }
-      ],
-      "name": "liquidateExpired",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_tk",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        }
-      ],
-      "name": "liquidateOptions",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "owner",
           "type": "address"
         }
@@ -1042,8 +893,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1080,8 +930,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1120,8 +969,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1140,8 +988,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1160,8 +1007,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1195,8 +1041,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1215,8 +1060,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1235,8 +1079,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1267,8 +1110,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1309,8 +1151,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1359,8 +1200,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1401,8 +1241,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -1436,8 +1275,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.6.0+commit.26b70077\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"CreateSymbol\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"onwer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"volume\",\"type\":\"uint256\"}],\"name\":\"LiquidateEarly\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"onwer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"volume\",\"type\":\"uint256\"}],\"name\":\"LiquidateExpired\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"WithdrawTokens\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"onwer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"volume\",\"type\":\"uint256\"}],\"name\":\"WriteOptions\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"spender\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"calcCollateral\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"udlFeed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"volume\",\"type\":\"uint256\"},{\"internalType\":\"enum OptionsExchange.OptionType\",\"name\":\"optType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"strike\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maturity\",\"type\":\"uint256\"}],\"name\":\"calcCollateral\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"calcDebt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"debt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"calcExpectedPayout\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"payout\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tk\",\"type\":\"address\"}],\"name\":\"calcIntrinsicValue\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"udlFeed\",\"type\":\"address\"},{\"internalType\":\"enum OptionsExchange.OptionType\",\"name\":\"optType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"strike\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maturity\",\"type\":\"uint256\"}],\"name\":\"calcIntrinsicValue\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"calcSurplus\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_tk\",\"type\":\"address\"}],\"name\":\"cleanUp\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"collateral\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"udlFeed\",\"type\":\"address\"},{\"internalType\":\"enum OptionsExchange.OptionType\",\"name\":\"optType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"strike\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maturity\",\"type\":\"uint256\"}],\"name\":\"createSymbol\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"tk\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"depositTokens\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"depositTokens\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"getBook\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"symbols\",\"type\":\"string\"},{\"internalType\":\"address[]\",\"name\":\"tokens\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"holding\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"written\",\"type\":\"uint256[]\"},{\"internalType\":\"int256[]\",\"name\":\"iv\",\"type\":\"int256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getImplementation\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"udlFeed\",\"type\":\"address\"},{\"internalType\":\"enum OptionsExchange.OptionType\",\"name\":\"optType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"strike\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maturity\",\"type\":\"uint256\"}],\"name\":\"getOptionSymbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"}],\"name\":\"getUnderlyingPrice\",\"outputs\":[{\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract Deployer\",\"name\":\"deployer\",\"type\":\"address\"}],\"name\":\"initializeAndLock\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tk\",\"type\":\"address\"},{\"internalType\":\"address[]\",\"name\":\"owners\",\"type\":\"address[]\"}],\"name\":\"liquidateExpired\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_tk\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"liquidateOptions\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"udlFeed\",\"type\":\"address\"}],\"name\":\"prefetchFeedData\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"udl\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"coll\",\"type\":\"uint256\"}],\"name\":\"release\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"}],\"name\":\"resolveToken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"setCollateral\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferBalance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_tk\",\"type\":\"address\"}],\"name\":\"underlyingBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"volumeBase\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"withdrawTokens\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"udlFeed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"volume\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"strike\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maturity\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"writeCovered\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"_tk\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"udlFeed\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"volume\",\"type\":\"uint256\"},{\"internalType\":\"enum OptionsExchange.OptionType\",\"name\":\"optType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"strike\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maturity\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"writeOptions\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"_tk\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/OptionsExchange.sol\":\"OptionsExchange\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":100},\"remappings\":[]},\"sources\":{\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/deployment/Deployer.sol\":{\"keccak256\":\"0x2db2d473ee077921818379fe9e64e67542ef858f86b40db18eb7184e319ffcd9\",\"urls\":[\"bzz-raw://cb0b6a65eb81f7f064d406f0c227e9c495bbea4520f1a52edbc135bc9521f4b8\",\"dweb:/ipfs/Qmayf4kC1HWoC9f8kmKQ9wako9pok4ucnU19ZyHS6YyJhB\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/deployment/ManagedContract.sol\":{\"keccak256\":\"0x1f0c9ae185aa78f775b13854d74eebc029481ce85647831e24b86f20f1cdf7ee\",\"urls\":[\"bzz-raw://5bfb8eb1cfb018b5c9aa12eaa1eefac52c4d126010fcac88c34c2f0154adb703\",\"dweb:/ipfs/QmYEiXjqaecqAgkZrmnV6yqGrQ6gfHq8DcJJgwGoiUeEeT\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/deployment/Proxy.sol\":{\"keccak256\":\"0x8015052e59dc51f6b27a63c5b4f6006fd505b4d3bd22415934c492b765f720f4\",\"urls\":[\"bzz-raw://d0df6ab99d1dd4762bac86deca35683c1f5e2ca5525b540340c000da9e3762d1\",\"dweb:/ipfs/Qmeqw7eyNQevBSUPC6jqv7R9UsiYQpzgegSRxWHjpsjme3\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/CreditProvider.sol\":{\"keccak256\":\"0x4a8734a4e9a4edfe367bbc1350b0af76395718fce524be5781d7028f34a886f6\",\"urls\":[\"bzz-raw://1b4afebeebc3062c4e028eb68d7f59a786104aec1fefc514bd3e5c5603262b5d\",\"dweb:/ipfs/QmRnnmY8NxDfd3fSCiZMozWhcC4utdsTBSpZ2TNEoxyDF6\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/CreditToken.sol\":{\"keccak256\":\"0x749b618d34a4267a0ba5d5f95e3197e211e4e5c4171a2da7e45ca63bbdbf4773\",\"urls\":[\"bzz-raw://29cac93f7eb08d44e7ccd98a5a91e6f5f7d2fa219715384659500219c9768fe1\",\"dweb:/ipfs/QmSc8HSJW5W6ix4YbBR6dMYPBYTH5Vq7UoNVJY6xrucZVF\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/OptionToken.sol\":{\"keccak256\":\"0x1264f44afbc5cf6a79958a933ca6740b72766cff78f3a91ea3d2da08173f3ab0\",\"urls\":[\"bzz-raw://80cb53757448a8cbdcc601fe39da28c6849ac0a2a7cbe03097b2749817dfe789\",\"dweb:/ipfs/QmTp22dGyzmvTEnPbudHZG8MnVh3fFmQxWka4YTPYWvscJ\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/OptionTokenFactory.sol\":{\"keccak256\":\"0xa4ab2c042588ab27acefe80fac7d71efd3bbe6bb1e2bf80a6e6dbbe3a770fe56\",\"urls\":[\"bzz-raw://666e7b4624b4f20b7e620b0c739b12e3116bcf85ac99b0a7b22191a6613b161e\",\"dweb:/ipfs/QmVp8NXnqdDsWJKUi466guELwmcmUoX1Mwm4jtCuTC7Sa8\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/OptionsExchange.sol\":{\"keccak256\":\"0x1eeac6a0797d17edab5c27139185af9797081a4ef660ef5462fbe8fd7026a700\",\"urls\":[\"bzz-raw://ccc59ebaa0347aaa67e3c2fc131886b6738acfeecfb05820b40e1e18e9ab55c0\",\"dweb:/ipfs/QmQ5CA6SLnu9QMBBhUzbQVabR3K9KXWb9VPZZt7JU4bTLY\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/RedeemableToken.sol\":{\"keccak256\":\"0xa5f864e508ee80a6d9042db8e7a3bbcd0c960c19798f6cf5b74e8c5154259bed\",\"urls\":[\"bzz-raw://9bdaae6b97ca5d997a1ba955d9504a355b8543b5f5080008cc28c9952627d053\",\"dweb:/ipfs/QmfXmKykqPt1qA1mWa2FwPQ1pX7XA9Rm7qdqEcVT7TW6KY\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/finance/UnderlyingVault.sol\":{\"keccak256\":\"0xd8247baa2dd50cc9d415187b221d9ec70a04b2690eef4dae9ef68b5fd6615305\",\"urls\":[\"bzz-raw://93a49a11718b9b5ca05ba791753828e9fd1ed724b703354b95e095df528ca0b7\",\"dweb:/ipfs/QmcixmqDNiba7kNWtYepzMT2jW6jZz7V8otZXWe4jEBtGK\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/governance/GovToken.sol\":{\"keccak256\":\"0x4cf4976da2e7e48103bf17c409d76cfc9827c9d1ae942f7780d41c3333bdc760\",\"urls\":[\"bzz-raw://9f83234b0e318dfb3884401fe63f2e628a92d5e1b038f1374d4839b9c352bc8f\",\"dweb:/ipfs/QmfWJhx2c36T4NqhwVjqNVn1zi7ZDRfLrCHJiDUS65gL8B\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/governance/Proposal.sol\":{\"keccak256\":\"0x35fef579a4614b9f610ee61ea3ad61b283d4160f07240c3eb6c0865588c2735d\",\"urls\":[\"bzz-raw://bbf2f824d1c72e89ce6b1b22aea2eb206b49ed535a0a14d196a97ceeb9c542c6\",\"dweb:/ipfs/QmYNL2Pxm5hZnpvfSTYj1cNuqyUKzkXYc3Zqe3qyEQLXjA\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/governance/ProposalWrapper.sol\":{\"keccak256\":\"0xe491ac859c5672c58bb3b91ab560c6c9d59a503ba81bf2c60a170c182c4df4c8\",\"urls\":[\"bzz-raw://bd04df32addbda7abc79aca73a5a5554f7a2cadea652fe644f32b8dc79f13917\",\"dweb:/ipfs/QmTqCXGYQP5VEywzKCyX8zbDvdyuhFsuvcBJ4AGyGXw4c2\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/governance/ProposalsManager.sol\":{\"keccak256\":\"0x505b52f9671c94d651734d6442be0bdf40141fecc620318c31b963afb0482d1f\",\"urls\":[\"bzz-raw://cfde804a17cd8d9d0a14fabc639b7d6c68b062be9bbc80c80ba86459f0ec802e\",\"dweb:/ipfs/Qmf1p9tq6KmNGGqED7uLJYg7MRDSCtZs4Z9amBvo88YHs1\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/governance/ProtocolSettings.sol\":{\"keccak256\":\"0x40431b1d27edbcf8b66d9709bf47a90e82979742c1a42f1038fdf9b179f334ca\",\"urls\":[\"bzz-raw://8b048aee26ee239c9135f284501035abc3030d586a1aa022ab058395a9aec22a\",\"dweb:/ipfs/QmbZRSKpbwknjft1kwwSYikTuaYhBjM2JWxqx1wkK8N72F\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/interfaces/IERC20.sol\":{\"keccak256\":\"0x58a2b891c52bf94a1591ffe73eb8bfcfc71d100092f0a7f149d3b904c5ed6152\",\"urls\":[\"bzz-raw://a3a7dd1296ca3eb395c66eb3a7350de9249f20b68b14d14b4ac8565464f4b84c\",\"dweb:/ipfs/QmUovuZkeet5Zb58kuAw5yt9iPeP3BsE9DBNezd7UdjrnG\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/interfaces/IERC20Details.sol\":{\"keccak256\":\"0xbdedba8ae9f77b1cbcba7a9612c8bf5deb88ed37b597983535f8ec636cecd552\",\"urls\":[\"bzz-raw://04662713d05e5986d3342971b5c9b878f0cc556cceb66ac800c0ae12e71ede44\",\"dweb:/ipfs/QmWn9SZu6nAY6PvyFWotrKJVyCY7onEZoKoFJ1cpmbzd8M\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/interfaces/IERC20Permit.sol\":{\"keccak256\":\"0x70b6f17f65cdc75213d082639deb6aa392e5339f503391510541dd152ae20834\",\"urls\":[\"bzz-raw://03a0dc70a94a0e7aa9396b8350a0b6d4680d008edd00739f80df6af59f71f767\",\"dweb:/ipfs/QmebUGo5YuySdPDE4h9hnnpA8VpQAbLyRVxEYycieGkTk6\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/interfaces/IUniswapV2Router01.sol\":{\"keccak256\":\"0xa261da250c947ecf01cf347a39e9e454e7804e9afe0c35052f0f976a6ade41c3\",\"urls\":[\"bzz-raw://26c9aaddf1a48a0cfc35149f7f0e6f37aa9f047772e55640b56cd8371e391f0e\",\"dweb:/ipfs/Qmc2uLmBKjiGakCKPPvkRnhQZYyNCQPxcCnK4793JjWqQY\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/interfaces/TimeProvider.sol\":{\"keccak256\":\"0xbce80d93f439034d8e42da7584753def37efcbb06fdf358de30b0a38a794e3fc\",\"urls\":[\"bzz-raw://2043a369ee4bbe94a0d7c0ceb4aa14ae48a415fdcff77da9ed47180b5fbaf237\",\"dweb:/ipfs/QmRF1DsFu2DWRqBAmhupEoue1Gf5QHxHQaKNwUsA68qcrD\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/interfaces/UnderlyingFeed.sol\":{\"keccak256\":\"0x90f7aee496daafcfc50989ff420c743a651a9e8c84ff1bc4e45089a135b76a44\",\"urls\":[\"bzz-raw://30a56e04dd95537408dfb3b2b84a46705437b15bbee1f36a22c96611a8f60ba8\",\"dweb:/ipfs/QmSCXdczFgqt5P7vN2ShmmbBcop4nJiGPw7XnXSRnjZ3WU\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/Address.sol\":{\"keccak256\":\"0x36ade57684f160c2558aa9fe3fd88889abd7ced5dadd8654465857493f997f10\",\"urls\":[\"bzz-raw://35c775ff8a25c5e5915a961d1cd3fc1f5376ee787274acb86c7e09d8d62c7ff2\",\"dweb:/ipfs/QmdGNcQjrEgy5skQnngWFoLnFbdkVoAnUMb49xBvd9w6ey\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/Arrays.sol\":{\"keccak256\":\"0x6ea099778a0aa794ac543213b4a37f91cc1903aabdb8c82140d5e22bd6ea0989\",\"urls\":[\"bzz-raw://4463f6476e1224b6eb8169957a0fb45c4ee888f73e0ede7946f2b0f888c1ab32\",\"dweb:/ipfs/QmP8v2vYZCEYvwPNPfMyjyJkUX7aa2UUJxnrThvtSMLpye\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/ERC20.sol\":{\"keccak256\":\"0x5c84beb862827dbf2793991ce28919767d7131028bb3a4bbf2356342e58f7f39\",\"urls\":[\"bzz-raw://b3504df91c0bfaa8bea4e03a4f2e9260fe7fdc0879773478467be12b4c872b6f\",\"dweb:/ipfs/QmNML8Qbm6r2vLDFiYb5butAxm7qzyCMeqjteFAr8HGorw\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/MoreMath.sol\":{\"keccak256\":\"0x3e16be6474c9c4f26744d010ab59b00c7da106f8e2f09e9bde629e2e914fd6f4\",\"urls\":[\"bzz-raw://37182944e3dd9cac87206fdb8fab63613efea4378649c8a121a777327d20bcbd\",\"dweb:/ipfs/QmV9U9EWY2wQtGrNrQevekPdAqUYKT6MwGYBbZaXk5k6rz\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/SafeCast.sol\":{\"keccak256\":\"0x55f845e6584eb714f8b3c18d222c56c1147fe7a711fe90b692b2599c3fd9a474\",\"urls\":[\"bzz-raw://b7d951545d0856ba483e9aa1bd63309c1bb8de27358cb42551a3ca83380315a4\",\"dweb:/ipfs/QmQDWGFSYiWcVY9WvcrUo3VELLVVfDWAbGw1CL5vPjfZwe\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/SafeERC20.sol\":{\"keccak256\":\"0xb92aec1128f0a1a486d817e1b0a02201357770173b87791fcb9e91d8ff9d548b\",\"urls\":[\"bzz-raw://92e0d3ea5247ea40156f59420c8b2fccb49536b76ad0446d1b18948b8f08efde\",\"dweb:/ipfs/Qmbr4T8DkUcRRZgtmxV8iDAzym1xbuf1vAryFVom8p8bcX\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/SafeMath.sol\":{\"keccak256\":\"0xe67aa16fcdd8fdb0fd04366c4fa45f80ef4b480e1a56b9c5550c88b3ae96be16\",\"urls\":[\"bzz-raw://c5cd3058b5fdcbb44cae9402ce05766d75a28cb0f332a17a66d240cc6415d90e\",\"dweb:/ipfs/QmNexDyZLfwAF4r3ideznwHcDrLnRvyio6TFUvDSMyWfzH\"]},\"/Users/dev/Documents/coding/defioptions/DeFiOptions-contracts/contracts/utils/SignedSafeMath.sol\":{\"keccak256\":\"0x831d07de0bc0932ba364f7638f328ca3ae082fee262289e92e8b63e6439339fc\",\"urls\":[\"bzz-raw://bc27168e739700b8390fe0b8e563657841196a5ad78f321c468221c2903ec5fc\",\"dweb:/ipfs/QmWKDKqokUNfc3QfhMwQ3srSyUG7FUwy2mreE1wszb2mjy\"]}},\"version\":1}",

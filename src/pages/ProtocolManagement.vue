@@ -969,7 +969,7 @@ export default {
       if (component.validateObj(component.setAllowedHedgingManagers)) {
         for(let i=0; i<component.setAllowedHedgingManagers.length; i++) {
           let parameters = [
-            component.setUdlCollateralManagers[i].addr, 
+            component.setAllowedHedgingManagers[i].addr, 
             Number(component.setAllowedHedgingManagers[i].bool)
           ];
           encodedData.push(
