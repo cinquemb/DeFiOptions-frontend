@@ -1,5 +1,6 @@
 import ProposalManagerJSON from "../../contracts/ProposalManager.json";
-import ProposalWrapperJSON from "../../contracts/ProposalWrapper.json";
+import ProtocolReaderJSON from "../../contracts/ProtocolReader.json";
+
 import addresses from "../../contracts/addresses.json";
 
 const ContractName = "ProposalManager";
@@ -39,40 +40,29 @@ const actions = {
     commit("setContract", contract);
   },
 
-  async fetchProposalCount({ commit, dispatch, state}) {
+  async fetchProposalCount({dispatch, state}) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
-
-    // check user's Exchange Balance allowance for the Liquidity Pool contract
-    let proposalCount = parseInt(await state.contract.methods.proposalCount().call());
-    
-    commit("setProposalCount", proposalCount);
-
   },
   async fetchProposals({ commit, dispatch, state, rootState}) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
-
-    
-    if(!state.proposalCount) {
-        dispatch("fetchProposalCount");
-    }
-
     //store a list of proposals with their information: wrapper addr. addr, governance token, vote type, status
     let proposals = [];
 
-    for(let i=1; i<state.proposalCount; i++){
+    let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
+    const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
+    let proposalData = await protocolReaderContract.methods.listProposals().call();
 
-      let web3 = rootState.accounts.web3;
+    for(let i=0; i<proposalData.length; i++){
       let proposal = {wrapperAddr: null, addr: null, govToken: null, voteType: null, status: null};
-      proposal['addr'] = await state.contract.methods.resolveProposal(web3.utils.toBN(i)).call();
-      proposal['wrapperAddr'] = await state.contract.methods.resolve(proposal['addr']).call();
-      let pWrapperContract = new web3.eth.Contract(ProposalWrapperJSON.abi, proposal.wrapperAddr);
-      proposal['govToken'] = await pWrapperContract.methods.getGovernanceToken().call();
-      proposal['voteType'] = await pWrapperContract.methods.getVoteType().call();
-      proposal['status'] = await pWrapperContract.methods.getStatus().call();
+      proposal['addr'] = proposalData[0][i];
+      proposal['wrapperAddr'] = proposalData[1][i];
+      proposal['govToken'] = proposalData[2][i];
+      proposal['voteType'] = proposalData[3][i];
+      proposal['status'] = proposalData[4][i];
       proposals.push(proposal);
     }
 

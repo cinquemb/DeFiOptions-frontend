@@ -136,14 +136,10 @@ const actions = {
     }
 
     commit("setUnderlyingPrice", "N/A");
-    console.log("fetchUnderlyingPrice");
-    
-    try {
-      let underlyingPrice = await state.contract.methods.getUnderlyingPrice(String(data.symbol)).call();
-      console.log(underlyingPrice);
-      
-      let web3 = rootState.accounts.web3;
 
+    try {
+      let underlyingPrice = await state.contract.methods.getUnderlyingPrice(String(data.symbol)).call();      
+      let web3 = rootState.accounts.web3;
       let underlyingPriceBig = Math.round(web3.utils.fromWei(Number(underlyingPrice).toString(16), "ether")*100)/100;
       commit("setUnderlyingPrice", underlyingPriceBig);
     } catch {
@@ -165,7 +161,7 @@ const actions = {
       commit("setOptionTokenAddress", "N/A");
     }
   },
-  async fetchLiquidityPools({ commit, dispatch, state }) {
+  async fetchLiquidityPools({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
     }
@@ -173,9 +169,9 @@ const actions = {
     let poolSymbolsAddrsMap = {};
     let exchangePools = [];
 
-    let protocolReaderAddr = addresses["ProtocolReader"][parseInt(this.getChainId)];
-    const protocolReaderContract = await new this.getWeb3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
-    let poolData = await protocolReaderContract.methods.listPoolsData(this.getActiveAccount).call();
+    let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
+    const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
+    let poolData = await protocolReaderContract.methods.listPoolsData(rootState.accounts.activeAccount).call();
     for (var i=0; i < poolData[0].length; i++) {
         let pSym = poolData[0][i];
         let poolAddr = poolData[1][i];
