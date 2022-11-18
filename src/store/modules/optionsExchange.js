@@ -79,7 +79,7 @@ const actions = {
     }
 
     let chainIdDec = parseInt(rootState.accounts.chainId);
-    let spender = addresses["LinearLiquidityPool"][chainIdDec];
+    let spender = rootState.liquidityPool.selectedPoolAddress;
     let owner = rootState.accounts.activeAccount;
 
     // check user's Exchange Balance allowance for the Liquidity Pool contract
@@ -140,6 +140,7 @@ const actions = {
     
     try {
       let underlyingPrice = await state.contract.methods.getUnderlyingPrice(String(data.symbol)).call();
+      console.log(underlyingPrice);
       
       let web3 = rootState.accounts.web3;
 
