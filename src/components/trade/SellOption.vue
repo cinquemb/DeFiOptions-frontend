@@ -695,16 +695,26 @@ export default {
       // get options size in wei
       const optionSizeWei = this.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether");
 
+      console.log([
+            [component.option.symbol],//string[] symbols;
+            [optionSizeWei],//uint[] volume;
+            [1],//bool[] isShort; 1 is true 0 is false
+            [1],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
+            [component.getLiquidityPoolAddress],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
+          ]);
+
+
       // write covered option transaction
       try {
         await component.getOptionsExchangeContract.methods.openExposure(
           [
-            [this.option.symbol],//string[] symbols;
-            [component.getWeb3.utils.toBN(optionSizeWei)],//uint[] volume;
+            [component.option.symbol],//string[] symbols;
+            [optionSizeWei],//uint[] volume;
             [1],//bool[] isShort; 1 is true 0 is false
             [1],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
-            [component.getLiquidityPoolContract.address],//address[] poolAddrs;
-            ["0x0000000000000000000000000000000000000000"],//address[] paymentTokens; only needed for buying options
+            [component.getLiquidityPoolAddress],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
           ],
           component.getActiveAccount
         ).send({
@@ -752,12 +762,12 @@ export default {
       try {
         await component.getOptionsExchangeContract.methods.openExposure(
           [
-            [this.option.symbol],//string[] symbols;
-            [component.getWeb3.utils.toBN(optionSizeWei)],//uint[] volume;
+            [component.option.symbol],//string[] symbols;
+            [optionSizeWei],//uint[] volume;
             [1],//bool[] isShort; 1 is true 0 is false
             [0],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
-            [component.getLiquidityPoolContract.address],//address[] poolAddrs;
-            ["0x0000000000000000000000000000000000000000"],//address[] paymentTokens; only needed for buying options
+            [component.getLiquidityPoolAddress],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
           ],
           component.getActiveAccount
         ).send({
