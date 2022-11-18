@@ -78,7 +78,6 @@ const actions = {
       dispatch("fetchContract");
     }
 
-    let chainIdDec = parseInt(rootState.accounts.chainId);
     let spender = rootState.liquidityPool.selectedPoolAddress;
     let owner = rootState.accounts.activeAccount;
 
@@ -137,6 +136,7 @@ const actions = {
     }
 
     commit("setUnderlyingPrice", "N/A");
+    console.log("fetchUnderlyingPrice");
     
     try {
       let underlyingPrice = await state.contract.methods.getUnderlyingPrice(String(data.symbol)).call();

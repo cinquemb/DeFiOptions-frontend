@@ -457,7 +457,7 @@ export default {
     },
 
     async setSellData() {
-      const result = await this.getLiquidityPoolContract.methods.querySell(this.option.symbol).call();
+      const result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 0).call();
 
       if (result) {
         this.selectedOptionPrice = this.getWeb3.utils.fromWei(String(result.price), "ether"); //* (1 + (this.slippage/100));

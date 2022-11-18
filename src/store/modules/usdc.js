@@ -55,7 +55,6 @@ const actions = {
     }
 
     let userAddress = rootState.accounts.activeAccount;
-    let chainIdDec = parseInt(rootState.accounts.chainId);
     let lpAddress = rootState.liquidityPool.selectedPoolAddress;
 
     let allowanceWei = await state.contract.methods.allowance(userAddress, lpAddress).call();

@@ -115,7 +115,7 @@ export default {
       // fetch option price
       console.log(this.option.symbol);
       let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 1).call();
-      let resultSell = await this.getLiquidityPoolContract.methods.querySell(this.option.symbol, 0).call();
+      let resultSell = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 0).call();
       
       if (result) {
         this.optionPrice = this.getWeb3.utils.fromWei(result.price, "ether") * (1 + (this.slippage/100));

@@ -393,7 +393,7 @@ export default {
 
     async getOptionPrice() {
       // fetch option price
-      let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol).call();
+      let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 1).call();
       
       if (result) {
         
@@ -413,7 +413,7 @@ export default {
       this.optionPriceFormatted = "loading";
       this.selectedOptionVolume = null;
       // fetch option price and volume
-      let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol).call();
+      let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 1).call();
       
       if (result) {
         this.optionPrice = this.getWeb3.utils.fromWei(result.price, "ether") * (1 + (this.slippage/100));

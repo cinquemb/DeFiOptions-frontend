@@ -956,8 +956,8 @@ export default {
       if (component.validateObj(component.setUdlCollateralManagers)) {
         for(let i=0; i<component.setUdlCollateralManagers.length; i++) {
           let parameters = [
-            component.setUdlCollateralManagers[i].addr, 
-            Number(component.setUdlCollateralManagers[i].bool)
+            component.setUdlCollateralManagers[i].value1, 
+            component.setUdlCollateralManagers[i].value2, 
           ];
           encodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(setUdlCollateralManagerABI, parameters)
