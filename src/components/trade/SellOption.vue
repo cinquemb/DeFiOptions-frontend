@@ -94,13 +94,6 @@
       </div>
       <!-- <div></div> -->
 
-      <div class="p-2">
-        <button v-if="!isEnoughAllowance" @click="approveAllowanceOption" class="btn btn-success form-control" :disabled="isOptionSizeNotValid.status">
-          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Approve the sell (${{getTotal.toFixed(2)}})
-        </button>
-      </div>
-
       <div class="p-2"  v-if="(!getCoveredType) && (!isBuyWithExchangeBalance)">
         <button @click="depositCollateral" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status || isEnoughAllowance) || (writingStepTx < 1)">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
