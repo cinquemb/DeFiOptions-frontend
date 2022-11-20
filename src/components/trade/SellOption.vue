@@ -79,7 +79,7 @@
      <!-- write to open and sell option -->
     <div class="d-flex flex-row" v-if="!getSellType">
       <div class="p-2" v-if="(!getCoveredType) && (!isBuyWithExchangeBalance)">
-        <button @click="approveStablecoinCollateralDeposit" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status || isEnoughAllowance) || (writingStepTx > 0)">
+        <button @click="approveStablecoinCollateralDeposit" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status || isEnoughAllowance)">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Approve {{buyWith}}
         </button>
@@ -105,7 +105,7 @@
       <div class="p-2" v-if="!getCoveredType">
         <button @click="writeOptions" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || ((writingStepTx < 2) && (!isBuyWithExchangeBalance))">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Write Options
+          Write Naked and Sell for ${{getTotal.toFixed(2)}}
         </button>
       </div>
       <!-- <div></div> -->
@@ -207,7 +207,7 @@ export default {
     },
     
     getMaxOptionSize() {
-      let availableOptionVolume = Math.floor(Number(this.selectedOptionVolume*1000))/1000;
+      let availableOptionVolume = Math.floor(Number(this.selectedOptionVolume*1000000000000))/1000000000000;
       let optionPriceSell = Number(this.optionPriceSell);
       let maxTotal = availableOptionVolume * optionPriceSell;
 
@@ -526,6 +526,8 @@ export default {
         Number(this.option.timestamp), // maturity of option in utc
       ).call();
 
+      console.log((collateralNeeded * 1.0025) / 10**18);
+
       this.collateralNeededRaw = (collateralNeeded * 1.0025) / 10**18; //estimate higher just in case
     },
 
@@ -723,7 +725,7 @@ export default {
           maxFeePerGas: null
         }).on('transactionHash', function(hash){
           console.log("tx hash: " + hash);
-          component.$toast.info("The writeCovered transaction has been submitted. Please wait for it to be confirmed.");
+          component.$toast.info("The openExposure (covered) transaction has been submitted. Please wait for it to be confirmed.");
 
         }).on('receipt', function(receipt){
           console.log(receipt);
@@ -776,7 +778,7 @@ export default {
           maxFeePerGas: null
         }).on('transactionHash', function(hash){
           console.log("tx hash: " + hash);
-          component.$toast.info("The writeOptions transaction has been submitted. Please wait for it to be confirmed.");
+          component.$toast.info("The openExposure (naked) transaction has been submitted. Please wait for it to be confirmed.");
 
         }).on('receipt', function(receipt){
           console.log(receipt);
