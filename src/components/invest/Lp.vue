@@ -7,7 +7,7 @@
     <!-- Pool data -->
     <div class="div-flex justify-content-center flex-wrap">
       <LpDataItem class="data-item" title="Symbol" :data="pool.symbol" :divider="true" />
-      <LpDataItem class="data-item" title="Address" :data="formatAddress" :divider="true" />
+      <LpDataItem class="data-item" title="Address" :data="formatAddress" :divider="true" :info="formatAddressInfo" />
     </div>
 
     <!-- Action button -->
@@ -62,6 +62,10 @@ export default {
     formatAddress () {
       return this.pool.address.substring(0, 6) + '...' + this.pool.address.substring(38, 42)
     }, 
+
+    formatAddressInfo () {
+      return "Pool Address (copy to clipboard when selecting pool)"
+    }, 
   },
 
   methods: {
@@ -83,9 +87,16 @@ export default {
 
 
       this.$store.commit("liquidityPool/setSelectedPoolAddress", this.pool.address);
+      this.copyPoolAddr();
 
+    },
+    async copyPoolAddr() {
+      try {
+        await navigator.clipboard.writeText(this.$store.state.liquidityPool["selectedPoolAddress"]);
+        let msg = "Copied Pool Address (" + this.$store.state.liquidityPool["selectedPoolAddress"] + ") to clipboard";
+        this.$toast.success(msg);
+      } catch($e) {console.log("fail copy")}
     }
-
   }
 }
 </script>
