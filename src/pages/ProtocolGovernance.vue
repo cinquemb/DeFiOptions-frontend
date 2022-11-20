@@ -39,7 +39,6 @@ export default {
     filteredCurrentPoolProposals() {
       let filtered = [];
       for (let proposal of this.getProposals) {
-        console.log(proposal)
         if (proposal.govToken == this.getDODAddress) {
           filtered.push(proposal);
         }

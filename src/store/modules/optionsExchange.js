@@ -172,17 +172,19 @@ const actions = {
     let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
     const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
     let poolData = await protocolReaderContract.methods.listPoolsData(rootState.accounts.activeAccount).call();
-    for (var i=0; i < poolData[0].length; i++) {
-        let pSym = poolData[0][i];
-        let poolAddr = poolData[1][i];
+    if (poolData.length > 0){
+      for (var i=0; i < poolData[0].length; i++) {
+          let pSym = poolData[0][i];
+          let poolAddr = poolData[1][i];
 
-        poolSymbolsAddrsMap[pSym] = poolAddr;
-        poolSymbols.push(pSym);
-        let symbol = poolSymbols[i];
-        let address = poolSymbolsAddrsMap[symbol];
-        // option object
-        let poolObject = {symbol, address};
-        exchangePools.push(poolObject);
+          poolSymbolsAddrsMap[pSym] = poolAddr;
+          poolSymbols.push(pSym);
+          let symbol = poolSymbols[i];
+          let address = poolSymbolsAddrsMap[symbol];
+          // option object
+          let poolObject = {symbol, address};
+          exchangePools.push(poolObject);
+      }
     }
     commit("setPoolSymbols", poolSymbols);
     commit("setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);

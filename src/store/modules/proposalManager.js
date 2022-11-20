@@ -56,14 +56,16 @@ const actions = {
     const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
     let proposalData = await protocolReaderContract.methods.listProposals().call();
 
-    for(let i=0; i<proposalData.length; i++){
-      let proposal = {wrapperAddr: null, addr: null, govToken: null, voteType: null, status: null};
-      proposal['addr'] = proposalData[0][i];
-      proposal['wrapperAddr'] = proposalData[1][i];
-      proposal['govToken'] = proposalData[2][i];
-      proposal['voteType'] = proposalData[3][i];
-      proposal['status'] = proposalData[4][i];
-      proposals.push(proposal);
+    if(proposalData.length > 0) {
+      for(let i=0; i<proposalData[0].length; i++){
+        let proposal = {wrapperAddr: null, addr: null, govToken: null, voteType: null, status: null};
+        proposal['addr'] = proposalData[0][i];
+        proposal['wrapperAddr'] = proposalData[1][i];
+        proposal['govToken'] = proposalData[2][i];
+        proposal['voteType'] = proposalData[3][i];
+        proposal['status'] = proposalData[4][i];
+        proposals.push(proposal);
+      }
     }
 
     commit("setProposals", proposals);

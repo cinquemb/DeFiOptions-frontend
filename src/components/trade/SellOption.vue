@@ -255,7 +255,7 @@ export default {
     isOptionSizeNotValid() { // validation for option size
       // option size bigger than volume.
       if (Number(this.selectedOptionSize) > Number(this.selectedOptionVolume)) {
-        return {status: true, message: "Must not be bigger than " + Math.floor(Number(this.selectedOptionVolume*1000))/1000 + "!"};
+        return {status: true, message: "Must not be bigger than " + Math.floor(Number(this.selectedOptionVolume*1000000000000))/1000000000000 + "!"};
       }
 
       if (Number(this.selectedOptionSize) > Number(this.getMaxOptionSize)) {

@@ -91,50 +91,51 @@ export default {
 
       let poolData = await protocolReaderContract.methods.listPoolsData(this.getActiveAccount).call();
 
-      for (var i=0; i < poolData[0].length; i++) {
-          let pSym = poolData[0][i];
-          let poolAddr = poolData[1][i];
-          let poolApy = poolData[2][i];
-          let poolBalance = poolData[3][i];
-          let poolFreeBalance = poolData[4][i];
-          let userPoolBalance = poolData[5][i];
-          let userPoolUsdValue = poolData[6][i];
-          let poolMaturityDate = poolData[7][i];
-          let poolWithdrawalFee = poolData[8][i];
-          let poolSymbolList = poolData[9][i];
+      if (poolData.length > 0){
+        for (var i=0; i < poolData[0].length; i++) {
+            let pSym = poolData[0][i];
+            let poolAddr = poolData[1][i];
+            let poolApy = poolData[2][i];
+            let poolBalance = poolData[3][i];
+            let poolFreeBalance = poolData[4][i];
+            let userPoolBalance = poolData[5][i];
+            let userPoolUsdValue = poolData[6][i];
+            let poolMaturityDate = poolData[7][i];
+            let poolWithdrawalFee = poolData[8][i];
+            let poolSymbolList = poolData[9][i];
 
-          let tmpPoolData = {
-            "poolApy": poolApy,
-            "poolBalance": poolBalance,
-            "poolFreeBalance": poolFreeBalance,
-            "userPoolBalance": userPoolBalance,
-            "userPoolUsdValue": userPoolUsdValue,
-            "poolMaturityDate": poolMaturityDate,
-            "poolWithdrawalFee": poolWithdrawalFee,
-            "poolSymbolList": poolSymbolList
-          };
-          poolSymbolsAddrsMap[pSym] = poolAddr;
-          poolSymbols.push(pSym);
-          let symbol = poolSymbols[i];
-          let address = poolSymbolsAddrsMap[symbol];
-          // option object
-          let poolObject = {symbol, address};
-          exchangePools.push(poolObject);
+            let tmpPoolData = {
+              "poolApy": poolApy,
+              "poolBalance": poolBalance,
+              "poolFreeBalance": poolFreeBalance,
+              "userPoolBalance": userPoolBalance,
+              "userPoolUsdValue": userPoolUsdValue,
+              "poolMaturityDate": poolMaturityDate,
+              "poolWithdrawalFee": poolWithdrawalFee,
+              "poolSymbolList": poolSymbolList
+            };
+            poolSymbolsAddrsMap[pSym] = poolAddr;
+            poolSymbols.push(pSym);
+            let symbol = poolSymbols[i];
+            let address = poolSymbolsAddrsMap[symbol];
+            // option object
+            let poolObject = {symbol, address};
+            exchangePools.push(poolObject);
 
 
 
-          for(let lKey in this.$store.state.liquidityPool) {
-            let tKey = lKey;
-            if(typeof this.$store.state.liquidityPool[tKey] === 'object') {
-              if (!(poolAddr in this.$store.state.liquidityPool[tKey])) {
-                this.$store.state.liquidityPool[tKey][poolAddr] = null;
+            for(let lKey in this.$store.state.liquidityPool) {
+              let tKey = lKey;
+              if(typeof this.$store.state.liquidityPool[tKey] === 'object') {
+                if (!(poolAddr in this.$store.state.liquidityPool[tKey])) {
+                  this.$store.state.liquidityPool[tKey][poolAddr] = null;
+                }
               }
             }
-          }
-          //hack because that commit shit doesn't work
-          this.$store.state.liquidityPool["pool"][poolAddr] = tmpPoolData;
+            //hack because that commit shit doesn't work
+            this.$store.state.liquidityPool["pool"][poolAddr] = tmpPoolData;
+        }
       }
-
       this.$store.commit("optionsExchange/setPoolSymbols", poolSymbols);
       this.$store.commit("optionsExchange/setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
       this.$store.commit("optionsExchange/setExchangeLiquidityPools", exchangePools);
