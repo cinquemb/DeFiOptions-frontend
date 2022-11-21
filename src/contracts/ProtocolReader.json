@@ -102,6 +102,11 @@
               "internalType": "enum IProposalWrapper.Status[]",
               "name": "status",
               "type": "uint8[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "isActive",
+              "type": "bool[]"
             }
           ],
           "internalType": "struct IProtocolReader.proposalData",

@@ -64,6 +64,7 @@ const actions = {
         proposal['govToken'] = proposalData[2][i];
         proposal['voteType'] = proposalData[3][i];
         proposal['status'] = proposalData[4][i];
+        proposal['isActive'] = proposalData[5][i];
         proposals.push(proposal);
       }
     }

@@ -11,6 +11,7 @@
       <LpProposalItem class="data-item" title="Wrapper Address" :data="formatWrapperAddress" :divider="true" />
       <LpProposalItem class="data-item" title="Address" :data="formatAddress" :divider="true" />
       <LpProposalItem class="data-item" title="Status" :data="formatStatus" :divider="true" />
+      <LpProposalItem class="data-item" title="Active" :data="formatActive" :divider="true" />
     </div>
 
      <!-- Action button -->
@@ -80,7 +81,10 @@ export default {
       return this.proposal.wrapperAddr.substring(0, 6) + '...' + this.proposal.wrapperAddr.substring(38, 42)
     },
     isClosable () {
-      return this.proposal.status == "1";
+      return ((this.proposal.status == "1") && (this.proposal.isActive == "1"));
+    },
+    formatActive() {
+      return (this.proposal.isActive == "1") ? "Active" : "Inactive";
     },
     formatStatus (){
       //    enum Status { PENDING, OPEN, APPROVED, REJECTED }
