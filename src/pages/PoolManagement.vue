@@ -24,7 +24,7 @@
         <span></span>
         <button @click="transferTokensToCreditProvider" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Settle Hedging Manager Token Balance
+          Settle Hedging Manager Token Balance (Total Stablecoins Holding: ${{ totalStableBalance }})
         </button>
       </div>
     </div>
@@ -135,12 +135,17 @@ import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
 import BaseHedgingManagerJSON from "../contracts/BaseHedgingManager.json";
 import MetavaultHedgingManagerFactoryJSON from "../contracts/MetavaultHedgingManagerFactory.json";
+import ChainlinkContractJson from "../contracts/ChainlinkFeed.json";
 import addresses from "../contracts/addresses.json";
 
 export default {
   name: 'PoolManagement',
   data() {
     return {
+      pairs: {},
+      totalStableBalance: null,
+      idealExpo: {},
+      realExpo: {},
       optTypes: {
         "CALL" : 0,
         "PUT": 1
@@ -179,7 +184,7 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress"]),
+    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract"]),
 
     isHedgingManagerReady(){
@@ -216,6 +221,11 @@ export default {
     this.$store.dispatch("creditToken/fetchUserBalance");
     this.$store.dispatch("accounts/fetchActiveBalance");
     this.setHedgingManagerAddr();
+    this.totalTokenStock();
+    this.pairs = Object.keys(this.getSymbolsListJson);
+    this.idealHedgeExposure();
+    this.realHedgeExposure();
+
   },
 
   methods: {
@@ -553,7 +563,12 @@ export default {
       let component = this;
 
       const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
-
+      if(hedgingManagerAddr != null) {
+        return false;
+      }
+      if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
+        return false;
+      }
       const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
       hedgingManagerContract.methods.balanceExposure().send({
@@ -586,7 +601,12 @@ export default {
 
 
         const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
-
+        if(hedgingManagerAddr != null) {
+          return false;
+        }
+        if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
+          return false;
+        }
         const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
         hedgingManagerContract.methods.transferTokensToCreditProvider(
@@ -613,6 +633,79 @@ export default {
           component.$toast.error("There has been an error. Please contact the DeFi Options support.");
         });
       }
+    },
+    async idealHedgeExposure() {
+      //function idealHedgeExposure(address underlying) virtual override public view returns (int256);
+
+      let component = this;
+      //TODO: display in ui
+      //TODO: ADD TO READER
+
+      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
+      if(hedgingManagerAddr != null) {
+        return false;
+      }
+      if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
+        return false;
+      }
+      const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
+
+      this.idealExpo = await hedgingManagerContract.methods.idealHedgeExposure().call();
+
+      for (let pair in component.pairs){
+          let priceFeedType = pair;
+
+          let feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
+          let feedContract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, feedAddress);
+          let underlyingAddr = await feedContract.methods.getUnderlyingAddr().call();
+          this.ideal[feedAddress] = await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call();
+      }   
+
+
+    },
+    async realHedgeExposure() {
+      //function realHedgeExposure(address udlFeedAddr) virtual override public view returns (int256);
+
+      let component = this;
+      //TODO: display in ui
+      //TODO: ADD TO READER
+
+
+      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
+      if(hedgingManagerAddr != null) {
+        return false;
+      }
+      if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
+        return false;
+      }
+
+      const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
+
+
+      for (let pair in component.pairs){
+          let priceFeedType = pair;
+
+          let feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
+          this.realExpo[feedAddress] = await hedgingManagerContract.methods.realHedgeExposure(feedAddress).call();
+      }
+    },
+    async totalTokenStock() {
+     // function totalTokenStock() virtual override public view returns (uint v);
+
+      let component = this;
+      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
+      
+      if(hedgingManagerAddr != null) {
+        return false;
+      }
+      if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
+        return false;
+      }
+
+      const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
+
+      this.totalStableBalance = (await hedgingManagerContract.methods.totalTokenStock().call()) / 10 **18;
+
     }
   }
 }
