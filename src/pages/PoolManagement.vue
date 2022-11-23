@@ -186,21 +186,6 @@ export default {
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract"]),
-
-    isHedgingManagerReady(){
-
-      if(this.setParams.hedgingManagerAddress != null) {
-        return false;
-      }
-
-      if(this.setParams.hedgingManagerAddress === "0x0000000000000000000000000000000000000000") {
-        return false;
-      }
-      
-
-      return true;
-
-    },
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -292,6 +277,20 @@ export default {
       }
 
       return true;
+    },
+    isHedgingManagerReady(){
+
+      if(this.setParams.hedgingManagerAddress != null) {
+        return false;
+      }
+
+      if(this.setParams.hedgingManagerAddress === "0x0000000000000000000000000000000000000000") {
+        return false;
+      }
+      
+
+      return true;
+
     },
     async setHedgingManagerAddr() {
       const hedgingManagerAddr = await this.getLiquidityPoolContract.methods.getHedgingManager().call();
