@@ -3,7 +3,12 @@ npm run build; cd dist/; git init; git add -A; git commit -m "deployment to GH P
 
 
 LINK/USD-EP-24e18-1643356800
-		
+		- issues
+			- when hedginign manager set for pool, cannot trade
+				- naked sell
+				- covered sell
+				- buy
+
 		- toggle pools
 			- debug to make sure that related pool values are being added
 				- make sure pool data is entering the state
@@ -11,30 +16,9 @@ LINK/USD-EP-24e18-1643356800
 				- other pool stats?
 
 		- manage pool
-			- governance related functions
-				- add options
-					- debug
 
-				- add ranges
-					- debug
-
-			- non governance function executions
-				- balanceExposure button
-				- create options
-					- debug
-						- requires working pricefeed of data?
-				- remove symbol
-					- debug
-						- requires working pricefeed of data?
-				- create a bulk helper?
-					- PoolManagementHelper
-						- bulkRemove
-						- bulkCreateOption (how much gas would x amount cost?)
-
-			- validation and formatting of proper inputs
-			
-			- have buttons that properly format the input for as many fields as possible?
-				- user friendly display of input values
+			- show balance of tokens in hedging manager contract (next to settle hedging manager balance)
+			- show pool ideal delta and realized delta (next to rebalance hedge)
 
 		- pool governance
 			- show what will be executed?
@@ -45,28 +29,13 @@ LINK/USD-EP-24e18-1643356800
 			- show what will be executed?
 			- other proposal data?
 
-		
-		- add incentivized functions
-			- debug 
 
-		- withdraw tokens
-			- debug
-		
-		- hedgeExposure and transferTokensToCreditProvider function in pool manangerment
-			- debug
-
-		- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]
-
-		- list underlying feeds [later]
-			- pull from government proposals?
-
+		- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]			
 		- contract viewers helper
-			- Reader
-				- udl feed addrs
-				- symbol addrs
-				- gov proposals
-					- pool filter
-					- protocol filter 
+			- Reader		
+				- udl feed addrs?
+					- pull from government proposals?
+					- pull from JSON
 
 
 https://wiki.polygon.technology/docs/zkEVM/develop/
