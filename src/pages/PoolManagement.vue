@@ -35,6 +35,8 @@
 
     <div class="section-big row mt-4 mx-3" v-if="isHedgingManagerReady">
       <div class="col-md-12">
+        <SetAddress :data="BalanceExposure" />
+        <span></span>
         <button @click="balanceExposure" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Manually Balance Pool Options Exposure (ideal:{{this.idealExpo}}, current: {{this.realExpo}}
@@ -162,6 +164,10 @@ export default {
       TransferTokensToCreditProvider: {
         addr: null,
         desc: "If there are tokens in hedging contract left over from hedging, this will pay them back to the DAO (token address)"
+      },
+      BalanceExposure: {
+        addr: null,
+        desc: "Manually Hedge Pool for UnderlyingFeed Exposure"
       },
       loading: false,
       setParams: { //gov
@@ -571,37 +577,42 @@ export default {
     async balanceExposure() {
       let component = this;
 
-      const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
-      if(hedgingManagerAddr === null) {
-        return false;
-      }
-      if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
-        return false;
-      }
-      const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
+      if (component.validateAddr(component.BalanceExposure)) {
+        component.loading = true;
 
-      hedgingManagerContract.methods.balanceExposure(
-      ).send({
-        from: component.getActiveAccount,
-        maxPriorityFeePerGas: null,
-        maxFeePerGas: null
-      }).on('transactionHash', function(hash){
-        console.log("tx hash: " + hash);
-        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
-      }).on('receipt', function(receipt){
-        console.log(receipt);
-        if (receipt.status) {
-          component.$toast.success("Manual Balancing Pool Exposure Initiated");
-        } else {
-          component.$toast.error("The balanceExposure tx has failed. Please contact the DeFi Options support.");
+        const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
+        if(hedgingManagerAddr === null) {
+          return false;
         }
-        component.loading = false;
+        if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
+          return false;
+        }
+        const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
-      }).on('error', function(error){
-        console.log(error);
-        component.loading = false;
-        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
-      });
+        hedgingManagerContract.methods.balanceExposure(
+          component.BalanceExposure.addr
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            component.$toast.success("Manual Balancing Pool Exposure Initiated");
+          } else {
+            component.$toast.error("The balanceExposure tx has failed. Please contact the DeFi Options support.");
+          }
+          component.loading = false;
+
+        }).on('error', function(error){
+          console.log(error);
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      }
 
     },
     async transferTokensToCreditProvider() {
