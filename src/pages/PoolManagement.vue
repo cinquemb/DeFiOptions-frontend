@@ -49,9 +49,11 @@
     </div>
     <div class="section-big row mt-4 mx-3" v-if="isHedgingManagerReady">
       <div class="col-md-12">
-        ideal:{{this.idealExpo}}
+        <h3>Ideal Exposure</h3>
+        {{this.idealExpo}}
         <span></span>
-        current: {{this.realExpo}}
+        <h3>Curent Exposure</h3>
+        {{this.realExpo}}
       </div>
     </div>
 
