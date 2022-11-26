@@ -678,7 +678,7 @@ export default {
           let feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
           let feedContract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, feedAddress);
           let underlyingAddr = await feedContract.methods.getUnderlyingAddr().call();
-          this.idealExpo[feedAddress] = await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call();
+          this.idealExpo[feedAddress] = (await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call())  / 10 **18;
       }   
 
 
@@ -687,7 +687,6 @@ export default {
       //function realHedgeExposure(address udlFeedAddr) virtual override public view returns (int256);
 
       let component = this;
-      //TODO: display in ui
       //TODO: ADD TO READER
 
 
@@ -706,7 +705,7 @@ export default {
           let priceFeedType = pair;
 
           let feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
-          this.realExpo[feedAddress] = await hedgingManagerContract.methods.realHedgeExposure(feedAddress).call();
+          this.realExpo[feedAddress] = (await hedgingManagerContract.methods.realHedgeExposure(feedAddress).call())  / 10 **18;
       }
     },
     async totalTokenStock() {
