@@ -37,7 +37,7 @@
         Redeem
       </button>
       
-      <button v-if="isOptionExpired(option) && intrinsicValue == 0" class="btn btn-danger" disabled>Expired</button>
+      <button v-if="isOptionExpired(option) && intrinsicValue == 0" class="btn btn-danger" @click="copyOptionAddr">Expired</button>
 
       <button @click="liquidateOptions" v-if="isOptionExpired(option) && (this.option.written > this.option.holding)" class="btn btn-outline-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -209,6 +209,15 @@ export default {
   },
 
   methods: {
+
+    async copyOptionAddr() {
+      try {
+        await navigator.clipboard.writeText(this.option.address);
+        let msg = "Copied Option Address (" + this.option.address + ") to clipboard";
+        this.$toast.success(msg);
+      } catch($e) {console.log("fail copy")}
+    },
+
     // approve allowance to sell an option
     async approveAllowance() {
       let component = this;

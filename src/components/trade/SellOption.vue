@@ -254,13 +254,13 @@ export default {
 
     isOptionSizeNotValid() { // validation for option size
       // option size bigger than volume.
-      if (Number(this.selectedOptionSize) > Number(this.selectedOptionVolume)) {
+      /*if (Number(this.selectedOptionSize) > Number(this.selectedOptionVolume)) {
         return {status: true, message: "Must not be bigger than " + Math.floor(Number(this.selectedOptionVolume*1000000000000))/1000000000000 + "!"};
-      }
+      }*/
 
-      if (Number(this.selectedOptionSize) > Number(this.getMaxOptionSize)) {
+      /*if (Number(this.selectedOptionSize) > Number(this.getMaxOptionSize)) {
         return {status: true, message: "Too big!"};
-      }
+      }*/
 
       // too many digits
       if (String(this.selectedOptionSize).length > 14) {

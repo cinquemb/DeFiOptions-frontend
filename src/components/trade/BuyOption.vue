@@ -213,9 +213,9 @@ export default {
 
     isOptionSizeNotValid() { // validation for option size
       // option size bigger than volume.
-      if (Number(this.selectedOptionSize) > Number(this.selectedOptionVolume)) {
+      /*if (Number(this.selectedOptionSize) > Number(this.selectedOptionVolume)) {
         return {status: true, message: "Must not be bigger than " + Math.floor(Number(this.selectedOptionVolume*1000))/1000 + "!"};
-      }
+      }*/
       // too many digits
       if (String(this.selectedOptionSize).length > 14) {
         return {status: true, message: "Please reduce the number of digits."};
@@ -418,7 +418,7 @@ export default {
       if (result) {
         this.optionPrice = this.getWeb3.utils.fromWei(result.price, "ether") * (1 + (this.slippage/100));
         this.optionPriceFormatted = "$" + Number(this.optionPrice).toFixed(2);
-        this.selectedOptionVolume = this.getWeb3.utils.fromWei(result.volume, "ether");
+        this.selectedOptionVolume = this.getWeb3.utils.fromWei(result.volume, "ether") * (10 ** 9);
         if (this.selectedOptionVolume < 0.001) {
           this.tooLowVolume = true;
         }

@@ -37,7 +37,11 @@
       <div class="col-md-12">
         <button @click="balanceExposure" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Manually Balance Pool Options Exposure
+          Manually Balance Pool Options Exposure (ideal:{{this.idealExpo}}, current: {{this.realExpo}}
+        </button>
+        <button @click="syncHedgingManagerStats" class="btn btn-success">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Update Hedging Manager Stats
         </button>
       </div>
     </div>
@@ -208,9 +212,6 @@ export default {
     this.setHedgingManagerAddr();
     this.totalTokenStock();
     this.pairs = Object.keys(this.getSymbolsListJson);
-    this.idealHedgeExposure();
-    this.realHedgeExposure();
-
   },
 
   methods: {
@@ -558,11 +559,20 @@ export default {
         
 
     },
+    async syncHedgingManagerStats(){
+      this.loading = true;
+
+      await this.idealHedgeExposure();
+      await this.realHedgeExposure();
+
+      this.loading = false;
+
+    },
     async balanceExposure() {
       let component = this;
 
-      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
-      if(hedgingManagerAddr != null) {
+      const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
+      if(hedgingManagerAddr === null) {
         return false;
       }
       if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
@@ -570,7 +580,8 @@ export default {
       }
       const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
-      hedgingManagerContract.methods.balanceExposure().send({
+      hedgingManagerContract.methods.balanceExposure(
+      ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
@@ -599,8 +610,8 @@ export default {
         component.loading = true;
 
 
-        const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
-        if(hedgingManagerAddr != null) {
+        const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
+        if(hedgingManagerAddr === null) {
           return false;
         }
         if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
@@ -640,8 +651,8 @@ export default {
       //TODO: display in ui
       //TODO: ADD TO READER
 
-      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
-      if(hedgingManagerAddr != null) {
+      const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
+      if(hedgingManagerAddr === null) {
         return false;
       }
       if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
@@ -649,15 +660,14 @@ export default {
       }
       const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
-      this.idealExpo = await hedgingManagerContract.methods.idealHedgeExposure().call();
 
-      for (let pair in component.pairs){
+      for (let pair of component.pairs){
           let priceFeedType = pair;
 
           let feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
           let feedContract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, feedAddress);
           let underlyingAddr = await feedContract.methods.getUnderlyingAddr().call();
-          this.ideal[feedAddress] = await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call();
+          this.idealExpo[feedAddress] = await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call();
       }   
 
 
@@ -670,8 +680,8 @@ export default {
       //TODO: ADD TO READER
 
 
-      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
-      if(hedgingManagerAddr != null) {
+      const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
+      if(hedgingManagerAddr === null) {
         return false;
       }
       if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
@@ -681,7 +691,7 @@ export default {
       const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
 
-      for (let pair in component.pairs){
+      for (let pair of component.pairs){
           let priceFeedType = pair;
 
           let feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
@@ -692,9 +702,9 @@ export default {
      // function totalTokenStock() virtual override public view returns (uint v);
 
       let component = this;
-      const hedgingManagerAddr = await component.getLiquidityPoolContract.methods.getHedgingManager().call();
+      const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
       
-      if(hedgingManagerAddr != null) {
+      if(hedgingManagerAddr === null) {
         return false;
       }
       if(hedgingManagerAddr === "0x0000000000000000000000000000000000000000") {
