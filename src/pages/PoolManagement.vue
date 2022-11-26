@@ -39,7 +39,7 @@
         <span></span>
         <button @click="balanceExposure" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Manually Balance Pool Options Exposure (ideal:{{this.idealExpo}}, current: {{this.realExpo}}
+          Manually Balance Pool Options Exposure
         </button>
         <button @click="syncHedgingManagerStats" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -47,6 +47,13 @@
         </button>
       </div>
     </div>
+    <div class="section-big row mt-4 mx-3" v-if="isHedgingManagerReady">
+      <div class="col-md-12">
+        (ideal:{{this.idealExpo}}, current: {{this.realExpo}}
+      </div>
+    </div>
+
+    
     <span></span>
     <span></span>
 
