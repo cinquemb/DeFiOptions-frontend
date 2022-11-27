@@ -187,6 +187,7 @@ export default {
         maturity: null, //datetime picker
         leverageMultiplier: null, //slider from 1-30? or manual with validation
         hedgingManagerAddress: null, //toggle from hdeging manager addresses hardcoded in ui?
+        hedgingNotionalThreshold:  null, //silder of dollar amount?
       },
       setRanges: [], //gov
       addSymbols: [],//gov
@@ -331,7 +332,8 @@ export default {
           Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
           Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
           Number(component.setParams.leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          component.setParams.hedgingManagerAddress,// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          String((parseInt(component.setParams.hedgingNotionalThreshold) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))
         ];
         encodedData.push(
           component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
