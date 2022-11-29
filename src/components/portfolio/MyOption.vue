@@ -209,6 +209,8 @@ export default {
   created() {
     this.fetchExpiryPrice();
     this.fetchOptionAllowance();
+    this.$store.dispatch("incentivized/fetchContract");
+
   },
 
   methods: {
