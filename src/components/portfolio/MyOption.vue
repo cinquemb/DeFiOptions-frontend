@@ -115,6 +115,7 @@ import OptionTokenContractJson from "../../contracts/OptionToken.json";
 import ChainlinkContractJson from "../../contracts/ChainlinkFeed.json";
 import addresses from "../../contracts/addresses.json";
 
+
 export default {
   name: "MyOption",
   props: ["option"],
@@ -139,6 +140,8 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getWeb3"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress"]),
+    ...mapGetters("incentivized", ["getIncentivizedContract"]),
+
     
     getMaxOptionSize() {
       // max option size that current user can sell
@@ -380,9 +383,9 @@ export default {
       component.loading = true;
 
       // liquidateOptions transaction
-      await component.getOptionsExchangeContract.methods.liquidateOptions(
+      await component.getIncentivizedContract.methods.liquidateExpired(
         component.option.address,
-        component.getActiveAccount
+        [component.getActiveAccount]
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
