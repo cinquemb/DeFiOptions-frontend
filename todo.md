@@ -4,10 +4,15 @@ npm run build; cd dist/; git init; git add -A; git commit -m "deployment to GH P
 
 LINK/USD-EP-24e18-1643356800
 		- issues
-			- when hedginign manager set for pool, cannot trade
-				- naked sell
-				- covered sell
-				- buy
+			- issue with rebalanicing alredy open position
+			- too little stock size when buying from pool
+				- why?
+					- something wrong with how pool calculates buy side volume (collaterall issue?)
+				- temp ui hack for now
+
+
+			
+			- need to figure out to factor in neutralizing prospective positions for pools
 
 		- toggle pools
 			- debug to make sure that related pool values are being added
@@ -17,8 +22,6 @@ LINK/USD-EP-24e18-1643356800
 
 		- manage pool
 
-			- show balance of tokens in hedging manager contract (next to settle hedging manager balance)
-			- show pool ideal delta and realized delta (next to rebalance hedge)
 
 		- pool governance
 			- show what will be executed?
@@ -29,6 +32,8 @@ LINK/USD-EP-24e18-1643356800
 			- show what will be executed?
 			- other proposal data?
 
+		- hedging
+			- different hedging strategies
 
 		- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]			
 		- contract viewers helper
@@ -36,6 +41,10 @@ LINK/USD-EP-24e18-1643356800
 				- udl feed addrs?
 					- pull from government proposals?
 					- pull from JSON
+
+				- trade
+					- unified ui that lists all the options from all pools?
+					- need to sort by price in ui
 
 
 https://wiki.polygon.technology/docs/zkEVM/develop/

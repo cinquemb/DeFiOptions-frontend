@@ -319,9 +319,11 @@ export default {
       let component = this;
       component.loading = true;
 
-      let addSymbolAbiJSON = component.getLiquidityPoolAbi[31];
+      //console.log(component.getLiquidityPoolAbi);
+
+      let addSymbolAbiJSON = component.getLiquidityPoolAbi[8];
       let setRangeAbiJSON = component.getLiquidityPoolAbi[33];
-      let setParametersAbiJSON = component.getLiquidityPoolAbi[26];
+      let setParametersAbiJSON = component.getLiquidityPoolAbi[32];
 
       let encodedData = [];
 
