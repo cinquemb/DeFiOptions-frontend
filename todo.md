@@ -35,6 +35,13 @@ LINK/USD-EP-24e18-1643356800
 		- hedging
 			- different hedging strategies
 
+		- liquidlity pool contract
+			- virtual methods for buy/sell/queryBuy?
+				- need  internalBuy/internalSell?
+				- option address of external non surface pricer?
+				- option address of external  interpolator?
+
+
 		- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]			
 		- contract viewers helper
 			- Reader		
