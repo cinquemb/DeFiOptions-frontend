@@ -205,9 +205,12 @@ const actions = {
     let optionsList = [];
     if (symbolsList[0] !== "") { // if the list is not empty  
       let counter = 0;
-      
+
+
       for (let symbol of symbolsList) {
         let itemList = symbol.split("-");
+        console.log(itemList);
+
         let pair = itemList[0];
         let udlSymbol = pair.split("/")[0];
         let timestamp = itemList[3];

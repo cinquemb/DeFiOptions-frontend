@@ -1,5 +1,7 @@
 import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
-//import addresses from "../../contracts/addresses.json";
+import ProtocolReaderJSON from "../../contracts/ProtocolReader.json";
+
+import addresses from "../../contracts/addresses.json";
 
 const state = {
   abi: {undefined:null},
@@ -14,6 +16,7 @@ const state = {
   poolMaturityDate: {undefined:null},
   poolWithdrawalFee: {undefined:null},
   symbolsListJson: {undefined:null},
+  allSymbolsListJSON: null,
   userBalance: {undefined:null},
   pool: {undefined: null},
   userPoolUsdValue: {undefined:null}, // USD value of the pool balance
@@ -111,6 +114,76 @@ const actions = {
     let symbolsRaw = state.pool[state.selectedPoolAddress]["poolSymbolList"];//await state.contract[state.selectedPoolAddress].methods.listSymbols().call();
 
     commit("setSymbolsList", {web3, symbolsRaw});
+  },
+  async fetchAllPoolOptions({ commit, rootState }){
+    let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
+    const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
+    let poolOptions = await protocolReaderContract.methods.listPoolOptions().call();
+
+    let marketOptionsPoolMap = {};
+    if (poolOptions.length > 0){
+      for (var i=0; i < poolOptions[0].length; i++) {
+        let pSym = poolOptions[0][i];
+        let poolAddr = poolOptions[1][i];
+        let poolOptions = poolOptions[2][i];
+
+        let symbolsLines = poolOptions.split("\n");
+
+        for (let opSym of symbolsLines) {
+          if (symbolsLines.length === 1 && symbolsLines[0] === '') {
+            // if the symbolsLines array is [''], skip the rest of the code in the loop
+            continue;
+          }
+
+          // market
+          let itemList = opSym.split("-");
+          let pair = itemList[0];
+
+          let maturityHumanReadable = new Date(Number(itemList[3])*1e3).toLocaleDateString('en-GB', 
+          { 
+            hour12 : true,
+            hour: 'numeric',
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric' 
+          });
+
+          // type
+          let typeName = "CALL";
+          if (itemList[1] === "EP") {
+            typeName = "PUT";
+          }
+
+          if (pair in marketOptionsPoolMap) {
+            if (maturityHumanReadable in marketOptionsPoolMap[pair]) {
+              if (typeName in marketOptionsPoolMap[pair][maturityHumanReadable]) {
+                marketOptionsPoolMap[pair][maturityHumanReadable][typeName].push({pool: pSym, poolAddr: poolAddr});
+              } else {
+                marketOptionsPoolMap[pair][maturityHumanReadable][typeName] = [
+                  {pool: pSym, poolAddr: poolAddr}
+                ]
+              }
+            } else {
+              marketOptionsPoolMap[pair][maturityHumanReadable] = {
+                [typeName]: [
+                  {pool: pSym, poolAddr: poolAddr}
+                ]
+              }
+            }
+          } else {
+            marketOptionsPoolMap[pair] = {
+              [maturityHumanReadable]: {
+                [typeName]: [
+                  {pool: pSym, poolAddr: poolAddr}
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+    commit("setAllSymbolsList", marketOptionsPoolMap);
+
   },
   async fetchPoolFreeBalance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -238,6 +311,9 @@ const mutations = {
   setSelectedPoolAddress(state, address) {
     state.selectedPoolAddress = address;
   },
+  setAllSymbolsList(state, allSymbolsList) {
+    state.allSymbolsListJSON = allSymbolsList;
+  },
   setSymbolsList(state, {web3, symbolsRaw}) {
     let symbolsLines = symbolsRaw.split("\n");
 
@@ -250,6 +326,8 @@ const mutations = {
       }
 
       let itemList = item.split("-");
+
+      console.log(itemList);
 
       
       let timestamp = itemList[3];
@@ -308,7 +386,7 @@ const mutations = {
         symbolsArray[pair] = {
           [maturityHumanReadable]: {
             [typeName]: [
-              {strike: strikePriceBigUnit, symbol: item, pair: pair, strikeRaw: strikeRaw, timestamp: timestamp, udlSymbol: udlSymbol}
+              {strike: strikePriceBigUnit, symbol: item, pair: pair, strikeRaw: strikeRaw, timestamp: timestamp, udlSymbol: udlSymbol, type: typeName}
             ]
           }
         }

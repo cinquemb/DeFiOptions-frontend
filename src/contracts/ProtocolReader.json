@@ -116,6 +116,82 @@
       ],
       "stateMutability": "view",
       "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "listPoolOptions",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string[]",
+              "name": "poolSymbols",
+              "type": "string[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "poolAddrs",
+              "type": "address[]"
+            },
+            {
+              "internalType": "string[]",
+              "name": "poolOptionsRaw",
+              "type": "string[]"
+            }
+          ],
+          "internalType": "struct IProtocolReader.poolOptions",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "optionSymbol",
+          "type": "string"
+        },
+        {
+          "internalType": "address[]",
+          "name": "poolAddressList",
+          "type": "address[]"
+        }
+      ],
+      "name": "listPoolsPrices",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256[]",
+              "name": "poolBuyPrice",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolSellPrice",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolBuyPriceVolume",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "poolSellPriceVolume",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct IProtocolReader.poolPricesData",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.6.0+commit.26b70077\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"listPoolsData\",\"outputs\":[{\"components\":[{\"internalType\":\"string[]\",\"name\":\"poolSymbols\",\"type\":\"string[]\"},{\"internalType\":\"address[]\",\"name\":\"poolAddrs\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolApy\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolBalance\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolFreeBalance\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"userPoolBalance\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"userPoolUsdValue\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolMaturityDate\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"poolWithdrawalFee\",\"type\":\"uint256[]\"}],\"internalType\":\"struct IProtocolReader.poolData\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IProtocolReader.sol\":\"IProtocolReader\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IProtocolReader.sol\":{\"keccak256\":\"0xdc4fc38fbd211251b755647acd34ffa750d035de70a6e9996a6bf11d41c1c19f\",\"urls\":[\"bzz-raw://0eb054ab00fb87245363df664ab26bc1eddfc88cd994439e395f5bd168b23fd6\",\"dweb:/ipfs/QmXjgTGaiUxFYhYxMruuB8sP37J4nSqDmE8UKqMne41Uc4\"]}},\"version\":1}",
