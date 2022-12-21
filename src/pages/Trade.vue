@@ -187,10 +187,10 @@ export default {
         }
 
         try {
-          let symbol = this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].symbol;
-          this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol});
+          let pair = this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].pair;
+          this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {pair});
         } catch {
-          this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol: "N/A"});
+          this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {pair: "N/A"});
         }
         
       }
@@ -209,10 +209,10 @@ export default {
 
       // fetch new underlying price
       try {
-        let symbol = this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].symbol;
-        this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol});
+        let pair = this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].pair;
+        this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {pair});
       } catch {
-        this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol: "N/A"});
+        this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {pair: "N/A"});
       }
     },
     changeMaturity(maturity) {

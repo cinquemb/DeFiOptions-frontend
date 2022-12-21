@@ -1,4 +1,5 @@
 import OptionsExchange from "../../contracts/OptionsExchangeV2.json";
+import UnderlyingFeed from "../../contracts/UnderlyingFeed.json";
 import ProtocolReaderJSON from "../../contracts/ProtocolReader.json";
 
 import addresses from "../../contracts/addresses.json";
@@ -138,9 +139,14 @@ const actions = {
     commit("setUnderlyingPrice", "N/A");
 
     try {
-      let underlyingPrice = await state.contract.methods.getUnderlyingPrice(String(data.symbol)).call();      
+      let chainIdDec = parseInt(rootState.accounts.chainId);
+      let address = addresses[data.pair][chainIdDec];
       let web3 = rootState.accounts.web3;
-      let underlyingPriceBig = Math.round(web3.utils.fromWei(Number(underlyingPrice).toString(16), "ether")*100)/100;
+
+      let contract = new web3.eth.Contract(UnderlyingFeed.abi, address);
+
+      let underlyingPrice = await contract.methods.getLatestPrice().call();      
+      let underlyingPriceBig = Math.round(web3.utils.fromWei(Number(underlyingPrice.price).toString(16), "ether")*100)/100;
       commit("setUnderlyingPrice", underlyingPriceBig);
     } catch {
       commit("setUnderlyingPrice", "N/A");
