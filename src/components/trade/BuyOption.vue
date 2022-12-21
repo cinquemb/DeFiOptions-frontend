@@ -67,7 +67,7 @@
           </div>
           <div class="modal-body">
             Choose the amount of {{buyWith}} that you want to give 
-            <a target="_blank" :href="'https://polygonscan.com/address/'+getLiquidityPoolAddress">this pool</a> 
+            <a target="_blank" :href="'https://polygonscan.com/address/'+option.poolAddr">this pool</a> 
             on DeFi Options spending approval for:
 
             <div class="form-check" @click="unlimitedApproval=false">
@@ -143,7 +143,7 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getWeb3"]),
-    //...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress"]),
+    //...mapGetters("liquidityPool", ["getLiquidityPoolContract"]),
     ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract", "getLpDaiAllowance"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserExchangeBalanceAllowance"]),
     ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract", "getLpUsdcAllowance"]),
@@ -274,7 +274,7 @@ export default {
       
       // call the approve method
       try {
-        await tokenContract.methods.approve(component.getLiquidityPoolAddress, allowanceValueWei).send({
+        await tokenContract.methods.approve(component.option.poolAddr, allowanceValueWei).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,
           maxFeePerGas: null
@@ -419,7 +419,10 @@ export default {
       this.optionPriceFormatted = "loading";
       this.selectedOptionVolume = null;
       // fetch option price and volume
-      let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 1).call();
+
+      const poolContract = new this.getWeb3.eth.Contract(LiquidityPool.abi, this.option.poolAddr);
+
+      let result = await poolContract.methods.queryBuy(this.option.symbol, 1).call();
       
       if (result) {
         this.optionPrice = this.getWeb3.utils.fromWei(result.price, "ether") * (1 + (this.slippage/100));
