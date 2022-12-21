@@ -357,6 +357,8 @@ export default {
   created() {
     this.$store.dispatch("accounts/initWeb3Modal");
     this.$store.dispatch("accounts/ethereumListener");
+    this.$store.dispatch("liquidityPool/fetchAllPoolOptions");
+
 
     // check if user has already confirmed the compliance modal (this modal is in Navbar)
     this.isCompliant = localStorage.getItem('isCompliant');

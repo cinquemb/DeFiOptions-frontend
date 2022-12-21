@@ -136,6 +136,7 @@ import OptionTokenContractJson from "../../contracts/RedeemableToken.json";
 import ChainlinkContractJson from "../../contracts/ChainlinkFeed.json";
 import ERC20ContractJson from "../../contracts/ERC20.json";
 import addresses from "../../contracts/addresses.json";
+import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
 
 export default {
   name: "SellOption",
@@ -174,7 +175,7 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getWeb3"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress"]),
+    //...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress"]),
     ...mapGetters("dai", ["getUserDaiBalance", "getDaiContract", "getLpDaiAllowance"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserCollateralSurplus", "getUserExchangeBalanceAllowance", "getUserOptions"]),
     ...mapGetters("usdc", ["getUserUsdcBalance", "getUsdcContract", "getLpUsdcAllowance"]),
@@ -393,7 +394,7 @@ export default {
       const optionContract = new component.getWeb3.eth.Contract(OptionTokenContractJson.abi, this.option.address);
 
       // call the approve method
-      await optionContract.methods.approve(component.getLiquidityPoolAddress, tokensWei).send({
+      await optionContract.methods.approve(component.option.poolAddr, tokensWei).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
         maxFeePerGas: null
@@ -605,7 +606,7 @@ export default {
 
       const optionContract = new this.getWeb3.eth.Contract(OptionTokenContractJson.abi, this.option.address);
 
-      const allowanceWei = await optionContract.methods.allowance(this.getActiveAccount, this.getLiquidityPoolAddress).call();
+      const allowanceWei = await optionContract.methods.allowance(this.getActiveAccount, this.option.poolAddr).call();
 
       this.optionAllowance = this.getWeb3.utils.fromWei(String(allowanceWei), "ether");
     },
@@ -628,7 +629,9 @@ export default {
 
     async getOptionPrice() {
       // fetch option price
-      let resultSell = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 0).call();
+      const poolContract = new this.getWeb3.eth.Contract(LiquidityPool.abi, this.option.poolAddr);
+
+      let resultSell = await poolContract.methods.queryBuy(this.option.symbol, 0).call();
 
       if (resultSell) {
         this.optionPriceSell = this.getWeb3.utils.fromWei(resultSell.price, "ether") * (1 - (this.slippage/100));
@@ -647,7 +650,9 @@ export default {
       this.selectedOptionVolume = null;
 
       // fetch option price and volume
-      let resultSell = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 0).call();
+      const poolContract = new this.getWeb3.eth.Contract(LiquidityPool.abi, this.option.poolAddr);
+
+      let resultSell = await poolContract.methods.queryBuy(this.option.symbol, 0).call();
 
       if (resultSell) {
         this.optionPriceSell = this.getWeb3.utils.fromWei(resultSell.price, "ether") * (1 - (this.slippage/100));
@@ -667,7 +672,8 @@ export default {
     },
 
     async setSellData() {
-      const result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 0).call();
+      const poolContract = new this.getWeb3.eth.Contract(LiquidityPool.abi, this.option.poolAddr);
+      const result = await poolContract.methods.queryBuy(this.option.symbol, 0).call();
 
       if (result) {
         this.selectedOptionPrice = this.getWeb3.utils.fromWei(String(result.price), "ether");
@@ -702,7 +708,7 @@ export default {
             [optionSizeWei],//uint[] volume;
             [1],//bool[] isShort; 1 is true 0 is false
             [1],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
-            [component.getLiquidityPoolAddress],//address[] poolAddrs;
+            [component.option.poolAddr],//address[] poolAddrs;
             ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
           ]);
 
@@ -715,7 +721,7 @@ export default {
             [optionSizeWei],//uint[] volume;
             [1],//bool[] isShort; 1 is true 0 is false
             [1],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
-            [component.getLiquidityPoolAddress],//address[] poolAddrs;
+            [component.option.poolAddr],//address[] poolAddrs;
             ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
           ],
           component.getActiveAccount
@@ -768,7 +774,7 @@ export default {
             [optionSizeWei],//uint[] volume;
             [1],//bool[] isShort; 1 is true 0 is false
             [0],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
-            [component.getLiquidityPoolAddress],//address[] poolAddrs;
+            [component.option.poolAddr],//address[] poolAddrs;
             ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
           ],
           component.getActiveAccount

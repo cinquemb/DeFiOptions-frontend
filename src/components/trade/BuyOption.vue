@@ -115,6 +115,8 @@
 
 <script>
 import { mapGetters } from "vuex";
+import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
+
 
 export default {
   name: "BuyOption",
@@ -141,7 +143,7 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getWeb3"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress"]),
+    //...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress"]),
     ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract", "getLpDaiAllowance"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserExchangeBalanceAllowance"]),
     ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract", "getLpUsdcAllowance"]),
@@ -321,8 +323,10 @@ export default {
       let optionSizeWei = component.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether");
       let optionUnitPrice = component.getWeb3.utils.toWei(String(component.optionPrice), "ether");
       // buy option transaction
+      const poolContract = new component.getWeb3.eth.Contract(LiquidityPool.abi, component.option.poolAddr);
+
       try {
-        await component.getLiquidityPoolContract.methods.buy(
+        await poolContract.methods.buy(
           component.option.symbol, // symbol
           optionUnitPrice, // price per one option
           optionSizeWei, // volume a.k.a. user's selected option size
@@ -393,7 +397,9 @@ export default {
 
     async getOptionPrice() {
       // fetch option price
-      let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 1).call();
+      const poolContract = new this.getWeb3.eth.Contract(LiquidityPool.abi, this.option.poolAddr);
+
+      let result = await poolContract.methods.queryBuy(this.option.symbol, 1).call();
       
       if (result) {
         

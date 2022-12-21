@@ -126,9 +126,14 @@ export default {
 
             for(let lKey in this.$store.state.liquidityPool) {
               let tKey = lKey;
+              if (tKey  === 'allSymbolsListJSON') {
+                continue;
+              }
               if(typeof this.$store.state.liquidityPool[tKey] === 'object') {
-                if (!(poolAddr in this.$store.state.liquidityPool[tKey])) {
-                  this.$store.state.liquidityPool[tKey][poolAddr] = null;
+                if (this.$store.state.liquidityPool[tKey] != null){
+                  if (!(poolAddr in this.$store.state.liquidityPool[tKey])) {
+                    this.$store.state.liquidityPool[tKey][poolAddr] = null;
+                  }
                 }
               }
             }

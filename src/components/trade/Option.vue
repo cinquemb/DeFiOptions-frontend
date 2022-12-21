@@ -51,6 +51,8 @@ import OptionDataItem from '../OptionDataItem.vue';
 
 import BuyOption from './BuyOption.vue';
 import SellOption from './SellOption.vue';
+import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
+
 
 export default {
   name: "Option",
@@ -85,7 +87,7 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getWeb3"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract"]),
+    //...mapGetters("liquidityPool", ["getLiquidityPoolContract"]),
 
     getBreakEvenPrice() {
       if (this.side == "BUY") {
@@ -114,8 +116,10 @@ export default {
     async getOptionPrice() {
       // fetch option price
       console.log(this.option.symbol);
-      let result = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 1).call();
-      let resultSell = await this.getLiquidityPoolContract.methods.queryBuy(this.option.symbol, 0).call();
+      const poolContract = new this.getWeb3.eth.Contract(LiquidityPool.abi, this.option.poolAddr);
+
+      let result = await poolContract.methods.queryBuy(this.option.symbol, 1).call();
+      let resultSell = await poolContract.methods.queryBuy(this.option.symbol, 0).call();
       
       if (result) {
         this.optionPrice = this.getWeb3.utils.fromWei(result.price, "ether") * (1 + (this.slippage/100));

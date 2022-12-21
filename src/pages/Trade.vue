@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="section-big row mt-4 mx-3">
-      <h3>Liquidity pool: {{getSelectedPool}}({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h3>
       <div class="col-md-3 mb-4">
         <h3>Markets</h3>
 
@@ -57,7 +56,7 @@
         </div>
 
         <OptionsList :symbols="getFilteredSymbols" :side="getSelectedSide" />
-        <h3 v-if="Object.keys(this.getSymbolsListJson).length === 0">No options available.</h3>
+        <h3 v-if="Object.keys(this.getAllSymbolsListJson).length === 0">No options available.</h3>
         
       </div>
     </div>
@@ -80,13 +79,13 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getActiveBalanceEth", "getWeb3", "isUserConnected", "getLastSelectedTradePair", "getLastSelectedTradeMaturity", "getLastSelectedTradeType", "getLastSelectedTradeSide"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getExchangeUserBalance", "getUnderlyingPrice", "getOptionTokenAddress", "getSelectedPool"]),
-    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress", "getSymbolsListJson", "getDefaultMaturity", "getDefaultPair", "getDefaultType", "getDefaultSide", "getSelectedPoolAddress"]),
+    ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAddress", "getAllSymbolsListJson", "getDefaultMaturity", "getDefaultPair", "getDefaultType", "getDefaultSide", "getSelectedPoolAddress"]),
     ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract"]), // todo: delete
     ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract"]),
 
     getFilteredSymbols() {
       try {
-        const filteredList = this.getSymbolsListJson[this.getSelectedPair][this.getSelectedMaturity][this.getSelectedType];
+        const filteredList = this.getAllSymbolsListJson[this.getSelectedPair][this.getSelectedMaturity][this.getSelectedType];
         return filteredList.sort((a, b) => a.strike - b.strike);
       } catch {
         return [];
@@ -126,7 +125,8 @@ export default {
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("optionsExchange/storeAddress");
     this.$store.dispatch("liquidityPool/fetchContract");
-    this.$store.dispatch("liquidityPool/fetchSymbolsList");
+    //this.$store.dispatch("liquidityPool/fetchSymbolsList");
+    this.$store.dispatch("liquidityPool/fetchAllPoolOptions");
     this.$store.dispatch("liquidityPool/storeAddress");
     this.$store.dispatch("dai/fetchContract");
     this.$store.dispatch("dai/fetchUserBalance");
@@ -152,15 +152,15 @@ export default {
   },
   methods: {
     loadOptionsAndMarkets() {
-      if (Object.keys(this.getSymbolsListJson).length > 0) {
+      if (Object.keys(this.getAllSymbolsListJson).length > 0) {
         // extract values from getSymbolsListJson and pre-populate dropdowns (pair, maturity, type)
-        this.pairs = Object.keys(this.getSymbolsListJson);
+        this.pairs = Object.keys(this.getAllSymbolsListJson);
         this.selectedPair = this.pairs[0];
 
-        this.maturities = Object.keys(this.getSymbolsListJson[this.selectedPair]);
+        this.maturities = Object.keys(this.getAllSymbolsListJson[this.selectedPair]);
         this.selectedMaturity = this.maturities[0];
 
-        this.typeNames = Object.keys(this.getSymbolsListJson[this.selectedPair][this.selectedMaturity]);
+        this.typeNames = Object.keys(this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity]);
         this.selectedType = this.typeNames[0];
 
         
@@ -187,7 +187,7 @@ export default {
         }
 
         try {
-          let symbol = this.getSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].symbol;
+          let symbol = this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].symbol;
           this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol});
         } catch {
           this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol: "N/A"});
@@ -197,11 +197,19 @@ export default {
     },
     changePair(pair) {
       this.selectedPair = pair;
+      this.maturities = Object.keys(this.getAllSymbolsListJson[this.selectedPair]);
       this.$store.commit("accounts/setLastSelectedTradePair", pair);
+      this.selectedMaturity = this.maturities[0];
+      this.$store.commit("accounts/setLastSelectedTradeMaturity", this.selectedMaturity);
+
+
+      this.typeNames = Object.keys(this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity]);
+      this.selectedType = this.typeNames[0];
+      this.$store.commit("accounts/setLastSelectedTradeType", this.selectedType);
 
       // fetch new underlying price
       try {
-        let symbol = this.getSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].symbol;
+        let symbol = this.getAllSymbolsListJson[this.selectedPair][this.selectedMaturity][this.selectedType][0].symbol;
         this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol});
       } catch {
         this.$store.dispatch("optionsExchange/fetchUnderlyingPrice", {symbol: "N/A"});

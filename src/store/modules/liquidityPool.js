@@ -8,10 +8,10 @@ const state = {
   address: {undefined:null},
   apy: {undefined:null},
   contract: {undefined:null},
-  defaultPair: {undefined:null},
-  defaultType: {undefined:null},
-  defaultSide: {undefined:null},
-  defaultMaturity: {undefined:null},
+  defaultPair: null,
+  defaultType: null,
+  defaultSide: null,
+  defaultMaturity: null,
   poolFreeBalance: {undefined:null},
   poolMaturityDate: {undefined:null},
   poolWithdrawalFee: {undefined:null},
@@ -31,16 +31,20 @@ const getters = {
     return state.selectedPoolAddress;
   },
   getDefaultMaturity(state) {
-    return state.defaultMaturity[state.selectedPoolAddress];
+    //return state.defaultMaturity[state.selectedPoolAddress];
+    return state.defaultMaturity;
   },
   getDefaultPair(state) {
-    return state.defaultPair[state.selectedPoolAddress];
+    //return state.defaultPair[state.selectedPoolAddress];
+    return state.defaultPair;
   },
   getDefaultType(state) {
-    return state.defaultType[state.selectedPoolAddress];
+    //return state.defaultType[state.selectedPoolAddress];
+    return state.defaultType;
   },
   getDefaultSide(state) {
-    return state.defaultSide[state.selectedPoolAddress];
+    //return state.defaultSide[state.selectedPoolAddress];
+    return state.defaultSide;
   },
   getLiquidityPoolAbi(state) {
     return state.abi[state.selectedPoolAddress];
@@ -66,6 +70,9 @@ const getters = {
   getSymbolsListJson(state) {
     return state.symbolsListJson[state.selectedPoolAddress];
   },
+  getAllSymbolsListJson(state) {
+    return state.allSymbolsListJSON;
+  },
   getUserPoolUsdValue(state) {
     return state.userPoolUsdValue[state.selectedPoolAddress];
   }
@@ -75,13 +82,13 @@ const getters = {
 */
 
 const actions = {
-  async fetchContract({ commit, rootState }) {
-    let web3 = rootState.accounts.web3;
+  async fetchContract({ commit }) {
+    //let web3 = rootState.accounts.web3;
     //let chainIdDec = parseInt(rootState.accounts.chainId);
-    let address = state.selectedPoolAddress;
+    //let address = state.selectedPoolAddress;
 
-    let contract = new web3.eth.Contract(LiquidityPool.abi, address);
-    commit("setContract", contract);
+    //let contract = new web3.eth.Contract(LiquidityPool.abi, address);
+    //commit("setContract", contract);
     commit("setAbi", LiquidityPool.abi);
   },
   async fetchApy({ commit, dispatch, state, rootState }) {
@@ -117,7 +124,7 @@ const actions = {
   },
   async fetchAllPoolOptions({ commit, rootState }){
     let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
-    const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
+    const protocolReaderContract = new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
     let poolOptions = await protocolReaderContract.methods.listPoolOptions().call();
 
     let marketOptionsPoolMap = {};
@@ -125,9 +132,9 @@ const actions = {
       for (var i=0; i < poolOptions[0].length; i++) {
         let pSym = poolOptions[0][i];
         let poolAddr = poolOptions[1][i];
-        let poolOptions = poolOptions[2][i];
+        let poolOptionsVals = poolOptions[2][i];
 
-        let symbolsLines = poolOptions.split("\n");
+        let symbolsLines = poolOptionsVals.split("\n");
 
         for (let opSym of symbolsLines) {
           if (symbolsLines.length === 1 && symbolsLines[0] === '') {
@@ -154,19 +161,39 @@ const actions = {
             typeName = "PUT";
           }
 
+          let timestamp = itemList[3];
+          let strikeRaw = itemList[2];
+
+          let udlSymbol = pair.split("/")[0];
+          console.log(pair);
+          state.defaultPair = pair;
+          state.defaultType = typeName;
+
+          // side
+          let sideName = "BUY";
+          state.defaultSide = sideName;
+          state.defaultMaturity = maturityHumanReadable;
+          
+          // strike price
+          let strikePriceBigUnit = Math.round(rootState.accounts.web3.utils.fromWei(Number(itemList[2]).toString(16), "ether")*100)/100;
+
+          /*
+
+            TODO: THERE MAY BE DUPLICATE OF THE SAME STRIKE, WILL NEED TO MAKE UNIQUE AND THEN SHOW THE DIFFERENT PRICES
+          */
           if (pair in marketOptionsPoolMap) {
             if (maturityHumanReadable in marketOptionsPoolMap[pair]) {
               if (typeName in marketOptionsPoolMap[pair][maturityHumanReadable]) {
-                marketOptionsPoolMap[pair][maturityHumanReadable][typeName].push({pool: pSym, poolAddr: poolAddr});
+                marketOptionsPoolMap[pair][maturityHumanReadable][typeName].push({strike: strikePriceBigUnit, symbol: opSym, pair: pair, strikeRaw: strikeRaw, timestamp: timestamp, udlSymbol: udlSymbol, type: typeName, pool: pSym, poolAddr: poolAddr});
               } else {
                 marketOptionsPoolMap[pair][maturityHumanReadable][typeName] = [
-                  {pool: pSym, poolAddr: poolAddr}
+                  {strike: strikePriceBigUnit, symbol: opSym, pair: pair, strikeRaw: strikeRaw, timestamp: timestamp, udlSymbol: udlSymbol, type: typeName, pool: pSym, poolAddr: poolAddr}
                 ]
               }
             } else {
               marketOptionsPoolMap[pair][maturityHumanReadable] = {
                 [typeName]: [
-                  {pool: pSym, poolAddr: poolAddr}
+                  {strike: strikePriceBigUnit, symbol: opSym, pair: pair, strikeRaw: strikeRaw, timestamp: timestamp, udlSymbol: udlSymbol, type: typeName, pool: pSym, poolAddr: poolAddr}
                 ]
               }
             }
@@ -174,7 +201,7 @@ const actions = {
             marketOptionsPoolMap[pair] = {
               [maturityHumanReadable]: {
                 [typeName]: [
-                  {pool: pSym, poolAddr: poolAddr}
+                {strike: strikePriceBigUnit, symbol: opSym, pair: pair, strikeRaw: strikeRaw, timestamp: timestamp, udlSymbol: udlSymbol, type: typeName, pool: pSym, poolAddr: poolAddr}
                 ]
               }
             }
