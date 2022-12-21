@@ -82,13 +82,13 @@ const getters = {
 */
 
 const actions = {
-  async fetchContract({ commit }) {
-    //let web3 = rootState.accounts.web3;
+  async fetchContract({ commit, rootState }) {
+    let web3 = rootState.accounts.web3;
     //let chainIdDec = parseInt(rootState.accounts.chainId);
-    //let address = state.selectedPoolAddress;
+    let address = state.selectedPoolAddress;
 
-    //let contract = new web3.eth.Contract(LiquidityPool.abi, address);
-    //commit("setContract", contract);
+    let contract = new web3.eth.Contract(LiquidityPool.abi, address);
+    commit("setContract", contract);
     commit("setAbi", LiquidityPool.abi);
   },
   async fetchApy({ commit, dispatch, state, rootState }) {
