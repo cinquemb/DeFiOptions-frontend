@@ -120,6 +120,8 @@ const actions = {
     let web3 = rootState.accounts.web3;
     let symbolsRaw = state.pool[state.selectedPoolAddress]["poolSymbolList"];//await state.contract[state.selectedPoolAddress].methods.listSymbols().call();
 
+    console.log(symbolsRaw);
+
     commit("setSymbolsList", {web3, symbolsRaw});
   },
   async fetchAllPoolOptions({ commit, rootState }){
@@ -363,18 +365,18 @@ const mutations = {
       // pair
       let pair = itemList[0];
       let udlSymbol = pair.split("/")[0];
-      state.defaultPair[state.selectedPoolAddress] = pair
+      //state.defaultPair[state.selectedPoolAddress] = pair
 
       // type
       let typeName = "CALL";
       if (itemList[1] === "EP") {
         typeName = "PUT";
       }
-      state.defaultType[state.selectedPoolAddress] = typeName;
+      //state.defaultType[state.selectedPoolAddress] = typeName;
 
       // side
-      let sideName = "BUY";
-      state.defaultSide[state.selectedPoolAddress] = sideName;
+      //let sideName = "BUY";
+      //state.defaultSide[state.selectedPoolAddress] = sideName;
 
       // maturity
       let maturityHumanReadable = new Date(Number(itemList[3])*1e3).toLocaleDateString('en-GB', 
@@ -385,7 +387,7 @@ const mutations = {
           month: 'short', 
           year: 'numeric' 
         });
-      state.defaultMaturity[state.selectedPoolAddress] = maturityHumanReadable;
+      //state.defaultMaturity[state.selectedPoolAddress] = maturityHumanReadable;
       
       // strike price
       let strikePriceBigUnit = Math.round(web3.utils.fromWei(Number(itemList[2]).toString(16), "ether")*100)/100;

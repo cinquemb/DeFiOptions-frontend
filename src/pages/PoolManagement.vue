@@ -227,8 +227,11 @@ export default {
     this.$store.dispatch("usdc/fetchUserBalance");
     this.$store.dispatch("creditToken/fetchUserBalance");
     this.$store.dispatch("accounts/fetchActiveBalance");
+    this.$store.dispatch("liquidityPool/fetchSymbolsList");
+
     this.setHedgingManagerAddr();
     this.totalTokenStock();
+
     this.pairs = Object.keys(this.getSymbolsListJson);
   },
 
@@ -686,6 +689,7 @@ export default {
       }
       const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
+      console.log(component.pairs);
 
       for (let pair of component.pairs){
           let priceFeedType = pair;

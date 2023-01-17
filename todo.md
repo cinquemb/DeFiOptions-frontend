@@ -1,15 +1,13 @@
 
-npm run build; cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push -f git@github.com:cinquemb/DeFiOptions-frontend.git master:gh-pages; cd ..;
+yarn build --no-lint; cd build/; git init; git remote add origin git@github.com:cinquemb/uniswap-interface.git; git add -A; git commit -m "deployment to GH Pages"; git push origin -f master:gh-pages; cd ..;
+
+cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push -f git@github.com:cinquemb/DeFiOptions-frontend.git master:gh-pages; cd ..;
 
 
 LINK/USD-EP-24e18-1643356800
 		- issues
 			- issue with rebalanicing alredy open position
-			- too little stock size when buying from pool
-				- why?
-					- something wrong with how pool calculates buy side volume (collaterall issue?)
-				- temp ui hack for now
-
+			- issue with displaying eth options on trade page
 
 			
 			- need to figure out to factor in neutralizing prospective positions for pools
@@ -36,11 +34,15 @@ LINK/USD-EP-24e18-1643356800
 			- different hedging strategies
 
 		- liquidlity pool contract
-			- virtual methods for buy/sell/queryBuy?
-				- need  internalBuy/internalSell?
-				- option address of external non surface pricer?
-				- option address of external  interpolator?
+			- virtual methods for calcOptPrice
+				- another set params variable that defines an external addr, if non zero
+					- makes a static call to calcOptPrice defined on that addr?
+					- percent payout from transfers taken from pool on buy/sell tx's for pools that are using the amm
 
+		- trade page
+			- need to figure out how to list options in ui with the same functionality as existing
+			- make a new trade page (trade v2)
+				- toggle multiple options accross type
 
 		- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]			
 		- contract viewers helper
@@ -50,8 +52,8 @@ LINK/USD-EP-24e18-1643356800
 					- pull from JSON
 
 				- trade
-					- unified ui that lists all the options from all pools?
-					- need to sort by price in ui
+					- make one unique strike per market but with a order book of diff prices?
+					- sub query the pools that price a particalr option
 
 
 https://wiki.polygon.technology/docs/zkEVM/develop/
