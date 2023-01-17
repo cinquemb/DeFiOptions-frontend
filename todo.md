@@ -17,6 +17,9 @@ LINK/USD-EP-24e18-1643356800
 				- make sure pool data is entering the state
 				- have to toggle between two pools multiple times before something updates in the ui
 				- other pool stats?
+				- ux
+					- change order of pools based on what you have liquidity in
+
 
 		- manage pool
 
@@ -24,6 +27,7 @@ LINK/USD-EP-24e18-1643356800
 		- pool governance
 			- show what will be executed?
 			- other proposal data?
+			- info on pool risk
 
 
 		- protocol governance
@@ -32,6 +36,10 @@ LINK/USD-EP-24e18-1643356800
 
 		- hedging
 			- different hedging strategies
+				- gamma hedging model
+				- theta hedging model
+				- pool parameters that set how much which combination of parameters to automatically hedge
+					- [0,0,0] -> [delta, gamma, theta]
 
 		- liquidlity pool contract
 			- virtual methods for calcOptPrice
@@ -43,6 +51,7 @@ LINK/USD-EP-24e18-1643356800
 			- need to figure out how to list options in ui with the same functionality as existing
 			- make a new trade page (trade v2)
 				- toggle multiple options accross type
+			- more info on profit and loss
 
 		- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]			
 		- contract viewers helper
