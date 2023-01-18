@@ -697,7 +697,10 @@ export default {
           let feedAddress = addresses[priceFeedType][parseInt(this.getChainId)];
           let feedContract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, feedAddress);
           let underlyingAddr = await feedContract.methods.getUnderlyingAddr().call();
-          this.idealExpo[feedAddress] = (await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call())  / 10 **18;
+          let idealExpoRaw = await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call();
+          console.log("idealExpoRaw");
+          console.log(idealExpoRaw);
+          this.idealExpo[feedAddress] = idealExpoRaw  / 10 **18;
       }   
 
 

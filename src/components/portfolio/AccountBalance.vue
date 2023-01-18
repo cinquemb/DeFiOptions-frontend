@@ -7,7 +7,8 @@
         cardClass="card-green" 
         title="Your balance" 
         :text="'$'+exchangeBalance.toFixed(2)" 
-        info="Your exchange balance in USD, deposited in the options exchange, which you can withdraw at any time free of charge, use to purchase options from the liquidity pool, or provide as collateral for writing options."
+        info="Your exchange balance in USD, deposited in the options exchange, which you can withdraw at any time free of charge, use to purchase options from the liquidity pool, or provide as collateral for writing options and transfer to anyone (or any contract)."
+        @click.native="copyExchangeAddr"
       />
 
       <Card 
@@ -426,6 +427,13 @@ export default {
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
     },
+    async copyExchangeAddr() {
+      try {
+        await navigator.clipboard.writeText(this.getOptionsExchangeAddress);
+        let msg = "Copied Exchange Address (" + this.getOptionsExchangeAddress + ") to clipboard";
+        this.$toast.success(msg);
+      } catch($e) {console.log("fail copy")}
+    }
   }
 }
 </script>
