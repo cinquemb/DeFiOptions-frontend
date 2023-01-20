@@ -88,3 +88,5 @@ https://docs.chain.link/docs/data-feeds/price-feeds/addresses/
 
 
 Smart contract bugs: https://nitter.lacontrevoie.fr/1nf0s3cpt/status/1583011233363824640
+
+https://solvemymath.com/online_math_calculator/statistics/cdf_calculator.php

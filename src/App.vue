@@ -5,7 +5,9 @@
     <div v-if="isUserConnected && !getChainName" class="alert alert-danger" role="alert">
       You are on an unsupported network. Click here to connect to either 
       <span @click="switchToPolygon" class="network-switch-link">Polygon</span> or 
-      <span @click="switchToKovan" class="network-switch-link">Kovan testnet</span>.
+      <span @click="switchToKovan" class="network-switch-link">Kovan testnet</span>. or 
+      <span @click="switchToMumbai" class="network-switch-link">Mumbai testnet</span>. or 
+      <span @click="switchToFuji" class="network-switch-link">Fuji testnet</span>.
     </div>
 
     <router-view />
@@ -50,6 +52,22 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x2a'
+        }] 
+      });
+    },
+    switchToMumbai() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x13881'
+        }] 
+      });
+    },
+    switchToFuji() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0xa868'
         }] 
       });
     }

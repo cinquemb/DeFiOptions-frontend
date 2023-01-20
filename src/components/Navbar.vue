@@ -157,6 +157,8 @@
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
               <li><button @click="switchToPolygon" class="dropdown-item">Polygon PoS Chain</button></li>
               <li><button @click="switchToKovan" class="dropdown-item">Kovan Testnet</button></li>
+              <li><button @click="switchToMumbai" class="dropdown-item">Mumbai Testnet</button></li>
+              <li><button @click="switchToFuji" class="dropdown-item">Fuji Testnet</button></li>
             </ul>
           </div>
 
@@ -249,6 +251,22 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x2a'
+        }] 
+      });
+    },
+    switchToMumbai() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x13881'
+        }] 
+      });
+    },
+    switchToFuji() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0xa868'
         }] 
       });
     }
