@@ -67,7 +67,7 @@ export default {
       window.ethereum.request({ 
         method: 'wallet_switchEthereumChain', 
         params: [{ 
-          chainId: '0xa868'
+          chainId: '0xa869'
         }] 
       });
     }
