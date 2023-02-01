@@ -322,8 +322,8 @@ export default {
     isPut() {
       if (this.option.symbol.includes("EC")) { // CALL
           return false;
-      } else if (this.option.symbol.includes("EP")) { // PUT
-          return true
+      } else {
+          return true;
       }
     }
   },
