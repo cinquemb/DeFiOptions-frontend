@@ -8,22 +8,29 @@
     <div class="div-flex justify-content-center flex-wrap">
       <LpDataItem class="data-item" title="Symbol" :data="pool.symbol" :divider="true" />
       <LpDataItem class="data-item" title="Address" :data="formatAddress" :divider="true" :info="formatAddressInfo" />
+      <div class="data-item" >
+        <button @click="togglePool" class="btn btn-success">
+          Select Pool
+        </button>
+      </div>
+
+      <div class="data-item" @mouseover="togglePool">
+        <router-link to="/manage" class="btn btn-success">
+          Manage pool
+        </router-link>
+      </div>
+
+      <div class="data-item" @mouseover="togglePool">
+        <router-link to="/pool-governance" class="btn btn-success">
+          Govern pool
+        </router-link>
+      </div>
+
     </div>
 
     <!-- Action button -->
     <div>
-      <button @click="togglePool" class="btn btn-success">
-        Select Pool
-      </button>
-
-      <router-link to="/manage" class="btn btn-success" v-on:click.native="togglePool">
-        Manage pool
-      </router-link>
-
-      <router-link to="/pool-governance" class="btn btn-success" v-on:click.native="togglePool">
-        Govern pool
-      </router-link>
-
+      
       <span></span>
     </div>
   </div>

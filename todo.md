@@ -13,9 +13,6 @@ LINK/USD-EP-24e18-1643356800
 
 			
 			- need to figure out to factor in neutralizing prospective positions for pools
-			- figure out how to toggle pool automattically before firing router-link when clicking
-				- manage pool
-				- govern pool
 
 		- toggle pools
 
