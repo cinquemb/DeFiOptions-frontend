@@ -22,8 +22,8 @@
     </h3>
 
     <div class="btn-group mt-1" role="group" aria-label="Basic example" v-if="!getSellType">
-      <button @click="changeCoveredType('COVERED')" type="button" class="btn btn-outline-primary btn-md" :class="{'btn-outline-primary-active':'COVERED' === selectedCoveredType}">COVERED</button>
-      <button @click="changeCoveredType('NAKED')" type="button" class="btn btn-outline-primary btn-md" :class="{'btn-outline-primary-active':'NAKED' === selectedCoveredType}">NAKED</button>
+      <button @click="changeCoveredType('COVERED')" type="button" class="btn btn-outline-primary btn-md" :class="{'btn-outline-primary-active':'COVERED' === selectedCoveredType}" v-if="!isPut">COVERED</button>
+      <button @click="changeCoveredType('NAKED')" type="button" class="btn btn-outline-primary btn-md" :class="{'btn-outline-primary-active':'NAKED' === selectedCoveredType}">CASH SECURED</button>
     </div>
 
     <div class="d-flex flex-wrap mt-3">
@@ -47,7 +47,7 @@
           </span>
         </div>
 
-        <div class="form-button-mobile" v-if="getCoveredType && !getSellType">
+        <div class="form-button-mobile" v-if="getCoveredType && !getSellType && !isPut">
           <div class="show-text form-text" :key="writingOptionsBalance">
             Balance: {{Number(underlyingBalance).toFixed(2)}} 
             <a target="_blank" :href="'https://polygonscan.com/token/'+this.underlyingAddr">{{underlyingSymbol}}</a>.
@@ -105,7 +105,7 @@
       <div class="p-2" v-if="!getCoveredType">
         <button @click="writeOptions" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || ((writingStepTx < 2) && (!isBuyWithExchangeBalance))">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Write Naked and Sell for ${{getTotal.toFixed(2)}}
+          Write Cash Secured and Sell for ${{getTotal.toFixed(2)}}
         </button>
       </div>
       <!-- <div></div> -->
@@ -140,7 +140,7 @@ import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
 
 export default {
   name: "SellOption",
-  props: ["option"],
+  props: ["option", "side"],
 
   data() {
     return {
@@ -151,8 +151,8 @@ export default {
       selectedOptionSize: 0.1,
       selectedOptionVolume: null,
       selectedOptionPrice: null,
-      selectedSellType: "SELL",
-      selectedCoveredType: "COVERED",
+      selectedSellType: "WRITE",
+      selectedCoveredType: "NAKED",
       slippage: 0.125, // 2% by default
       tooLowVolume: false,
       //unlimitedApproval: false,
@@ -313,6 +313,18 @@ export default {
 
     getCoveredType() {
       return this.selectedCoveredType == "COVERED";
+    },
+
+    isBuy() {
+      return this.side == "BUY";
+    },
+
+    isPut() {
+      if (this.option.symbol.includes("EC")) { // CALL
+          return false;
+      } else if (this.option.symbol.includes("EP")) { // PUT
+          return true
+      }
     }
   },
 

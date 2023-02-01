@@ -37,10 +37,10 @@
   </div>
 
   <!-- Buy option form -->
-  <BuyOption v-if="showForm && isGetBuy" class="show-form" :option="option" />
+  <BuyOption v-if="showForm && isGetBuy" class="show-form" :option="option" :side="side" />
 
   <!-- Sell option form -->
-  <SellOption v-if="showForm && isGetSell" class="sell-form" :option="option" />
+  <SellOption v-if="showForm && isGetSell" class="sell-form" :option="option" :side="side" />
   
 </div>
   

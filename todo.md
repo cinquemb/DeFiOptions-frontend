@@ -13,6 +13,9 @@ LINK/USD-EP-24e18-1643356800
 
 			
 			- need to figure out to factor in neutralizing prospective positions for pools
+			- issue with bad oracle inialzation decimals?
+				- causes bad vol calcs
+					- try building samples from purely on chain
 
 		- toggle pools
 

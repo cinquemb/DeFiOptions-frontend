@@ -120,7 +120,7 @@ import LiquidityPool from "../../contracts/GovernableLinearLiquidityPool.json";
 
 export default {
   name: "BuyOption",
-  props: ["option"],
+  props: ["option", "side"],
 
   data() {
     return {
