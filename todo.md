@@ -8,11 +8,17 @@ LINK/USD-EP-24e18-1643356800
 		- issues
 			- issue with rebalanicing alredy open position
 			- issue with displaying eth options on trade page
+			- empty proposal being created when not setting all fields of setParams
+				- fix ui to not create Proposal when all fields are not set for setParams
 
 			
 			- need to figure out to factor in neutralizing prospective positions for pools
+			- figure out how to toggle pool automattically before firing router-link when clicking
+				- manage pool
+				- govern pool
 
 		- toggle pools
+
 			- debug to make sure that related pool values are being added
 				- make sure pool data is entering the state
 				- have to toggle between two pools multiple times before something updates in the ui

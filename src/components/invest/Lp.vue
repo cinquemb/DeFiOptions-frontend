@@ -16,11 +16,11 @@
         Select Pool
       </button>
 
-      <router-link to="/manage" class="btn btn-success">
+      <router-link to="/manage" class="btn btn-success" v-on:click.native="togglePool">
         Manage pool
       </router-link>
 
-      <router-link to="/pool-governance" class="btn btn-success">
+      <router-link to="/pool-governance" class="btn btn-success" v-on:click.native="togglePool">
         Govern pool
       </router-link>
 
