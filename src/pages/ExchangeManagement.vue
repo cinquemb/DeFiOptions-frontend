@@ -95,6 +95,21 @@
     <span></span>
     <span></span>
 
+    <!------ cleanUp Book ------>
+
+    <div class="section-big row mt-4 mx-3">
+      <div class="col-md-12">
+        <SetAddressMapMultiple :data="CleanUp" />
+        <span></span>
+        <button @click="cleanUp" class="btn btn-success">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Remove Expired Options From Book
+        </button>
+      </div>
+    </div>
+    <span></span>
+    <span></span>
+
   </div>
 </template>
 
@@ -139,6 +154,13 @@ export default {
         field_name1: "Option Token Address",
         value1: null,
         field_name2: "Option Token Holder/Writer Adress",
+        value2: null,
+        desc: "Execute Collateral Call/Liquidate Option Writer"
+      },
+      CleanUp: {
+        field_name1: "Account Address",
+        value1: null,
+        field_name2: "Option Token Address",
         value2: null,
         desc: "Execute Collateral Call/Liquidate Option Writer"
       },
@@ -349,6 +371,36 @@ export default {
           component.$toast.success("Collateral Call/Liquidation Succeeded");
         } else {
           component.$toast.error("The liquidateOptions tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+    },
+    async cleanUp() {
+      //      function cleanUp(address owner, address _tk) public returns (uint value), SetAddressMap
+      let component = this;
+      component.loading = true;
+
+      await component.getOptionsExchangeContract.methods.cleanUp(
+        component.CleanUp.value1,
+        component.CleanUp.value2,
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Removal Success");
+        } else {
+          component.$toast.error("The cleanUp tx has failed. Please contact the DeFi Options support.");
         }
         component.loading = false;
 
