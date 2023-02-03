@@ -119,7 +119,7 @@ export default {
             let symbol = poolSymbols[i];
             let address = poolSymbolsAddrsMap[symbol];
             // option object
-            let poolObject = {symbol, address};
+            let poolObject = {symbol, address, poolApy, poolBalance, poolFreeBalance, userPoolBalance, userPoolUsdValue, poolMaturityDate, poolWithdrawalFee, poolSymbolList};
             exchangePools.push(poolObject);
 
 
@@ -141,12 +141,14 @@ export default {
             this.$store.state.liquidityPool["pool"][poolAddr] = tmpPoolData;
         }
       }
+      exchangePools.sort((a, b) => parseInt(a["userPoolBalance"]) > parseInt(b["userPoolBalance"]));
+      exchangePools.reverse();
       this.$store.commit("optionsExchange/setPoolSymbols", poolSymbols);
       this.$store.commit("optionsExchange/setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
       this.$store.commit("optionsExchange/setExchangeLiquidityPools", exchangePools);
       this.$store.dispatch("proposalManager/fetchProposals");
 
-      this.poolSyms =  exchangePools;
+      this.poolSyms = exchangePools;
       this.loading = false;
     }
   }

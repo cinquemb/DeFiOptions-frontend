@@ -114,6 +114,9 @@ export default {
         return this.selectedSide;
       }
       return this.getDefaultSide;
+    },
+    getMarkets() {
+      return Object.keys(this.getAllSymbolsListJson) || this.pairs;
     }
   },
   created() {
@@ -142,7 +145,7 @@ export default {
   data() {
     return {
       maturities: null,
-      pairs: null,
+      pairs: [],
       selectedMaturity: null,
       selectedPair: null,
       selectedType: null,

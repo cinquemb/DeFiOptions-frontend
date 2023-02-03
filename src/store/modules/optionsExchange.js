@@ -182,16 +182,26 @@ const actions = {
       for (var i=0; i < poolData[0].length; i++) {
           let pSym = poolData[0][i];
           let poolAddr = poolData[1][i];
+          let poolApy = poolData[2][i];
+          let poolBalance = poolData[3][i];
+          let poolFreeBalance = poolData[4][i];
+          let userPoolBalance = poolData[5][i];
+          let userPoolUsdValue = poolData[6][i];
+          let poolMaturityDate = poolData[7][i];
+          let poolWithdrawalFee = poolData[8][i];
+          let poolSymbolList = poolData[9][i];
 
           poolSymbolsAddrsMap[pSym] = poolAddr;
           poolSymbols.push(pSym);
           let symbol = poolSymbols[i];
           let address = poolSymbolsAddrsMap[symbol];
           // option object
-          let poolObject = {symbol, address};
+          let poolObject = {symbol, address, poolApy, poolBalance, poolFreeBalance, userPoolBalance, userPoolUsdValue, poolMaturityDate, poolWithdrawalFee, poolSymbolList};
           exchangePools.push(poolObject);
       }
     }
+    exchangePools.sort((a, b) => a["userPoolBalance"] < b["userPoolBalance"]);
+
     commit("setPoolSymbols", poolSymbols);
     commit("setPoolSymbolsAddrsMap", poolSymbolsAddrsMap);
     commit("setExchangeLiquidityPools", exchangePools);

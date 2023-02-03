@@ -23,8 +23,6 @@ LINK/USD-EP-24e18-1643356800
 				- make sure pool data is entering the state
 				- have to toggle between two pools multiple times before something updates in the ui
 				- other pool stats?
-				- ux
-					- change order of pools based on what you have liquidity in
 
 
 		- manage pool
