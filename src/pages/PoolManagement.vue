@@ -130,32 +130,27 @@
         Remove Symbol
       </button>
     </div>
-    </br>
 
-    <div>
-      <button @click="createExecuteFastProposal" class="btn btn-success">
+    <div class="pool-submit-buttons">
+      <button @click="createExecuteFastProposal" class="btn btn-success disabled">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Create + Register + Vote + Execute Proposal (1 tx)
       </button>
     </div>
-    </br>
 
-
-    <div>
+    <div class="pool-submit-buttons">
       <button @click="createExecuteProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Create and Register Proposal (FAST, 1 tx + gov tx's)
       </button>
     </div>
-    </br>
     
-    <div>
+    <div class="pool-submit-buttons">
       <button @click="createProposal" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Create and Register Proposal (SLOW, 3 tx's + gov tx's)
       </button>
     </div>
-    </br>
 
   </div>
 </template>
@@ -979,3 +974,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.pool-submit-buttons {
+  padding: 20px 20px !important;
+}
+</style>
