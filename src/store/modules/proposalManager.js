@@ -4,6 +4,7 @@ import ProtocolReaderJSON from "../../contracts/ProtocolReader.json";
 import addresses from "../../contracts/addresses.json";
 
 const ContractName = "ProposalManager";
+const FastContractName = "FastPoolManagement";
 
 const state = {
   abi: null,
@@ -28,6 +29,9 @@ const getters = {
   },
   getProposals(state) {
     return state.proposals;
+  },
+  getFastPoolManagementAddress(state) {
+    return state.fastAddress;
   }
 };
 
@@ -38,6 +42,8 @@ const actions = {
     let address = addresses[ContractName][chainIdDec];
     let contract = new web3.eth.Contract(ProposalManagerJSON.abi, address);
     commit("setContract", contract);
+    commit("setAddress", addresses[ContractName][chainIdDec]);
+    commit("setFastAddress", addresses[FastContractName][chainIdDec]);
   },
 
   async fetchProposalCount({dispatch, state}) {
@@ -77,6 +83,8 @@ const actions = {
   storeAddress({ commit, rootState }) {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     commit("setAddress", addresses[ContractName][chainIdDec]);
+    commit("setFastAddress", addresses[FastContractName][chainIdDec]);
+
   }
 };
 
@@ -86,6 +94,9 @@ const mutations = {
   },
   setAddress(state, address) {
     state.address = address;
+  },
+  setFastAddress(state, fastAddress) {
+    state.fastAddress = fastAddress;
   },
   setContract(state, _contract) {
     state.contract = _contract;

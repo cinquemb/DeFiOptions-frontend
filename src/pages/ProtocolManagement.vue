@@ -346,13 +346,14 @@
         Add DOD balance transfer operation from DAO
       </button>
     </div>
-    <span></span>
-    <span></span>
+    </br>
 
-    <button @click="createProposal" class="btn btn-success">
-      <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      Create and Register Proposal
-    </button>
+    <div>
+      <button @click="createProposal" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Create and Register Proposal
+      </button>
+    </div>
 
   </div>
 </template>

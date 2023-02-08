@@ -130,13 +130,32 @@
         Remove Symbol
       </button>
     </div>
-    <span></span>
-    <span></span>
+    </br>
 
-    <button @click="createProposal" class="btn btn-success">
-      <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      Create and Register Proposal
-    </button>
+    <div>
+      <button @click="createExecuteFastProposal" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Create + Register + Vote + Execute Proposal (1 tx)
+      </button>
+    </div>
+    </br>
+
+
+    <div>
+      <button @click="createExecuteProposal" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Create and Register Proposal (FAST, 1 tx + gov tx's)
+      </button>
+    </div>
+    </br>
+    
+    <div>
+      <button @click="createProposal" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Create and Register Proposal (SLOW, 3 tx's + gov tx's)
+      </button>
+    </div>
+    </br>
 
   </div>
 </template>
@@ -150,6 +169,7 @@ import SetAddress from '../components/manage/exchange/SetAddress.vue';
 import CreateOption from '../components/manage/CreateOption.vue';
 import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
+import FastPoolManagementJSON from "../contracts/FastPoolManagement.json";
 import BaseHedgingManagerJSON from "../contracts/BaseHedgingManager.json";
 import MetavaultHedgingManagerFactoryJSON from "../contracts/MetavaultHedgingManagerFactory.json";
 import ChainlinkContractJson from "../contracts/ChainlinkFeed.json";
@@ -207,7 +227,7 @@ export default {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
-    ...mapGetters("proposalManager", ["getProposalManagerContract"]),
+    ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -466,6 +486,214 @@ export default {
           
         } else {
           component.$toast.error("The register proposal tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+
+    },
+    async createExecuteFastProposal () {
+      let component = this;
+      component.loading = true;
+
+      //console.log(component.getLiquidityPoolAbi);
+
+      let addSymbolAbiJSON = component.getLiquidityPoolAbi[8];
+      let setRangeAbiJSON = component.getLiquidityPoolAbi[33];
+      let setParametersAbiJSON = component.getLiquidityPoolAbi[32];
+
+      let encodedData = [];
+
+      //encode setParameters first if exists
+      if (component.validateSetParameters()) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress,// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          String((parseInt(component.setParams.hedgingNotionalThreshold) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols[i].udlFeed, 
+            String((parseInt(component.addSymbols[i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
+            component.addSymbols[i].maturity, //unix timestamp format
+            component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols[i].t0), // unix timestamp format
+            Number(component.addSymbols[i].t1), //unix timestamp format
+            component.addSymbols[i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
+            component.addSymbols[i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
+            [
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges[i].symbol, 
+            component.marketOpTypes[component.setRanges[i].op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            String((parseInt(component.setRanges[i].start) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18
+            String((parseInt(component.setRanges[i].end) *  (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))//price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      const fastPoolManagementContract = new component.getWeb3.eth.Contract(
+        FastPoolManagementJSON.abi,
+        component.getFastPoolManagementAddress
+      );
+    
+      await fastPoolManagementContract.methods.deployProposeVoteExecute(
+        component.getProposalManagerAddress,
+        PoolManagementProposalJSON.bytecode,
+        encodedData,
+        component.getSelectedPoolAddress,
+        2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
+        1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
+        Number(Math.floor(Date.now() / 1000) + (60 * 60)), //30 min to vote
+        true
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Updating the pool was successful.");
+          
+        } else {
+          component.$toast.error("The storing proposal transactions tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+    },
+
+    async createExecuteProposal () {
+      let component = this;
+      component.loading = true;
+
+      //console.log(component.getLiquidityPoolAbi);
+
+      let addSymbolAbiJSON = component.getLiquidityPoolAbi[8];
+      let setRangeAbiJSON = component.getLiquidityPoolAbi[33];
+      let setParametersAbiJSON = component.getLiquidityPoolAbi[32];
+
+      let encodedData = [];
+
+      //encode setParameters first if exists
+      if (component.validateSetParameters()) {
+        let parameters = [
+          Number(Number(component.setParams.reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.setParams.withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.setParams.maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.setParams.leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress,// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          String((parseInt(component.setParams.hedgingNotionalThreshold) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+      //encode all addSymbols
+      if (component.validateObj(component.addSymbols)) {
+        for(let i=0; i<component.addSymbols.length; i++) {
+          let parameters = [
+            component.addSymbols[i].udlFeed, 
+            String((parseInt(component.addSymbols[i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
+            component.addSymbols[i].maturity, //unix timestamp format
+            component.optTypes[component.addSymbols[i].optionType], //0 if optionType == 'CALL' else 1
+            Number(component.addSymbols[i].t0), // unix timestamp format
+            Number(component.addSymbols[i].t1), //unix timestamp format
+            component.addSymbols[i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
+            component.addSymbols[i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
+            [
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.addSymbols[i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      //encode all setRanges
+      if (component.validateObj(component.setRanges)) {
+        for(let i=0; i<component.setRanges.length; i++) {
+          let parameters = [
+            component.setRanges[i].symbol, 
+            component.marketOpTypes[component.setRanges[i].op], //    enum Operation { NONE, BUY, SELL } == 0, 1, 2 respectively
+            String((parseInt(component.setRanges[i].start) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})), //price * 10 ** 18
+            String((parseInt(component.setRanges[i].end) *  (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))//price * 10 ** 18
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(setRangeAbiJSON, parameters)
+          );
+        }
+      }
+
+      const fastPoolManagementContract = new component.getWeb3.eth.Contract(
+        FastPoolManagementJSON.abi,
+        component.getFastPoolManagementAddress
+      );
+
+      await fastPoolManagementContract.methods.deployProposeVoteExecute(
+        component.getProposalManagerAddress,
+        PoolManagementProposalJSON.bytecode,
+        encodedData,
+        component.getSelectedPoolAddress,
+        2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
+        1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
+        Number(Math.floor(Date.now() / 1000) + (60 * 60)), //30 min to vote
+        false
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page");
+          
+        } else {
+          component.$toast.error("The storing proposal transactions tx has failed. Please contact the DeFi Options support.");
         }
         component.loading = false;
 
