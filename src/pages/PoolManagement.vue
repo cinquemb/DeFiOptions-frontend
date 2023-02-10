@@ -5,6 +5,8 @@
 
     <!------ create hedging manager ------>
 
+    <OptViz :passedProps="passedProps"/>
+
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
         <button @click="createHedgingManager" class="btn btn-success">
@@ -163,6 +165,10 @@ import SetParams from '../components/manage/SetParams.vue';
 import SetAddress from '../components/manage/exchange/SetAddress.vue';
 import CreateOption from '../components/manage/CreateOption.vue';
 import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
+
+import { ReactInVue } from 'vuera'
+import App from '../components/react/App/App';
+
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
 import FastPoolManagementJSON from "../contracts/FastPoolManagement.json";
 import BaseHedgingManagerJSON from "../contracts/BaseHedgingManager.json";
@@ -217,12 +223,16 @@ export default {
     SetParams,
     CreateOption,
     RemoveSymbol,
+    'OptViz': ReactInVue(App),
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
+    passedProps () {
+      return {}
+    },
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {

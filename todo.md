@@ -31,8 +31,9 @@ LINK/USD-EP-24e18-1643356800
 					- deploy proposal
 					- upload proposal data
 					- register proposal
-					- vote yes on proposal
-					- close proposal
+					- issue with governance (msg.sender isnt account but contract now)
+						- vote yes on proposal
+						- close proposal
 
 		https://forms.monday.com/forms/ce3817531bd3dcdba24e01e2263f397d?r=use1
 		https://docs.google.com/forms/d/e/1FAIpQLSe1_GGh_NArOi8_TcpmSjsNiDkLHINgb18dOewfQVWqcX8LWQ/viewform?usp=send_form
