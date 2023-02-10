@@ -6,7 +6,7 @@ module.exports = {
         module: {
             rules: [
                 {
-                    test: /react\/\*\.?(js|tsx)(\?.*)?$/,
+                    test: /react\/*.js$/,
                     use: {
                         loader: 'babel-loader',
                         options: {

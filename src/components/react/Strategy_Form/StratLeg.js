@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
+import React, { useEffect } from 'react';
 import './StratLeg.css';
 import { Col } from "react-bootstrap"
 import Form from 'react-bootstrap/Form';

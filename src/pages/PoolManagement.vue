@@ -5,7 +5,8 @@
 
     <!------ create hedging manager ------>
 
-    <OptViz :passedProps="passedProps"/>
+    <!------ <OptViz :passedProps="passedProps"/> ------>
+    <react :component="OptViz"/>
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
@@ -166,7 +167,8 @@ import SetAddress from '../components/manage/exchange/SetAddress.vue';
 import CreateOption from '../components/manage/CreateOption.vue';
 import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
 
-import { ReactInVue } from 'vuera'
+import { ReactWrapper } from 'vuera';
+//import { ReactInVue } from 'vuera';
 import App from '../components/react/App/App';
 
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
@@ -180,6 +182,7 @@ export default {
   name: 'PoolManagement',
   data() {
     return {
+      OptViz: App,
       pairs: {},
       totalStableBalance: null,
       idealExpo: {},
@@ -223,7 +226,8 @@ export default {
     SetParams,
     CreateOption,
     RemoveSymbol,
-    'OptViz': ReactInVue(App),
+    'react': ReactWrapper,
+    //'OptViz': ReactInVue(App),
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),

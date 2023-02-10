@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
+import React, { useState, useEffect } from 'react';
 import './Chart.css';
 import {Line} from 'react-chartjs-2';
 import 'chartjs-plugin-annotation';
