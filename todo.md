@@ -16,6 +16,11 @@ LINK/USD-EP-24e18-1643356800
 			- issue with bad oracle inialzation decimals?
 				- causes bad vol calcs
 					- try building samples from purely on chain
+				- need a better way to initialize on chain
+					- in udlfeed contracts
+
+			-support canto testnet
+				- chain id: 740, 0x2e4
 
 		- toggle pools
 
