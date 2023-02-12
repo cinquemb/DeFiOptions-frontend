@@ -7,12 +7,10 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 LINK/USD-EP-24e18-1643356800
 		- issues
 			- issue with rebalanicing alredy open position
-			- issue with displaying eth options on trade page
 			- empty proposal being created when not setting all fields of setParams
 				- fix ui to not create Proposal when all fields are not set for setParams
 
 			
-			- need to figure out to factor in neutralizing prospective positions for pools
 			- issue with bad oracle inialzation decimals?
 				- causes bad vol calcs
 					- try building samples from purely on chain
@@ -39,10 +37,12 @@ LINK/USD-EP-24e18-1643356800
 			- pass entered/computed data from react component back to vue component
 			- compute basic pricing surface(s)
 			- create "limit order"
-				- create pool
-				- deposit collateral needed
-				- fast option creation proposal, 
-				- fast pool proposal (
+				- in one tx:
+					- create pool
+					- deposit collateral needed
+						- fast options registration tx
+				
+					- fast pool proposal (
 					set params -> (expiration == max exp of longest dated leg),
 					pricing surfaces
 				   ), 
@@ -52,13 +52,9 @@ LINK/USD-EP-24e18-1643356800
 
 		- manage pool
 			- fast pool propsal
-				- within one tx
-					- deploy proposal
-					- upload proposal data
-					- register proposal
-					- issue with governance (msg.sender isnt account but contract now)
-						- vote yes on proposal
-						- close proposal
+				- issue with governance (msg.sender isnt account but contract now)
+					- vote yes on proposal
+					- close proposal
 			- fast options creation
 				- able to register many different options at once
 

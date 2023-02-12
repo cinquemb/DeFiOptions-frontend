@@ -73,6 +73,7 @@ const actions = {
     let address = addresses.OptionsExchange[chainIdDec];
     let contract = new web3.eth.Contract(OptionsExchange.abi, address);
     commit("setContract", contract);
+    commit("setAbi", OptionsExchange.abi);
   },
   async fetchExchangeBalanceAllowance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {

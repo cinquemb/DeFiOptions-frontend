@@ -231,7 +231,7 @@ export default {
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getLiquidityPoolBalance", "getSelectedPool"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getOptionsExchangeAbi", "getLiquidityPoolBalance", "getSelectedPool"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
     passedProps () {
@@ -750,6 +750,63 @@ export default {
         }
       }
     },
+
+    async createSymbolsBulk () {
+      //encode all setRanges
+      let component = this;
+
+      let encodedData = [];
+
+      //TODO: NEED TO FIND THE PROPER INDEX FOR "createSymbol" abi
+      let createSymbolAbiJSON = component.getOptionsExchangeAbi[32];
+
+
+      if (component.validateObj(component.createOptions)) {
+        for (let i=0; i < component.createOptions.length; i++) {
+          let parameters = [
+            component.createOptions[i].udlFeedAddr,
+            component.optTypes[component.createOptions[i].optType], //0 if optionType == 'CALL' else 1
+            String((parseInt(component.createOptions[i].strike) * (10**18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
+            component.createOptions[i].maturity //unix timestamp format
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(createSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      const fastPoolManagementContract = new component.getWeb3.eth.Contract(
+        FastPoolManagementJSON.abi,
+        component.getFastPoolManagementAddress
+      );
+
+      await fastPoolManagementContract.methods.bulkRegisterSymbols(
+        component.getOptionsExchangeContract.options.address,
+        encodedData
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page");
+          
+        } else {
+          component.$toast.error("The storing proposal transactions tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+    },
+    
     async removeAllSymbols () {
       //TODO: BULK REMOVAL LATER
       //loop over removes and ask user to keep pressin mm tx's
