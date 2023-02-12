@@ -17,6 +17,8 @@ LINK/USD-EP-24e18-1643356800
 				- need a better way to initialize on chain
 					- in udlfeed contracts
 
+			- add check for hedging liquidity, kill open pos if not available
+
 			-support canto testnet
 				- chain id: 740, 0x2e4
 
@@ -37,15 +39,16 @@ LINK/USD-EP-24e18-1643356800
 			- pass entered/computed data from react component back to vue component
 			- compute basic pricing surface(s)
 			- create "limit order"
+				- approve fpm contract
 				- in one tx:
 					- create pool
 					- deposit collateral needed
 						- fast options registration tx
 				
 					- fast pool proposal (
-					set params -> (expiration == max exp of longest dated leg),
-					pricing surfaces
-				   ), 
+						set params -> (expiration == max exp of longest dated leg),
+						pricing surfaces
+				   	   )
 				- governance vote tx, 
 				- governance close tx
 

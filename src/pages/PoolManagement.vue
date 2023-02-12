@@ -3,10 +3,12 @@
 
     <h1> Current Pool: ({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h1>
 
-    <!------ create hedging manager ------>
 
-    <!------ <OptViz :passedProps="passedProps"/> ------>
+    <!------ TODO: NEED TO MOVE THIS TO OWN TRADE PAGE ------>
     <react :component="OptViz"/>
+
+
+    <!------ create hedging manager ------>
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
