@@ -40,6 +40,10 @@
             <span v-if="Number(selectedOptionSize) > Number(getMaxOptionSize)"> 
             Max size: <span class="max-sell" @click="selectedOptionSize = getMaxOptionSize">{{getMaxOptionSize}}</span>.
             </span>
+
+            <span> 
+              Collateral Required: ${{ getCollateralNeeded }}
+            </span>
             
             <span v-if="Number(this.option.holding) > Number(getMaxOptionSize)"> 
               (Your total holding is bigger: {{this.option.holding}})
@@ -205,6 +209,10 @@ export default {
       } else {
         return 0;
       }
+    },
+
+    getCollateralNeeded(){
+      return this.collateralNeededRaw.toFixed(4)
     },
     
     getMaxOptionSize() {
@@ -533,13 +541,14 @@ export default {
 
       const collateralNeeded = await this.getOptionsExchangeContract.methods.calcCollateral(
         feedAddress, // feed address
-        this.getWeb3.utils.toBN(optionSizeWei), //volume of options to write
+        optionSizeWei, //volume of options to write
         (this.option.type === "CALL") ? 0 : 1, //option type
         this.getWeb3.utils.toBN(strikeInWei), // strike price of option
         Number(this.option.timestamp), // maturity of option in utc
       ).call();
 
-      console.log((collateralNeeded * 1.0025) / 10**18);
+      console.log("option size:"+optionSizeWei)
+      console.log("collateral req" +((collateralNeeded * 1.0025) / 10**18));
 
       this.collateralNeededRaw = (collateralNeeded * 1.0025) / 10**18; //estimate higher just in case
     },

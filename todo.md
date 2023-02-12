@@ -29,16 +29,28 @@ LINK/USD-EP-24e18-1643356800
 				- have to toggle between two pools multiple times before something updates in the ui
 				- other pool stats?
 
+		- options visualizer
+			- fix the font to make text visible
+			- pass current underlying price into react component
+				- check for update with oracle updates
+			- when strike and expiration is entered, default to computing black sholes price of premium
+				- at current timestamp
+				- at expiration-24 hours
+			- pass entered/computed data from react component back to vue component
+			- compute basic pricing surface with
+			- 
+
 
 		- manage pool
 			- fast pool propsal
-				- witinon one tx
+				- within one tx
 					- deploy proposal
 					- upload proposal data
 					- register proposal
 					- issue with governance (msg.sender isnt account but contract now)
 						- vote yes on proposal
 						- close proposal
+			- fast 
 
 		https://forms.monday.com/forms/ce3817531bd3dcdba24e01e2263f397d?r=use1
 		https://docs.google.com/forms/d/e/1FAIpQLSe1_GGh_NArOi8_TcpmSjsNiDkLHINgb18dOewfQVWqcX8LWQ/viewform?usp=send_form
