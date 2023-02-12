@@ -37,8 +37,17 @@ LINK/USD-EP-24e18-1643356800
 				- at current timestamp
 				- at expiration-24 hours
 			- pass entered/computed data from react component back to vue component
-			- compute basic pricing surface with
-			- 
+			- compute basic pricing surface(s)
+			- create "limit order"
+				- create pool
+				- deposit collateral needed
+				- fast option creation proposal, 
+				- fast pool proposal (
+					set params -> (expiration == max exp of longest dated leg),
+					pricing surfaces
+				   ), 
+				- governance vote tx, 
+				- governance close tx
 
 
 		- manage pool
@@ -50,7 +59,8 @@ LINK/USD-EP-24e18-1643356800
 					- issue with governance (msg.sender isnt account but contract now)
 						- vote yes on proposal
 						- close proposal
-			- fast 
+			- fast options creation
+				- able to register many different options at once
 
 		https://forms.monday.com/forms/ce3817531bd3dcdba24e01e2263f397d?r=use1
 		https://docs.google.com/forms/d/e/1FAIpQLSe1_GGh_NArOi8_TcpmSjsNiDkLHINgb18dOewfQVWqcX8LWQ/viewform?usp=send_form
