@@ -15,6 +15,7 @@ function Chart (props) {
   const [quote, setQuote] = useState(0);
   const [high, setHigh] = useState(0); 
   const [low, setLow] = useState(0);
+  const [sigma, setSigma] = useState(0);
   const [chartData, setChartData] = useState([]);
   //const [chartBounds, setChartBounds] = useState([0, 0]);
 
@@ -37,12 +38,13 @@ function Chart (props) {
       setHigh(data.latestPrice + (3 * data.sigma)); //TODO: USE 3sigma + current price from oracle
       setLow(data.latestPrice - (3 * data.sigma));//TODO: USE 3sigma + current price from oracle
       setQuote(data.latestPrice); //TODO: USE current price from oracle
+      setSigma(data.sigma)
     }
 
   }, [symbol]);
 
-  let lower_bound = Math.ceil(low - quote/10 - 10);
-  let upper_bound = Math.ceil(high + quote/10 + 10);
+  let lower_bound = Math.ceil(low - quote/10 - sigma);
+  let upper_bound = Math.ceil(high + quote/10 + sigma);
   useEffect(() => { 
     let chart_data = [];
     let strikes = [];
@@ -72,7 +74,7 @@ function Chart (props) {
       for (let j = 0; strategies[i].legs !== undefined && j < Object.keys(strategies[i].legs).length; j++){
         let factor = strategies[i].legs[j].direction === "-" ? 1 : -1
         let type = strategies[i].legs[j].type; 
-        let premium = strategies[i].legs[j].premium * 100;
+        let premium = strategies[i].legs[j].premium * 1;
         let strike = strategies[i].legs[j].strike;
         let quantity = strategies[i].legs[j].quantity;
         for (let k = 0; k < chart_data[i].length; k++){
@@ -82,12 +84,12 @@ function Chart (props) {
   
           // Handle calls 
           if (type === "C" && x >= strike){
-            cur_y = - factor * ((x - strike)*100 - premium);
+            cur_y = - factor * ((x - strike)*1 - premium);
           }
           
           // Handle puts 
           if (type === "P" && x <= strike){ 
-            cur_y = -factor * ((strike - x)*100 - premium)
+            cur_y = -factor * ((strike - x)*1 - premium)
           }
           if (premium !== 0 && strike !== 0 && premium !== undefined && strike !== undefined){
             chart_data[i][k].y += cur_y * quantity;
@@ -202,9 +204,13 @@ function Chart (props) {
                 fontSize: 18
               },
               ticks: {
-                callback: function(value, index, values) { 
+                /*callback: function(value, index, values) { 
                   console.log(index);
                   console.log(values);
+                  return '$' + value;
+                }*/
+
+                callback: function(value) { 
                   return '$' + value;
                 }
               }
@@ -217,9 +223,12 @@ function Chart (props) {
                 fontSize: 18
               },
               ticks: {
-                callback: function(value, index, values) { 
+                /*callback: function(value, index, values) { 
                   console.log(index);
                   console.log(values);
+                  return '$' + value;
+                }, */
+                callback: function(value) { 
                   return '$' + value;
                 }, 
                 min: Math.max(0, lower_bound),
