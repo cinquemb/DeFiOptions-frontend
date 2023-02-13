@@ -37,7 +37,11 @@ LINK/USD-EP-24e18-1643356800
 					- at expiration-24 hours == t1
 				- pass entered/computed data from react component back to vue component
 
+				- implement submit order button against proper FPM contract function
+
 			- compute basic pricing surface(s)
+
+			- redeply FPM contract
 
 
 		- manage pool
