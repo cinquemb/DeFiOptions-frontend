@@ -31,16 +31,12 @@ LINK/USD-EP-24e18-1643356800
 				- other pool stats?
 
 		- options visualizer
-			- pass current underlying price into react component
-				- check for update with oracle updates
-				- //TODO: need to replace with open spot data on different crypto/mapped to udl feed address
-					- currently react/chart/chart.js uses iex
-			- when strike and expiration is entered, default to computing black sholes price of premium
-				- at current timestamp
-				- at expiration-24 hours
-			- pass entered/computed data from react component back to vue component
-				- vue to react
-				- react back to vue
+			- when all data is entered for all legs (probaby signified by a submit order button)
+				- default to computing black sholes price of premium
+					- at current timestamp == t0
+					- at expiration-24 hours == t1
+				- pass entered/computed data from react component back to vue component
+
 			- compute basic pricing surface(s)
 
 
