@@ -20,6 +20,8 @@ LINK/USD-EP-24e18-1643356800
 			- add check for hedging liquidity, kill open pos if not available
 
 			-support canto testnet
+				- script to initalize udlfeeds
+					- https://docs.scry.finance/docs/smart-contracts/solidity-contracts-and-interface
 				- chain id: 740, 0x2e4
 
 		- toggle pools
@@ -38,19 +40,6 @@ LINK/USD-EP-24e18-1643356800
 				- at expiration-24 hours
 			- pass entered/computed data from react component back to vue component
 			- compute basic pricing surface(s)
-			- create "limit order"
-				- approve fpm contract
-				- in one tx:
-					- create pool
-					- deposit collateral needed
-						- fast options registration tx
-				
-					- fast pool proposal (
-						set params -> (expiration == max exp of longest dated leg),
-						pricing surfaces
-				   	   )
-				- governance vote tx, 
-				- governance close tx
 
 
 		- manage pool

@@ -159,6 +159,7 @@
               <li><button @click="switchToKovan" class="dropdown-item">Kovan Testnet</button></li>
               <li><button @click="switchToMumbai" class="dropdown-item">Mumbai Testnet</button></li>
               <li><button @click="switchToFuji" class="dropdown-item">Fuji Testnet</button></li>
+              <li><button @click="switchToCanto" class="dropdown-item">Canto Testnet</button></li>
             </ul>
           </div>
 
@@ -267,6 +268,14 @@ export default {
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0xa869'
+        }] 
+      });
+    },
+    switchToCanto() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x2e4'
         }] 
       });
     }
