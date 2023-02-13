@@ -32,12 +32,11 @@ function Chart (props) {
       };
     }
     if (symbol !== undefined && symbol !== ''){
-      getBoundaryData(symbol).then(data => {
-        //TODO: Add y calculation here as well 
-        setHigh(data.latestPrice + (3 * data.sigma)); //TODO: USE 3sigma + current price from oracle
-        setLow(data.latestPrice - (3 * data.sigma));//TODO: USE 3sigma + current price from oracle
-        setQuote(data.latestPrice); //TODO: USE current price from oracle
-      });
+      let data = getBoundaryData(symbol);
+      //TODO: Add y calculation here as well 
+      setHigh(data.latestPrice + (3 * data.sigma)); //TODO: USE 3sigma + current price from oracle
+      setLow(data.latestPrice - (3 * data.sigma));//TODO: USE 3sigma + current price from oracle
+      setQuote(data.latestPrice); //TODO: USE current price from oracle
     }
 
   }, [symbol]);
@@ -128,7 +127,7 @@ function Chart (props) {
 
         label: {
           backgroundColor: "#959296",
-          content: "52 wk Low",
+          content: "-3 sigma",
           position: "bottom",
           enabled: true
         }
@@ -159,7 +158,7 @@ function Chart (props) {
 
         label: {
           backgroundColor: "#959296",
-          content: "52 wk High",
+          content: "+3 sigma",
           position: "top",
           enabled: true
         }
@@ -203,15 +202,9 @@ function Chart (props) {
                 fontSize: 18
               },
               ticks: {
-                /*callback: function(value, index, values) { 
-                  //console.log(index);
-                  //console.log(values);
-                  return '$' + value;
-                }*/
-
-                callback: function(value) { 
-                  //console.log(index);
-                  //console.log(values);
+                callback: function(value, index, values) { 
+                  console.log(index);
+                  console.log(values);
                   return '$' + value;
                 }
               }
@@ -224,13 +217,9 @@ function Chart (props) {
                 fontSize: 18
               },
               ticks: {
-                /*callback: function(value, index, values) { 
-                  //console.log(index);
-                  //console.log(values);
-                  return '$' + value;
-                }*/callback: function(value) { 
-                  //console.log(index);
-                  //console.log(values);
+                callback: function(value, index, values) { 
+                  console.log(index);
+                  console.log(values);
                   return '$' + value;
                 }, 
                 min: Math.max(0, lower_bound),

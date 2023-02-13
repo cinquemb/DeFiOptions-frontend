@@ -16,17 +16,17 @@ function Ticker(props) {
 
   useEffect(() => {
     async function getValidSymbols() {
-      //TODO: TAKE UDL FEEDS FROM PROPS that are mapped to current price, udl vol
-      return {};
+      return Object.keys(props.underlyingDataProps);
     }
     getValidSymbols().then(data => {
-      setSymbols(new Set(data.map(i => i.symbol)));
+      setSymbols(new Set(data.map(i => i)));
     });  
   }, []);
 
   function handleChange(event) {
     const cleanInput = event.target.value.trim().toUpperCase();
-    if (cleanInput.length <= 5 && symbols.has(cleanInput)) {
+
+    if (symbols.has(cleanInput)) {
       setDisabled(false);
     } else{ 
       setDisabled(true);

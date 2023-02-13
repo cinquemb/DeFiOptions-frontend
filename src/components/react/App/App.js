@@ -24,7 +24,7 @@ class OptionsVizualizer extends React.Component {
           <div>
               Options Visualizer    
           </div>
-          <Ticker/>
+          <Ticker underlyingDataProps={this.props.underlyingData}/>
           <AddClear />
           <StratContainer />
           <Chart underlyingDataProps={this.props.underlyingData}/>
