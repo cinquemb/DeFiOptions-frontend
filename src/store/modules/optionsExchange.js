@@ -16,6 +16,7 @@ const state = {
   underlyingPrice: null,
   availableLiquidityPools: [],
   poolSymbolsAddrsMap: {},
+  underlyingsAvailable: {},
   selectedPool: "N/A"
 };
 
@@ -63,6 +64,9 @@ const getters = {
   },
   getExchangeLiquidityPools(state) {
     return state.exchangeLiquidityPools;
+  },
+  getUnderlyingsAvailable(state){
+   return state.underlyingsAvailable; 
   }
 };
 
@@ -72,6 +76,15 @@ const actions = {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = addresses.OptionsExchange[chainIdDec];
     let contract = new web3.eth.Contract(OptionsExchange.abi, address);
+
+    let underlyingMap = {
+      "BTC/USD": {"udlAddr": addresses["BTC/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "ETH/USD": {"udlAddr": addresses["ETH/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "MATIC/USD": {"udlAddr": addresses["MATIC/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "CANTO/USD": {"udlAddr": addresses["CANTO/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "AVAX/USD": {"udlAddr": addresses["AVAX/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}
+    };
+    commit("setUnderlyingsAvailable", underlyingMap);
     commit("setContract", contract);
     commit("setAbi", OptionsExchange.abi);
   },
@@ -313,6 +326,9 @@ const mutations = {
   },
   setExchangeLiquidityPools(state, pools) {
     state.exchangeLiquidityPools = pools;
+  },
+  setUnderlyingsAvailable(state, data) {
+    state.underlyingsAvailable = data;
   }
 };
 

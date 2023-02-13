@@ -17,6 +17,7 @@ function StratLeg(props) {
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "strike", 0.00))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "premium", 0.00))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "quantity", 0))
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", Number(Math.floor(Date.now() / 1000))))
     }, [dispatch, props.id, props.index, props.direction, props.type, props.newStrat]);
 
     function handleDirectionChange(event) {
@@ -39,6 +40,10 @@ function StratLeg(props) {
 
     function handleQuantityChange(event) {
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "quantity", event.target.value))
+    }
+
+    function handleExpirationChange(event) {
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", event.target.value))
     }
 
     return (
@@ -72,6 +77,10 @@ function StratLeg(props) {
                 <Form.Group as={Col} controlID="legQuantity">
                     <Form.Label>Quantity</Form.Label>
                     <Form.Control value={thisLeg == null ? 0.00 : thisLeg["quantity"]} onChange={handleQuantityChange}/>
+                </Form.Group>
+                <Form.Group as={Col} controlID="legExpiration">
+                    <Form.Label>Expiration</Form.Label>
+                    <Form.Control value={thisLeg == null ? 0.00 : thisLeg["expiration"]} onChange={handleExpirationChange}/>
                 </Form.Group>
             </Form.Row>
         </Form>

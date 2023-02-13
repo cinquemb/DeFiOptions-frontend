@@ -16,9 +16,8 @@ function Ticker(props) {
 
   useEffect(() => {
     async function getValidSymbols() {
-      let response = await fetch('https://cloud.iexapis.com/stable/ref-data/iex/symbols?token=' + process.env.REACT_APP_IEX_API_KEY);
-      let data = await response.json();
-      return data;
+      //TODO: TAKE UDL FEEDS FROM PROPS that are mapped to current price, udl vol
+      return {};
     }
     getValidSymbols().then(data => {
       setSymbols(new Set(data.map(i => i.symbol)));

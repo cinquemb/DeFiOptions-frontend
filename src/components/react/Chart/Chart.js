@@ -25,17 +25,20 @@ function Chart (props) {
 
   useEffect(() => {
 
-    async function getTickerData(tick) {
-      let response = await fetch('https://cloud.iexapis.com/stable/stock/' + tick + '/quote?token=' + process.env.REACT_APP_IEX_API_KEY);
-      let data = await response.json();
-      return data;
+    async function getBoundaryData(symbol) {
+      // TODO: GET FROM PROP
+
+      if (symbol in props){
+        //pass
+      }
+      return {latestPrice: 0, sigma: 1};
     }
     if (symbol !== undefined && symbol !== ''){
-      getTickerData(symbol).then(data => {
+      getBoundaryData(symbol).then(data => {
         //TODO: Add y calculation here as well 
-        setHigh(data.week52High);
-        setLow(data.week52Low);
-        setQuote(data.latestPrice);
+        setHigh(data.latestPrice + (3 * data.sigma)); //TODO: USE 3sigma + current price from oracle
+        setLow(data.latestPrice - (3 * data.sigma));//TODO: USE 3sigma + current price from oracle
+        setQuote(data.latestPrice); //TODO: USE current price from oracle
       });
     }
 
@@ -202,9 +205,15 @@ function Chart (props) {
                 fontSize: 18
               },
               ticks: {
-                callback: function(value, index, values) { 
-                  console.log(index);
-                  console.log(values);
+                /*callback: function(value, index, values) { 
+                  //console.log(index);
+                  //console.log(values);
+                  return '$' + value;
+                }*/
+
+                callback: function(value) { 
+                  //console.log(index);
+                  //console.log(values);
                   return '$' + value;
                 }
               }
@@ -217,9 +226,13 @@ function Chart (props) {
                 fontSize: 18
               },
               ticks: {
-                callback: function(value, index, values) { 
-                  console.log(index);
-                  console.log(values);
+                /*callback: function(value, index, values) { 
+                  //console.log(index);
+                  //console.log(values);
+                  return '$' + value;
+                }*/callback: function(value) { 
+                  //console.log(index);
+                  //console.log(values);
                   return '$' + value;
                 }, 
                 min: Math.max(0, lower_bound),

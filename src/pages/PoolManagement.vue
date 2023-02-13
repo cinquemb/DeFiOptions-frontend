@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="pool-management-body-text-color">
 
     <h1> Current Pool: ({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h1>
 
 
     <!------ TODO: NEED TO MOVE THIS TO OWN TRADE PAGE ------>
-    <react :component="OptViz"/>
+    <react :component="OptViz" :underlyingData="passedProps"/>
 
 
     <!------ create hedging manager ------>
@@ -185,6 +185,7 @@ export default {
   data() {
     return {
       OptViz: App,
+      OptVizData: {},
       pairs: {},
       totalStableBalance: null,
       idealExpo: {},
@@ -233,17 +234,20 @@ export default {
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getOptionsExchangeAbi", "getLiquidityPoolBalance", "getSelectedPool"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getOptionsExchangeAbi", "getLiquidityPoolBalance", "getSelectedPool", "getUnderlyingsAvailable"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
     passedProps () {
-      return {}
+      return this.OptVizData;
     },
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
+    this.OptVizData = this.getUnderlyingsAvailable;
+
+    console.log(this.OptVizData);
 
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("liquidityPool/fetchContract");
@@ -264,6 +268,9 @@ export default {
     this.totalTokenStock();
 
     this.pairs = Object.keys(this.getSymbolsListJson);
+
+    this.updateAvailableUdlCurrentPrice();
+    this.setUdlRealizedVol();
   },
 
   methods: {
@@ -344,6 +351,44 @@ export default {
 
       return true;
 
+    },
+    async updateAvailableUdlCurrentPrice() {
+      //      "ETH/USD": {"udlAddr": addresses["ETH/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      let component = this;
+
+      setTimeout(
+        async function(){
+          for (var key in component.OptVizData) {
+
+            if (component.OptVizData[key]["address"] != "") {
+              let contract = new component.getWeb3.eth.Contract(ChainlinkContractJson.abi, component.OptVizData[key]["address"]);
+
+              let underlyingPrice = await contract.methods.getLatestPrice().call();      
+              let underlyingPriceBig = Math.round(component.getWeb3.utils.fromWei(Number(underlyingPrice.price).toString(16), "ether")*100)/100;
+
+              component.OptVizData[key]["currentPrice"] = underlyingPriceBig;
+              }
+          }
+        },
+        1000 * 60 * 2//update price every 2 min
+      );
+
+      
+      
+    },
+    async setUdlRealizedVol() {
+      for (var key in this.OptVizData) {
+
+        if (this.OptVizData[key]["address"] != "") {
+          let contract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, this.OptVizData[key]["address"]);
+
+          let underlyingVol = await contract.methods.getDailyVolatility(60*60*24*90).call();      
+          let underlyingVolBig = Math.round(this.getWeb3.utils.fromWei(Number(underlyingVol).toString(16), "ether")*100)/100;
+
+          this.OptVizData[key]["realizedVol"] = underlyingVolBig;
+        }
+
+      }
     },
     async setHedgingManagerAddr() {
       const hedgingManagerAddr = await this.getLiquidityPoolContract.methods.getHedgingManager().call();
@@ -1051,5 +1096,8 @@ export default {
 <style scoped>
 .pool-submit-buttons {
   padding: 20px 20px !important;
+}
+.pool-management-body-text-color {
+  color: #48cc8c;
 }
 </style>

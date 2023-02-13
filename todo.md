@@ -22,7 +22,6 @@ LINK/USD-EP-24e18-1643356800
 			-support canto testnet
 				- script to initalize udlfeeds
 					- https://docs.scry.finance/docs/smart-contracts/solidity-contracts-and-interface
-				- chain id: 740, 0x2e4
 
 		- toggle pools
 
@@ -32,13 +31,16 @@ LINK/USD-EP-24e18-1643356800
 				- other pool stats?
 
 		- options visualizer
-			- fix the font to make text visible
 			- pass current underlying price into react component
 				- check for update with oracle updates
+				- //TODO: need to replace with open spot data on different crypto/mapped to udl feed address
+					- currently react/chart/chart.js uses iex
 			- when strike and expiration is entered, default to computing black sholes price of premium
 				- at current timestamp
 				- at expiration-24 hours
 			- pass entered/computed data from react component back to vue component
+				- vue to react
+				- react back to vue
 			- compute basic pricing surface(s)
 
 

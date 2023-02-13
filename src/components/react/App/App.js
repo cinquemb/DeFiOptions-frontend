@@ -16,8 +16,8 @@ const store = createStore(
 
 
 class OptionsVizualizer extends React.Component {
-
   render () {
+    console.log(this.props.underlyingData);
     return (
       <Provider store={store}>
         <div className="App">
@@ -27,7 +27,7 @@ class OptionsVizualizer extends React.Component {
           <Ticker/>
           <AddClear />
           <StratContainer />
-          <Chart />
+          <Chart underlyingDataProps={this.props.underlyingData}/>
         </div>
       </Provider>
     )

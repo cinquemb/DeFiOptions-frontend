@@ -8,7 +8,24 @@ import { useSelector, useDispatch } from 'react-redux';
 import allActions from '../../redux/actions'
 
 function StratBody(props) {
-  console.log(props);
+  console.log(props); 
+  /*
+
+  TODO: THIS IS THE DATA THAT WE NEED TO PASS UP INTO THE VUE COMPONENT
+  {
+  "strat": "Custom (1 Leg)",
+  "legs": {
+    "0": {
+      "direction": "+",
+      "type": "C",
+      "strike": "1600",
+      "premium": "1000",
+      "quantity": "1"
+    }
+  }
+}
+
+*/
   const dispatch = useDispatch();
   const stratType = useSelector((state) => state.currentStrategies[props.id].strat)
 
