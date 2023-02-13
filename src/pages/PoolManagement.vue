@@ -5,7 +5,7 @@
 
 
     <!------ TODO: NEED TO MOVE THIS TO OWN TRADE PAGE ------>
-    <react :component="OptViz" :underlyingData="passedProps"/>
+    <react :component="OptViz" :underlyingData="OptVizData"/>
 
 
     <!------ create hedging manager ------>
@@ -237,17 +237,11 @@ export default {
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getOptionsExchangeAbi", "getLiquidityPoolBalance", "getSelectedPool", "getUnderlyingsAvailable"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
-    passedProps () {
-      return this.OptVizData;
-    },
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
       this.$router.push({ name: 'home'});
     }
-    this.OptVizData = this.getUnderlyingsAvailable;
-
-    console.log(this.OptVizData);
 
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("liquidityPool/fetchContract");
@@ -263,6 +257,8 @@ export default {
     this.$store.dispatch("creditToken/fetchUserBalance");
     this.$store.dispatch("accounts/fetchActiveBalance");
     this.$store.dispatch("liquidityPool/fetchSymbolsList");
+
+    this.OptVizData = this.getUnderlyingsAvailable;
 
     this.setHedgingManagerAddr();
     this.totalTokenStock();
@@ -360,15 +356,17 @@ export default {
         async function(){
           for (var key in component.OptVizData) {
 
-            if (component.OptVizData[key]["address"] != "") {
-              let contract = new component.getWeb3.eth.Contract(ChainlinkContractJson.abi, component.OptVizData[key]["address"]);
+            if (component.OptVizData[key]["udlAddr"] != "") {
+              let contract = new component.getWeb3.eth.Contract(ChainlinkContractJson.abi, component.OptVizData[key]["udlAddr"]);
 
               let underlyingPrice = await contract.methods.getLatestPrice().call();      
               let underlyingPriceBig = Math.round(component.getWeb3.utils.fromWei(Number(underlyingPrice.price).toString(16), "ether")*100)/100;
 
               component.OptVizData[key]["currentPrice"] = underlyingPriceBig;
-              }
+            }
           }
+
+          console.log(component.OptVizData);
         },
         1000 * 60 * 2//update price every 2 min
       );
@@ -379,16 +377,16 @@ export default {
     async setUdlRealizedVol() {
       for (var key in this.OptVizData) {
 
-        if (this.OptVizData[key]["address"] != "") {
-          let contract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, this.OptVizData[key]["address"]);
+        if (this.OptVizData[key]["udlAddr"] != "") {
+          let contract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, this.OptVizData[key]["udlAddr"]);
 
           let underlyingVol = await contract.methods.getDailyVolatility(60*60*24*90).call();      
           let underlyingVolBig = Math.round(this.getWeb3.utils.fromWei(Number(underlyingVol).toString(16), "ether")*100)/100;
 
           this.OptVizData[key]["realizedVol"] = underlyingVolBig;
         }
-
       }
+      console.log(this.OptVizData);
     },
     async setHedgingManagerAddr() {
       const hedgingManagerAddr = await this.getLiquidityPoolContract.methods.getHedgingManager().call();

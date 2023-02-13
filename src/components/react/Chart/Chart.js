@@ -25,13 +25,11 @@ function Chart (props) {
 
   useEffect(() => {
 
-    async function getBoundaryData(symbol) {
-      // TODO: GET FROM PROP
-
-      if (symbol in props){
-        //pass
-      }
-      return {latestPrice: 0, sigma: 1};
+    function getBoundaryData(symbol) {
+      return {
+        latestPrice: props.underlyingDataProps[symbol]["currentPrice"],
+        sigma: props.underlyingDataProps[symbol]["realizedVol"]
+      };
     }
     if (symbol !== undefined && symbol !== ''){
       getBoundaryData(symbol).then(data => {

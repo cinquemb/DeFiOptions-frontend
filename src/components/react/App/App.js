@@ -17,7 +17,7 @@ const store = createStore(
 
 class OptionsVizualizer extends React.Component {
   render () {
-    console.log(this.props.underlyingData);
+    console.log(this.props.underlyingData["BTC/USD"]);
     return (
       <Provider store={store}>
         <div className="App">
