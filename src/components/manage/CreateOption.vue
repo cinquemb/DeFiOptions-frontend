@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="option in options" v-bind:key="option.udlFeedAddr">
+    <div v-for="option in options" v-bind:key="option.udlFeedAddr" class="flex flex-col gap-2">
       <h3>Add or Modify Existing Range of the Underling Where Option Remains Valid </h3>
       <input v-model="option.udlFeedAddr" class="form-control deposit-input" placeholder="(Feed Address), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="option.optType" class="form-control deposit-input"  placeholder="(Option Type), Ex: CALL or PUT">

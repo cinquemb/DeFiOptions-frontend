@@ -3,7 +3,7 @@
     <h3>Create A Governable Liquidity Pool</h3>
 
     <div class="section-small">
-      <div class="d-flex flex-wrap">
+      <div class="d-flex flex-wrap gap-2">
         <div>
           <input type="text" v-model="symbolSuffix" class="form-control deposit-input" placeholder="My Pool Symbol" aria-describedby="createPoolNameText">
         </div>

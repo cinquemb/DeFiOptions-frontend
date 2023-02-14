@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="flex flex-col gap-2">
     <h3>Set Pool Parameters (GOV REQUIRED)</h3>
     <input v-model="params.reserveRatio" class="form-control deposit-input" placeholder="Reserve Ratio (Float: from 0 to 100, Ex: 2)">
     <input v-model="params.withdrawFee" class="form-control deposit-input" placeholder="Early withdraw fee - % (Float: from 0 to 100, Ex: 2)">
@@ -23,5 +23,10 @@ export default {
 </script>
 
 <style>
-
+  .flex {
+    display: flex;
+  }
+  .flex-col {
+    flex-direction: column;
+  }
 </style>

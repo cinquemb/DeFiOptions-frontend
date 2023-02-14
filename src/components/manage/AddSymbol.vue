@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-for="symbol in symbols" v-bind:key="symbol.strike">
+    <div v-for="symbol in symbols" v-bind:key="symbol.strike" class="flex flex-col gap-2">
       <h3>Add or Modify Existing Symbol </h3>
       <input v-model="symbol.udlFeed" class="form-control deposit-input" placeholder="(Feed Address), Ex: 0xd81F810fc394e96c5D67af8395607C71B0a42d52">
       <input v-model="symbol.strike" class="form-control deposit-input" placeholder="(Strike Price), Ex: 1000">

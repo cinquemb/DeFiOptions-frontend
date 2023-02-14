@@ -42,14 +42,14 @@
       <div class="col-md-12">
         <SetAddress :data="BalanceExposure" />
         <span></span>
-        <button @click="balanceExposure" class="btn btn-success">
-          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Manually Balance Pool Options Exposure
-        </button>
-        <button @click="syncHedgingManagerStats" class="btn btn-success">
-          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Update Hedging Manager Stats
-        </button>
+          <button @click="balanceExposure" class="btn btn-success m-1">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Manually Balance Pool Options Exposure
+          </button>
+          <button @click="syncHedgingManagerStats" class="btn btn-success m-1">
+            <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Update Hedging Manager Stats
+          </button>
       </div>
     </div>
     <div class="section-big row mt-4 mx-3" v-if="isHedgingManagerReady">
@@ -84,12 +84,14 @@
         <CreateOption :options="createOptions" />
         <span></span>
       </div>
-      <button @click="addOption" class="btn btn-success">
-        Add More Options To Exchange
-      </button>
-      <button @click="createSymbols" class="btn btn-success">
-       Submit New Options
-      </button>
+      <div class="flex flex-col gap-2">
+        <button @click="addOption" class="btn btn-success">
+          Add More Options To Exchange
+        </button>
+        <button @click="createSymbols" class="btn btn-success">
+          Submit New Options
+        </button>
+      </div>
     </div>
     <span></span>
     <span></span>
