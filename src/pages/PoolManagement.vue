@@ -272,8 +272,113 @@ export default {
   },
 
   methods: {
-    handleOptVizEvent (event){
-      console.log(event.getState());
+    async handleOptVizEvent (optVizState){
+      let optVizData = optVizState.getState();
+      console.log(optVizData);
+
+      let udlFeed = this.OptVizData[optVizData["currentSymbol"]]["udlAddr"];
+      let realizedVol = this.OptVizData[optVizData["currentSymbol"]]["realizedVol"];
+      let currentPrice = this.OptVizData[optVizData["currentSymbol"]]["currentPrice"];
+      let expirations = [];
+      let collaterals = [];
+      let bins = 5;
+      
+      let low = currentPrice - (3*realizedVol);
+      let high = currentPrice + (3*realizedVol);
+
+      let lower_bound = Math.ceil(low - currentPrice/bins - realizedVol);
+      let upper_bound = Math.ceil(high + currentPrice/bins + realizedVol);
+      let bound_width = (upper_bound - lower_bound)/bins;
+      let xVals = [];
+      for(let i =0; i < bins; i++){
+        xVals.push(lower_bound+(i*bound_width));
+      }
+
+      for (let strat in optVizData["currentStrategies"]) {
+        let numLegs = Object.keys(strat["legs"]).length;
+        for (let i =0; i < numLegs; i++){
+          let lKey = i.toString();
+          strat["legs"][lKey]["direction"];
+          strat["legs"][lKey]["type"];
+          strat["legs"][lKey]["strike"];
+          let yStart = strat["legs"][lKey]["premium"];
+          let yEnd = strat["legs"][lKey]["premium1"];
+          let optionsSize = parseInt(strat["legs"][lKey]["quantity"]);
+          expirations.push(strat["legs"][lKey]["expiration"]);
+
+          let tCol;
+
+          if ((strat["legs"][lKey]["direction"] == "-")){
+            //how much need to write this leg
+            tCol = await this.getOptionsExchangeContract.methods.calcCollateral(
+              udlFeed,
+              String((parseInt(strat["legs"][lKey]["quantity"]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"],
+              String((parseInt(strat["legs"][lKey]["strike"]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              strat["legs"][lKey]["expiration"]
+            ).call()
+          } else {
+            //premium willing to pay to buy this leg
+            tCol = strat["legs"][lKey]["premium"];
+          }
+          collaterals.append(tCol);
+
+          this.createOptions.push({
+            udlFeedAddr: udlFeed,//button
+            optType: this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"], //button
+            strike: strat["legs"][lKey]["strike"], //manual?
+            maturity: strat["legs"][lKey]["expiration"] //datetimepicker
+          });
+
+          this.addSymbols.push({
+            udlFeed: udlFeed, // these can
+            strike: strat["legs"][lKey]["strike"], // be inputed from 
+            maturity: null, // avaiable options 
+            optionType: this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"], // in exchange
+            t0: Number(Math.floor(Date.now() / 1000)), //date time picker?
+            t1: strat["legs"][lKey]["expiration"] - (60*60*24), //datetime picker
+            x: xVals,
+            y: null,//TODO: for each x, compute value with t1 and t0
+            bsStockSpread: [
+              (strat["legs"][lKey]["direction"] == "-") ? optionsSize : 0, //how much people can buy against pool
+              (strat["legs"][lKey]["direction"] == "-") ? 0 : optionsSize, //how much people can sell against pool
+              1,// 1 percent spread
+            ]
+          });
+        }
+      }
+
+      this.setParams = { //gov
+        reserveRatio: 0, //slider as a percentage
+        withdrawFee: 100, //slider as a percentage
+        maturity: max(expirations) + (60 * 60 * 24 * 7), //datetime picker
+        leverageMultiplier: 1, //slider from 1-30? or manual with validation
+        hedgingManagerAddress: "0x0000000000000000000000000000000000000000", //toggle from hdeging manager addresses hardcoded in ui?
+        hedgingNotionalThreshold:  1000, //silder of dollar amount?
+      };
+
+      let depositTotalBigBum = collaterals.reduce((a, b) => a + b, 0);
+
+      /*{
+        "currentSymbol": "ETH/USD",
+        "currentStrategies": [
+          {
+            "strat": "Custom (1 Leg)",
+            "legs": {
+              "0": {
+                "direction": "-",
+                "type": "C",
+                "strike": "",
+                "premium": 25.047842324526755,
+                "quantity": "1",
+                "expiration": 1677196800
+              }
+            }
+          }
+        ]
+      }*/
+
+
     },
     addSymbol: function () {
       this.addSymbols.push({

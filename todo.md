@@ -35,12 +35,10 @@ LINK/USD-EP-24e18-1643356800
 				- in vue callback:
 					- compute collateral required for each leg
 					- compute basic pricing surface(s)
+					- set approval for FPM contract
 
 
 					- implement submit order button against proper FPM contract function
-
-
-			- redeply FPM contract
 
 
 		- manage pool
