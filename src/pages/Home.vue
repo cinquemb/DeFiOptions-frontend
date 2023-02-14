@@ -9,13 +9,6 @@
           <h1 class="hero-title">Decentralized Options Exchange</h1>
         </div>
       </div>
-
-      <div class="d-flex flex-row justify-content-center text-white">
-        <div class="hero-line-left"></div>
-        <div>on</div>
-        <img src="@/assets/img/polygon-logo-inverted.svg" class="polygon-logo" />
-        <div class="hero-line-right"></div>
-      </div>
       
       <div class="d-flex flex-wrap flex-row justify-content-center text-uppercase hero-buttons" v-if="isUserConnected">
         <router-link to="/trade" style="text-decoration: none">

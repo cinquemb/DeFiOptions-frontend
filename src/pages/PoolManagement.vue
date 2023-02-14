@@ -181,6 +181,8 @@ import BaseHedgingManagerJSON from "../contracts/BaseHedgingManager.json";
 import MetavaultHedgingManagerFactoryJSON from "../contracts/MetavaultHedgingManagerFactory.json";
 import ChainlinkContractJson from "../contracts/ChainlinkFeed.json";
 import addresses from "../contracts/addresses.json";
+import bs from 'black-scholes';
+
 
 export default {
   name: 'PoolManagement',
@@ -293,7 +295,11 @@ export default {
       for(let i =0; i < bins; i++){
         xVals.push(lower_bound+(i*bound_width));
       }
+      let addSymbols = [];
+      let createOptions = []
 
+      let rvol = realizedVol / currentPrice * 20;
+      
       for (let strat in optVizData["currentStrategies"]) {
         let numLegs = Object.keys(strat["legs"]).length;
         for (let i =0; i < numLegs; i++){
@@ -301,8 +307,6 @@ export default {
           strat["legs"][lKey]["direction"];
           strat["legs"][lKey]["type"];
           strat["legs"][lKey]["strike"];
-          let yStart = strat["legs"][lKey]["premium"];
-          let yEnd = strat["legs"][lKey]["premium1"];
           let optionsSize = parseInt(strat["legs"][lKey]["quantity"]);
           expirations.push(strat["legs"][lKey]["expiration"]);
 
@@ -323,14 +327,17 @@ export default {
           }
           collaterals.append(tCol);
 
-          this.createOptions.push({
+          createOptions.push({
             udlFeedAddr: udlFeed,//button
             optType: this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"], //button
             strike: strat["legs"][lKey]["strike"], //manual?
             maturity: strat["legs"][lKey]["expiration"] //datetimepicker
           });
 
-          this.addSymbols.push({
+          let dt = (strat["legs"][lKey]["expiration"] - Number(Math.floor(Date.now() / 1000))) / (60 * 60 * 24 * 365);
+          let dt1 = (60 * 60 * 24) / (60 * 60 * 24 * 365);
+
+          addSymbols.push({
             udlFeed: udlFeed, // these can
             strike: strat["legs"][lKey]["strike"], // be inputed from 
             maturity: null, // avaiable options 
@@ -338,7 +345,11 @@ export default {
             t0: Number(Math.floor(Date.now() / 1000)), //date time picker?
             t1: strat["legs"][lKey]["expiration"] - (60*60*24), //datetime picker
             x: xVals,
-            y: null,//TODO: for each x, compute value with t1 and t0
+            y: xVals.map(
+              strike => bs.blackScholes(currentPrice,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+            ) + xVals.map(
+              strike => bs.blackScholes(currentPrice,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+            ),
             bsStockSpread: [
               (strat["legs"][lKey]["direction"] == "-") ? optionsSize : 0, //how much people can buy against pool
               (strat["legs"][lKey]["direction"] == "-") ? 0 : optionsSize, //how much people can sell against pool
@@ -348,36 +359,22 @@ export default {
         }
       }
 
-      this.setParams = { //gov
+      let setParams = { //gov
         reserveRatio: 0, //slider as a percentage
         withdrawFee: 100, //slider as a percentage
-        maturity: max(expirations) + (60 * 60 * 24 * 7), //datetime picker
+        maturity: Math.max(expirations) + (60 * 60 * 24 * 7), //datetime picker
         leverageMultiplier: 1, //slider from 1-30? or manual with validation
         hedgingManagerAddress: "0x0000000000000000000000000000000000000000", //toggle from hdeging manager addresses hardcoded in ui?
         hedgingNotionalThreshold:  1000, //silder of dollar amount?
       };
 
-      let depositTotalBigBum = collaterals.reduce((a, b) => a + b, 0);
+      let depositTotalBigNum = collaterals.reduce((a, b) => a + b, 0);
 
-      /*{
-        "currentSymbol": "ETH/USD",
-        "currentStrategies": [
-          {
-            "strat": "Custom (1 Leg)",
-            "legs": {
-              "0": {
-                "direction": "-",
-                "type": "C",
-                "strike": "",
-                "premium": 25.047842324526755,
-                "quantity": "1",
-                "expiration": 1677196800
-              }
-            }
-          }
-        ]
-      }*/
+      //TODO: create limit order
 
+      if (setParams && depositTotalBigNum) {
+        //pass
+      }
 
     },
     addSymbol: function () {
