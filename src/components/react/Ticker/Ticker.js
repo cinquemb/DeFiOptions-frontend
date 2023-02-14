@@ -43,6 +43,9 @@ function Ticker(props) {
 
   return (
     <div className="Ticker-div"> 
+      <div>
+        Available Symbols: {Object.keys(props.underlyingDataProps).join(', ')}
+      </div>
       <form onSubmit={handleSubmit}>
         <label style={{paddingRight:"5px"}}>
           <input type="text" placeholder="Enter Ticker Symbol Here" value={curinput} onChange={handleChange} className="Ticker-searchbar" />
