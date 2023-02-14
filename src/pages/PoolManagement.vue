@@ -177,7 +177,7 @@
         </div>
 
         <div class="show-text form-text">
-          Balance: {{Number(getUserStablecoinBalance).toFixed(2)}} {{buyWith}}.
+          Balance: {{Number(getUserStablecoinBalance).toFixed(2)}} {{depositWith}}.
         </div>
       </div>
 
@@ -273,6 +273,23 @@ export default {
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
     ...mapGetters("dai", ["getUserDaiBalance", "getDaiContract"]),
     ...mapGetters("usdc", ["getUserUsdcBalance", "getUsdcContract"]),
+
+    getUserStablecoinBalance() {
+
+
+      if (this.depositWith === "DAI") {
+        return this.getUserDaiBalance;
+      } else if (this.depositWith === "USDC") {
+        return this.getUserUsdcBalance;
+      } /*
+
+      else if (this.depositWith === "Exchange Surplus Balance") {
+        return this.getUserCollateralSurplus;
+      }
+      */
+
+      return null;
+    },
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -308,17 +325,6 @@ export default {
   methods: {
     setDepositWith(choice) {
       this.depositWith = choice;
-    },
-    getUserStablecoinBalance() {
-      if (this.depositWith === "DAI") {
-        return this.getUserDaiBalance;
-      } else if (this.depositWith === "USDC") {
-        return this.getUserUsdcBalance;
-      } /*else if (this.depositWith === "Exchange Surplus Balance") {
-        return this.getUserCollateralSurplus;
-      }*/
-
-      return null;
     },
     async handleOptVizEvent (optVizState){
       let optVizData = optVizState.getState();
@@ -525,7 +531,6 @@ export default {
           }
 
           console.log(component.OptVizData);
-          console.log(component.OptVizDataState);
         },
         1000 * 60 * 2//update price every 2 min
       );
@@ -1272,7 +1277,7 @@ export default {
       }
 
       // define allowance value
-      let allowanceValue = allowanceValue = 10 ** 9; // 1B tokens as "unlimited" value
+      let allowanceValue = 10 ** 9; // 1B tokens as "unlimited" value
 
       const allowanceValueWei = component.getWeb3.utils.toWei(String(allowanceValue.toFixed(4)), unit); // round to 4 decimals
       
@@ -1291,7 +1296,6 @@ export default {
 
           if (receipt.status) {
             component.$toast.success("The approval was successfull. You make your order now");
-            component.collateralDepositValue = String(component.collateralNeededRaw.toFixed(4));
 
           } else {
             component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
