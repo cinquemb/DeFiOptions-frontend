@@ -45,7 +45,6 @@ function Chart (props) {
   let lower_bound = Math.ceil(low - quote/10 - sigma);
   let upper_bound = Math.ceil(high + quote/10 + sigma);
   useEffect(() => { 
-    console.log(props);
     let chart_data = [];
     let strikes = [];
     for (let i = 0; i < strategies.length; i++){
@@ -59,9 +58,6 @@ function Chart (props) {
 
     for (let i = 0; i < strategies.length; i++){
       chart_data.push([]);
-      console.log(low);
-      console.log(high);
-      console.log(quote);
       if (low + high + quote !== 0){
         let cur_x = lower_bound;
         while (cur_x <= upper_bound){

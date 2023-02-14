@@ -10,6 +10,7 @@
   "dependencies": {
     "@burner-wallet/burner-connect-provider": "^0.1.1",
     "authereum": "^0.1.0",
+    "black-scholes": "^1.1.0",
     "bootstrap": "^4.5.0",
     "chart.js": "^2.9.3",
     "chartjs-plugin-annotation": "^0.5.7",

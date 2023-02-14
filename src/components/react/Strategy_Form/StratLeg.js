@@ -7,8 +7,10 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import allActions from '../../redux/actions';
 import DateTimePicker from 'react-datetime-picker';
+import bs from 'black-scholes';
 
 function StratLeg(props) {
+    const symbol = useSelector(state => state.currentSymbol);
     const thisLeg = useSelector((state) => state.currentStrategies[props.id].legs == null ? null : state.currentStrategies[props.id].legs[props.index])
     const dispatch = useDispatch();
 
@@ -17,6 +19,7 @@ function StratLeg(props) {
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "type", props.type))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "strike", 0.00))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "premium", 0.00))
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "premium1", 0.00))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "quantity", 0))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", Number(Math.floor(Date.now() / 1000))))
     }, [dispatch, props.id, props.index, props.direction, props.type, props.newStrat]);
@@ -28,11 +31,13 @@ function StratLeg(props) {
 
     function handleTypeChange(event) {
         const newType = (event.target.value === 'P') ? 'P' : 'C'
-        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "type", newType))            
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "type", newType))
+        computePremium()         
     }
 
     function handleStrikeChange(event) {
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "strike", event.target.value))
+        computePremium()
     }
 
     function handlePremiumChange(event) {
@@ -44,8 +49,43 @@ function StratLeg(props) {
     }
 
     function handleExpirationChange(date) {
-        console.log(Number(Math.floor(date / 1000)));
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", Number(Math.floor(date / 1000))))
+        computePremium()
+    }
+
+    function computePremium(){
+        if (thisLeg["strike"] !=0 && symbol != "" && props.underlyingDataProps[symbol]["currentPrice"] != null && props.underlyingDataProps[symbol]["realizedVol"] !== null && thisLeg['expiration'] != 0 && thisLeg['type'] != null) {
+            let rvol = props.underlyingDataProps[symbol]["realizedVol"] / props.underlyingDataProps[symbol]["currentPrice"] * 20;
+            let dt = (thisLeg['expiration'] - Number(Math.floor(Date.now() / 1000))) / (60 * 60 * 24 * 365);
+            let dt1 = (60 * 60 * 24) / (60 * 60 * 24 * 365);
+            let computedPremium = bs.blackScholes(
+                parseFloat(props.underlyingDataProps[symbol]["currentPrice"]),
+                parseFloat(thisLeg["strike"]),
+                dt,
+                rvol,
+                0,
+                (thisLeg['type'] === 'P') ? 'put' : 'call'
+            );
+
+            let computedPremium1 = bs.blackScholes(
+                parseFloat(props.underlyingDataProps[symbol]["currentPrice"]),
+                parseFloat(thisLeg["strike"]),
+                dt1,
+                rvol,
+                0,
+                (thisLeg['type'] === 'P') ? 'put' : 'call'
+            );
+
+            console.log(parseFloat(props.underlyingDataProps[symbol]["currentPrice"]))
+            console.log(    parseFloat(thisLeg["strike"]))
+            console.log(    dt)
+            console.log(    rvol)
+            console.log(    0)
+            console.log(    (thisLeg['type'] === 'P') ? 'put' : 'call')
+            console.log(computedPremium)
+            dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "premium", computedPremium));
+            dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "premium1", computedPremium1));
+        }
     }
 
     return (

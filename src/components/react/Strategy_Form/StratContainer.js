@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 //import allActions from '../../redux/actions'
 
 function StratContainer(props) {
-  console.log(props);
   const strategies = useSelector((state) => state.currentStrategies)
   const [legTable, setLegTable] = useState({});
 
@@ -37,7 +36,7 @@ function StratContainer(props) {
   return (
     <div className="StratContainer-div"> 
         {strategies.map((strategy, i) => 
-            <StratBody id = {i} strat = {strategy.strat} legs = {strategy.legs} table = {legTable} thisStrategy = {strategies[i]}/>)}
+            <StratBody id = {i} strat = {strategy.strat} legs = {strategy.legs} table = {legTable} thisStrategy = {strategies[i]} underlyingDataProps={props.underlyingDataProps}/>)}
     </div>
   );
 }

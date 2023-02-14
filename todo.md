@@ -32,13 +32,13 @@ LINK/USD-EP-24e18-1643356800
 
 		- options visualizer
 			- when all data is entered for all legs (probaby signified by a submit order button)
-				- default to computing black sholes price of premium
-					- at current timestamp == t0
-					- at expiration-24 hours == t1
+				- in vue callback:
+					- compute collateral required for each leg
+					- compute basic pricing surface(s)
 
-				- implement submit order button against proper FPM contract function
 
-			- compute basic pricing surface(s)
+					- implement submit order button against proper FPM contract function
+
 
 			- redeply FPM contract
 
