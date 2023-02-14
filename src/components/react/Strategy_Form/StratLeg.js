@@ -5,7 +5,8 @@ import { Col } from "react-bootstrap"
 import Form from 'react-bootstrap/Form';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import allActions from '../../redux/actions'
+import allActions from '../../redux/actions';
+import DateTimePicker from 'react-datetime-picker';
 
 function StratLeg(props) {
     const thisLeg = useSelector((state) => state.currentStrategies[props.id].legs == null ? null : state.currentStrategies[props.id].legs[props.index])
@@ -42,8 +43,9 @@ function StratLeg(props) {
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "quantity", event.target.value))
     }
 
-    function handleExpirationChange(event) {
-        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", event.target.value))
+    function handleExpirationChange(date) {
+        console.log(Number(Math.floor(date / 1000)));
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", Number(Math.floor(date / 1000))))
     }
 
     return (
@@ -80,7 +82,8 @@ function StratLeg(props) {
                 </Form.Group>
                 <Form.Group as={Col} controlID="legExpiration">
                     <Form.Label>Expiration</Form.Label>
-                    <Form.Control value={thisLeg == null ? 0.00 : thisLeg["expiration"]} onChange={handleExpirationChange}/>
+                    <span></span>
+                    <DateTimePicker onChange={handleExpirationChange} style="color: inherit !important;"/>
                 </Form.Group>
             </Form.Row>
         </Form>
