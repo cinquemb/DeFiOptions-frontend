@@ -45,7 +45,107 @@
         }
       ],
       "name": "deployProposeVoteExecute",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "optionsExchangeAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "_executionBytes",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "bulkRegisterSymbols",
       "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "stableToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "stableTokenValue",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "isDeposit",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "proposalManagerAddr",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_code",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes[]",
+              "name": "_executionBytes",
+              "type": "bytes[]"
+            },
+            {
+              "internalType": "enum IProposalManager.Quorum",
+              "name": "quorum",
+              "type": "uint8"
+            },
+            {
+              "internalType": "enum IProposalManager.VoteType",
+              "name": "voteType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expiresAt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "optionsExchangeAddr",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes[]",
+              "name": "_executionCreateOptionsBytes",
+              "type": "bytes[]"
+            }
+          ],
+          "internalType": "struct FastPoolManagement.FPMLimitOrder",
+          "name": "fpmOrder",
+          "type": "tuple"
+        }
+      ],
+      "name": "createSyntheticLimitOrder",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     }
