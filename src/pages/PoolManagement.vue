@@ -383,6 +383,10 @@ export default {
           let underlyingVol = await contract.methods.getDailyVolatility(60*60*24*90).call();      
           let underlyingVolBig = Math.round(this.getWeb3.utils.fromWei(Number(underlyingVol).toString(16), "ether")*100)/100;
 
+          let underlyingPrice = await contract.methods.getLatestPrice().call();      
+          let underlyingPriceBig = Math.round(this.getWeb3.utils.fromWei(Number(underlyingPrice.price).toString(16), "ether")*100)/100;
+
+          this.OptVizData[key]["currentPrice"] = underlyingPriceBig;
           this.OptVizData[key]["realizedVol"] = underlyingVolBig;
         }
       }

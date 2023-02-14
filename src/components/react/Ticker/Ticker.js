@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import allActions from '../../redux/actions'
 
 function Ticker(props) {
-  console.log(props);
   const [curinput, setCurinput] = useState('');
   const [disabled, setDisabled] = useState(true);
   const [symbols, setSymbols] = useState(new Set());
@@ -15,12 +14,12 @@ function Ticker(props) {
   const currSymbol = useSelector(state => state.currentSymbol)
 
   useEffect(() => {
-    async function getValidSymbols() {
+    function getValidSymbols() {
       return Object.keys(props.underlyingDataProps);
     }
-    getValidSymbols().then(data => {
-      setSymbols(new Set(data.map(i => i)));
-    });  
+
+    let data = getValidSymbols();
+    setSymbols(new Set(data.map(i => i))); 
   }, []);
 
   function handleChange(event) {

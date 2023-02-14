@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux'
 const borderColors = ["#191716", "#E6AF2E", "#E0E2DB", "#BEB7A4"];
 
 function Chart (props) {
-  console.log(props);
   let verticalLines = [];
   //let dataLabel = "";
   const [quote, setQuote] = useState(0);
@@ -17,11 +16,11 @@ function Chart (props) {
   const [low, setLow] = useState(0);
   const [sigma, setSigma] = useState(0);
   const [chartData, setChartData] = useState([]);
+
   //const [chartBounds, setChartBounds] = useState([0, 0]);
 
   const symbol = useSelector(state => state.currentSymbol);
   const strategies = useSelector(state => state.currentStrategies);
-
 
 
   useEffect(() => {
@@ -46,6 +45,7 @@ function Chart (props) {
   let lower_bound = Math.ceil(low - quote/10 - sigma);
   let upper_bound = Math.ceil(high + quote/10 + sigma);
   useEffect(() => { 
+    console.log(props);
     let chart_data = [];
     let strikes = [];
     for (let i = 0; i < strategies.length; i++){
@@ -59,6 +59,9 @@ function Chart (props) {
 
     for (let i = 0; i < strategies.length; i++){
       chart_data.push([]);
+      console.log(low);
+      console.log(high);
+      console.log(quote);
       if (low + high + quote !== 0){
         let cur_x = lower_bound;
         while (cur_x <= upper_bound){
@@ -231,7 +234,7 @@ function Chart (props) {
                 callback: function(value) { 
                   return '$' + value;
                 }, 
-                min: Math.max(0, lower_bound),
+                min: lower_bound,
                 max: upper_bound,
               },
             }],
