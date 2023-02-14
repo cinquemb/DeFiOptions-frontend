@@ -33,11 +33,7 @@ LINK/USD-EP-24e18-1643356800
 		- options visualizer
 			- when all data is entered for all legs (probaby signified by a submit order button)
 				- in vue callback:
-					- compute collateral required for each leg
-					- compute basic pricing surface(s)
 					- set approval for FPM contract
-
-
 					- implement submit order button against proper FPM contract function
 
 

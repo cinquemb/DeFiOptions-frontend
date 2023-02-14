@@ -91,6 +91,9 @@
         <button @click="createSymbols" class="btn btn-success">
           Submit New Options
         </button>
+        <button @click="createSymbolsBulk" class="btn btn-success">
+          Submit New Options (Bulk)
+        </button>
       </div>
     </div>
     <span></span>
@@ -159,6 +162,31 @@
       </button>
     </div>
 
+    <div class="pool-submit-buttons">
+      <div class="form-button-mobile">
+        <div class="btn-group" aria-describedby="button-text">
+          <button type="button" class="btn btn-outline-success dropdown-toggle text-uppercase" data-bs-toggle="dropdown" aria-expanded="false">
+            {{depositWith}}
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <span class="dropdown-item text-uppercase" @click="setDepositWith('DAI')">DAI</span>
+              <span class="dropdown-item text-uppercase" @click="setDepositWith('USDC')">USDC</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="show-text form-text">
+          Balance: {{Number(getUserStablecoinBalance).toFixed(2)}} {{buyWith}}.
+        </div>
+      </div>
+
+      <button @click="approveStablecoinDeposit" class="btn btn-success">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Approve FPM Contract For Synthic Limit Orders
+      </button>
+    </div>
+
   </div>
 </template>
 
@@ -188,7 +216,9 @@ export default {
   name: 'PoolManagement',
   data() {
     return {
+      depositWith: "DAI",
       OptViz: App,
+      syntheticLimitOrder: {},
       OptVizData: {},
       pairs: {},
       totalStableBalance: null,
@@ -241,6 +271,8 @@ export default {
     ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getOptionsExchangeAbi", "getLiquidityPoolBalance", "getSelectedPool", "getUnderlyingsAvailable"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
+    ...mapGetters("dai", ["getUserDaiBalance", "getDaiContract"]),
+    ...mapGetters("usdc", ["getUserUsdcBalance", "getUsdcContract"]),
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -274,6 +306,20 @@ export default {
   },
 
   methods: {
+    setDepositWith(choice) {
+      this.depositWith = choice;
+    },
+    getUserStablecoinBalance() {
+      if (this.depositWith === "DAI") {
+        return this.getUserDaiBalance;
+      } else if (this.depositWith === "USDC") {
+        return this.getUserUsdcBalance;
+      } /*else if (this.depositWith === "Exchange Surplus Balance") {
+        return this.getUserCollateralSurplus;
+      }*/
+
+      return null;
+    },
     async handleOptVizEvent (optVizState){
       let optVizData = optVizState.getState();
       console.log(optVizData);
@@ -369,6 +415,11 @@ export default {
       };
 
       let depositTotalBigNum = collaterals.reduce((a, b) => a + b, 0);
+
+      /*this.syntheticLimitOrder[];
+      this.syntheticLimitOrder[];
+      this.syntheticLimitOrder[];
+      this.syntheticLimitOrder[];*/
 
       //TODO: create limit order
 
@@ -871,8 +922,6 @@ export default {
 
     },
     async createSymbols () {
-      //TODO: BULK CREATION LATER, BOUNDED BY OPTIONS CONTRACT GAS COSTS * NUM SYMBOLS
-      //loop over symbols and ask user to keep pressing mm tx's
       let component = this;
 
       if (component.validateObj(component.createOptions)) {
@@ -908,13 +957,13 @@ export default {
       }
     },
 
+
+
     async createSymbolsBulk () {
-      //encode all setRanges
+      //encode all createSymbols and us FPM
       let component = this;
 
       let encodedData = [];
-
-      //TODO: NEED TO FIND THE PROPER INDEX FOR "createSymbol" abi
       let createSymbolAbiJSON = component.getOptionsExchangeAbi[32];
 
 
@@ -1128,7 +1177,6 @@ export default {
       //function idealHedgeExposure(address underlying) virtual override public view returns (int256);
 
       let component = this;
-      //TODO: display in ui
       //TODO: ADD TO READER
 
       const hedgingManagerAddr = this.setParams.hedgingManagerAddress;
@@ -1198,7 +1246,166 @@ export default {
 
       this.totalStableBalance = (await hedgingManagerContract.methods.totalTokenStock().call()) / 10 **18;
 
-    }
+    },
+
+    // approve the amount of stablecoins to use as collateral to sell/buy options against FPM contract
+    async approveStablecoinDeposit() {
+      let component = this;
+      component.loading = true;
+
+      // define unit and token contract
+      let unit = "ether"; // Exchange Balance & DAI - 18 decimals
+      let tokenContract;
+
+      if (component.depositWith === "USDT") {
+        unit = "kwei"; // USDT (Tether) - 4 decimals
+        // TODO: tokenContract = ...; // USDT contract
+      }
+
+      if (component.depositWith === "USDC") {
+        unit = "mwei"; // USDC - 6 decimals
+        tokenContract = component.getUsdcContract; // USDC contract
+      }
+
+      if (component.depositWith === "DAI") {
+        tokenContract = component.getDaiContract; // DAI contract
+      }
+
+      // define allowance value
+      let allowanceValue = allowanceValue = 10 ** 9; // 1B tokens as "unlimited" value
+
+      const allowanceValueWei = component.getWeb3.utils.toWei(String(allowanceValue.toFixed(4)), unit); // round to 4 decimals
+      
+      // call the approve method
+      try {
+        await tokenContract.methods.approve(component.getFastPoolManagementAddress, allowanceValueWei).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+
+          if (receipt.status) {
+            component.$toast.success("The approval was successfull. You make your order now");
+            component.collateralDepositValue = String(component.collateralNeededRaw.toFixed(4));
+
+          } else {
+            component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          }
+
+        }).on('error', function(error){
+          console.log(error);
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      } catch (e) {
+          window.console.log("Error:", e);
+          component.$toast.error("The transaction has been reverted. Please try again or contact DeFi Options support.");
+      } finally {
+        component.loading = false;
+      }
+
+    },
+
+    async createSyntheticLimitOrder () {
+      //create synthetic limit order that abstracts typical pool operations
+      let component = this;
+
+      let tokenContract;
+      //let unit;
+
+      let createOptionsEncodedData = [];
+      let createSymbolAbiJSON = component.getOptionsExchangeAbi[32];
+
+
+      if (component.validateObj(component.createOptions)) {
+        for (let i=0; i < component.createOptions.length; i++) {
+          let parameters = [
+            component.createOptions[i].udlFeedAddr,
+            component.optTypes[component.createOptions[i].optType], //0 if optionType == 'CALL' else 1
+            String((parseInt(component.createOptions[i].strike) * (10**18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
+            component.createOptions[i].maturity //unix timestamp format
+          ];
+          createOptionsEncodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(createSymbolAbiJSON, parameters)
+          );
+        }
+      }
+
+      if (component.depositWith === "USDT") {
+        //unit = "kwei"; // USDT (Tether) - 4 decimals
+        // TODO: tokenContract = ...; // USDT contract
+      }
+
+      if (component.depositWith === "USDC") {
+        //unit = "mwei"; // USDC - 6 decimals
+        tokenContract = component.getUsdcContract; // USDC contract
+      }
+
+      if (component.depositWith === "DAI") {
+        tokenContract = component.getDaiContract; // DAI contract
+      }
+
+      /*
+
+      struct FPMLimitOrder {
+        address stableToken;
+        uint256 stableTokenValue;
+        bool isDeposit;
+        address proposalManagerAddr;
+        bytes _code;
+        bytes[] _executionBytes;
+        IProposalManager.Quorum quorum;
+        IProposalManager.VoteType voteType;
+        uint expiresAt;
+        address optionsExchangeAddr;
+        bytes[] _executionCreateOptionsBytes;
+      }
+      */
+
+      const fastPoolManagementContract = new component.getWeb3.eth.Contract(
+        FastPoolManagementJSON.abi,
+        component.getFastPoolManagementAddress
+      );
+
+      await fastPoolManagementContract.methods.createSyntheticLimitOrder(
+        tokenContract.options.address,
+        /*uint256 stableTokenValue;
+        bool isDeposit;
+        address proposalManagerAddr;
+        bytes _code;
+        bytes[] _executionBytes;*/
+        2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
+        1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
+        Number(Math.floor(Date.now() / 1000) + (60 * 60)), //30 min to vote
+        component.getOptionsExchangeContract.options.address,
+        createOptionsEncodedData
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page");
+          
+        } else {
+          component.$toast.error("The storing proposal transactions tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+    },
   }
 }
 </script>
