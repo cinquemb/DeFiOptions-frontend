@@ -9,6 +9,13 @@
           <h1 class="hero-title">Decentralized Options Exchange</h1>
         </div>
       </div>
+
+      <div class="d-flex flex-row justify-content-center text-white">
+        <div class="canto-hero-line-left"></div>
+        <div>on</div>
+        <img src="@/assets/img/canto-logo-green-on-transparent.png" class="polygon-logo" />
+        <div class="canto-hero-line-right"></div>
+      </div>
       
       <div class="d-flex flex-wrap flex-row justify-content-center text-uppercase hero-buttons" v-if="isUserConnected">
         <router-link to="/trade" style="text-decoration: none">
@@ -429,7 +436,7 @@ export default {
   margin-top: 70px;
 }
 
-.hero-line-left {
+.polygon-hero-line-left {
   width: 190px;
   height: 1px;
   background: linear-gradient(270deg, #7951DD 0%, rgba(32, 164, 221, 0) 100%);
@@ -437,10 +444,27 @@ export default {
   margin-right: 16px;
 }
 
-.hero-line-right {
+.polygon-hero-line-right {
   width: 190px;
   height: 1px;
   background: linear-gradient(270deg, #7951DD 0%, rgba(32, 164, 221, 0) 100%);
+  margin-top: 11px;
+  transform: rotate(180deg);
+  margin-left: 16px;
+}
+
+.canto-hero-line-left {
+  width: 190px;
+  height: 1px;
+  background: linear-gradient(270deg, #48cc8c 0%, rgba(90, 255, 176, 0) 100%);
+  margin-top: 11px;
+  margin-right: 16px;
+}
+
+.canto-hero-line-right {
+  width: 190px;
+  height: 1px;
+  background: linear-gradient(270deg, #48cc8c 0%, rgba(90, 255, 176, 0) 100%);
   margin-top: 11px;
   transform: rotate(180deg);
   margin-left: 16px;

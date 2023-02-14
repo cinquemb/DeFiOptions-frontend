@@ -33,7 +33,6 @@ LINK/USD-EP-24e18-1643356800
 		- options visualizer
 			- when all data is entered for all legs (probaby signified by a submit order button)
 				- in vue callback:
-					- set approval for FPM contract
 					- implement submit order button against proper FPM contract function
 
 
@@ -42,8 +41,6 @@ LINK/USD-EP-24e18-1643356800
 				- issue with governance (msg.sender isnt account but contract now)
 					- vote yes on proposal
 					- close proposal
-			- fast options creation
-				- able to register many different options at once
 
 		https://forms.monday.com/forms/ce3817531bd3dcdba24e01e2263f397d?r=use1
 		https://docs.google.com/forms/d/e/1FAIpQLSe1_GGh_NArOi8_TcpmSjsNiDkLHINgb18dOewfQVWqcX8LWQ/viewform?usp=send_form
