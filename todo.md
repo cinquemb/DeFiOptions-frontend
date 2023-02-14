@@ -35,7 +35,6 @@ LINK/USD-EP-24e18-1643356800
 				- default to computing black sholes price of premium
 					- at current timestamp == t0
 					- at expiration-24 hours == t1
-				- pass entered/computed data from react component back to vue component
 
 				- implement submit order button against proper FPM contract function
 

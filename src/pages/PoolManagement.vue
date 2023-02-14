@@ -5,7 +5,7 @@
 
 
     <!------ TODO: NEED TO MOVE THIS TO OWN TRADE PAGE ------>
-    <react :component="OptViz" :underlyingData="OptVizData"/>
+    <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent"/>
 
 
     <!------ create hedging manager ------>
@@ -270,6 +270,9 @@ export default {
   },
 
   methods: {
+    handleOptVizEvent (event){
+      console.log(event.getState());
+    },
     addSymbol: function () {
       this.addSymbols.push({
         udlFeed: null, // these can
@@ -367,6 +370,7 @@ export default {
           }
 
           console.log(component.OptVizData);
+          console.log(component.OptVizDataState);
         },
         1000 * 60 * 2//update price every 2 min
       );

@@ -19,10 +19,10 @@ class OptionsVizualizer extends React.Component {
   render () {
     return (
       <Provider store={store}>
-        <div className="App">
+        <div className="App" onChange={this.props.onChange.bind(this, store)}>
           <Ticker underlyingDataProps={this.props.underlyingData}/>
           <AddClear />
-          <StratContainer />
+          <StratContainer/>
           <Chart underlyingDataProps={this.props.underlyingData}/>
         </div>
       </Provider>
