@@ -343,7 +343,7 @@ export default {
       let currentPrice = this.OptVizData[optVizData["currentSymbol"]]["currentPrice"];
       let expirations = [];
       let collaterals = [];
-      let bins = 5;
+      let bins = 15;
       
       let low = currentPrice - (3*realizedVol);
       let high = currentPrice + (3*realizedVol);
@@ -358,7 +358,7 @@ export default {
       let addSymbols = [];
       let createOptions = [];
 
-      let rvol = realizedVol / currentPrice * 20;
+      let rvol = realizedVol / currentPrice * 30;
       
       for (let sidx in optVizData["currentStrategies"]) {
         let strat = optVizData["currentStrategies"][sidx];
@@ -366,6 +366,7 @@ export default {
         let numLegs = Object.keys(strat["legs"]).length;
         for (let i =0; i < numLegs; i++){
           let lKey = i.toString();
+          let strike = parseInt(strat["legs"][lKey]["strike"]);
           let optionsSize = parseInt(strat["legs"][lKey]["quantity"]);
           expirations.push(strat["legs"][lKey]["expiration"]);
 
@@ -405,13 +406,13 @@ export default {
           let dt1 = (60 * 60 * 24) / (60 * 60 * 24 * 365);
 
           let yVals1 = xVals.map(
-            strike => bs.blackScholes(currentPrice,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+            p => bs.blackScholes(p,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
           );
 
           console.log(yVals1);
 
           let yVals2 = xVals.map(
-            strike => bs.blackScholes(currentPrice,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+            p => bs.blackScholes(p,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
           );
 
           console.log(yVals2);

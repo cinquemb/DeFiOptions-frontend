@@ -17,8 +17,15 @@ LINK/USD-EP-24e18-1643356800
 				- need a better way to initialize on chain
 					- in udlfeed contracts
 
-			- issue with options visulaizer submit order button
-				- event not firing on button click up thru from react component -> vue component
+			- issue with default delta calc
+				- still off
+
+			- issue with options visulaizer
+				-submit order button
+					- event not firing on button click up thru from react component -> vue component
+				- dissapears when using it, then going to another screen, then going back to it again in the lp page
+				- registering inputs properly, requires fake edits in order to get the proper values
+
 
 			- add check for hedging liquidity, kill open pos if not available
 
