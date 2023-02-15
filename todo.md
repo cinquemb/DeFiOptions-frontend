@@ -17,6 +17,9 @@ LINK/USD-EP-24e18-1643356800
 				- need a better way to initialize on chain
 					- in udlfeed contracts
 
+			- issue with options visulaizer submit order button
+				- event not firing on button click up thru from react component -> vue component
+
 			- add check for hedging liquidity, kill open pos if not available
 
 			-support canto testnet
@@ -29,12 +32,6 @@ LINK/USD-EP-24e18-1643356800
 				- make sure pool data is entering the state
 				- have to toggle between two pools multiple times before something updates in the ui
 				- other pool stats?
-
-		- options visualizer
-			- when all data is entered for all legs (probaby signified by a submit order button)
-				- in vue callback:
-					- implement submit order button against proper FPM contract function
-
 
 		- manage pool
 			- fast pool propsal
