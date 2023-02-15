@@ -360,7 +360,8 @@ export default {
 
       let rvol = realizedVol / currentPrice * 20;
       
-      for (let strat in optVizData["currentStrategies"]) {
+      for (let sidx in optVizData["currentStrategies"]) {
+        let strat = optVizData["currentStrategies"][sidx];
         console.log(strat);
         let numLegs = Object.keys(strat["legs"]).length;
         for (let i =0; i < numLegs; i++){
@@ -383,7 +384,7 @@ export default {
             //premium willing to pay to buy this leg
             tCol = strat["legs"][lKey]["premium"];
           }
-          collaterals.append(tCol);
+          collaterals.push(tCol);
 
           createOptions.push({
             udlFeedAddr: udlFeed,//button
@@ -433,7 +434,7 @@ export default {
       this.syntheticLimitOrder["addSymbols"] = addSymbols;
       this.syntheticLimitOrder["createOptions"] = createOptions;
 
-      //TODO: call submit order
+      this.createSyntheticLimitOrder();
 
     },
     addSymbol: function () {

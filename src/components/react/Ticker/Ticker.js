@@ -12,7 +12,7 @@ function Ticker(props) {
   const [symbols, setSymbols] = useState(new Set());
   const dispatch = useDispatch();
   const currSymbol = useSelector(state => state.currentSymbol)
-  //const submit = useSelector(state => state.isSubmit)
+  let submit = false
 
   useEffect(() => {
     function getValidSymbols() {
@@ -43,6 +43,7 @@ function Ticker(props) {
   }
 
   function handleLimitOrderSubmit(event) {
+    submit = true
     dispatch(allActions.updateSubmit(true))
     event.preventDefault();
   }
@@ -59,6 +60,7 @@ function Ticker(props) {
         <Button variant="outline-primary" type="submit" disabled={disabled} style={{float:"center", borderRadius: "0px"}}>Submit</Button>
       </form>
       <form onSubmit={handleLimitOrderSubmit}>
+        <input type="hidden" placeholder="is submit" value={submit} />
         <Button variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>Place Limit Order</Button>
       </form>
     </div>
