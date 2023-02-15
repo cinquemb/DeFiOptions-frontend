@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './StratLeg.css';
 import { Col } from "react-bootstrap"
 import Form from 'react-bootstrap/Form';
@@ -8,10 +8,13 @@ import { useSelector } from 'react-redux';
 import allActions from '../../redux/actions';
 import DateTimePicker from 'react-datetime-picker';
 import bs from 'black-scholes';
+import Button from 'react-bootstrap/Button';
+
 
 function StratLeg(props) {
     const symbol = useSelector(state => state.currentSymbol);
     const thisLeg = useSelector((state) => state.currentStrategies[props.id].legs == null ? null : state.currentStrategies[props.id].legs[props.index])
+    const [submit, setSubmit] = useState(false)
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -88,8 +91,18 @@ function StratLeg(props) {
         }
     }
 
+      function handleLimitOrderSubmit(event) {
+        setSubmit(true);
+        dispatch(allActions.updateSubmit(true))
+        event.preventDefault();
+      }
+
     return (
     <div className="StratLeg-div"> 
+        <Form onSubmit={handleLimitOrderSubmit}>
+            <input type="hidden" placeholder="is submit" value={submit}/>
+            <Button variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>Place Limit Order</Button>
+          </Form>
         <Form>
             <Form.Row>
                 <Form.Group as={Col} controlID="legDirection">

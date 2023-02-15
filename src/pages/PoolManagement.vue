@@ -183,7 +183,7 @@
 
       <button @click="approveStablecoinDeposit" class="btn btn-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Approve FPM Contract For Synthic Limit Orders
+        Approve FPM Contract For Synthetic Limit Orders
       </button>
     </div>
 
@@ -356,7 +356,7 @@ export default {
         xVals.push(lower_bound+(i*bound_width));
       }
       let addSymbols = [];
-      let createOptions = []
+      let createOptions = [];
 
       let rvol = realizedVol / currentPrice * 20;
       
@@ -375,16 +375,24 @@ export default {
             //how much need to write this leg
             tCol = await this.getOptionsExchangeContract.methods.calcCollateral(
               udlFeed,
-              String((parseInt(strat["legs"][lKey]["quantity"]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((optionsSize * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
               this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"],
               String((parseInt(strat["legs"][lKey]["strike"]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
               strat["legs"][lKey]["expiration"]
-            ).call()
+            ).call();
           } else {
             //premium willing to pay to buy this leg
             tCol = strat["legs"][lKey]["premium"];
           }
-          collaterals.push(tCol);
+
+          console.log(udlFeed)
+          console.log(String((optionsSize * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})))
+          console.log(this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"])
+          console.log(String((parseInt(strat["legs"][lKey]["strike"]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})))
+          console.log(strat["legs"][lKey]["expiration"])
+
+          console.log(tCol / (10 ** 18));
+          collaterals.push(parseInt(tCol) / (10 ** 18));
 
           createOptions.push({
             udlFeedAddr: udlFeed,//button
@@ -396,43 +404,54 @@ export default {
           let dt = (strat["legs"][lKey]["expiration"] - Number(Math.floor(Date.now() / 1000))) / (60 * 60 * 24 * 365);
           let dt1 = (60 * 60 * 24) / (60 * 60 * 24 * 365);
 
+          let yVals1 = xVals.map(
+            strike => bs.blackScholes(currentPrice,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+          );
+
+          console.log(yVals1);
+
+          let yVals2 = xVals.map(
+            strike => bs.blackScholes(currentPrice,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+          );
+
+          console.log(yVals2);
+
+          let yVals = yVals1.concat(yVals2);
+
           addSymbols.push({
             udlFeed: udlFeed, // these can
             strike: strat["legs"][lKey]["strike"], // be inputed from 
-            maturity: null, // avaiable options 
+            maturity: strat["legs"][lKey]["expiration"], // avaiable options 
             optionType: (strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT", // in exchange
             t0: Number(Math.floor(Date.now() / 1000)), //date time picker?
             t1: strat["legs"][lKey]["expiration"] - (60*60*24), //datetime picker
-            x: xVals,
-            y: xVals.map(
-              strike => bs.blackScholes(currentPrice,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
-            ) + xVals.map(
-              strike => bs.blackScholes(currentPrice,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
-            ),
+            x: xVals.join(','),
+            y: yVals.join(','),
             bsStockSpread: [
               (strat["legs"][lKey]["direction"] == "-") ? optionsSize : 0, //how much people can buy against pool
               (strat["legs"][lKey]["direction"] == "-") ? 0 : optionsSize, //how much people can sell against pool
               1,// 1 percent spread
-            ]
+            ].join(',')
           });
         }
       }
 
       let setParams = { //gov
         reserveRatio: 0, //slider as a percentage
-        withdrawFee: 100, //slider as a percentage
+        withdrawFee: 0, //slider as a percentage
         maturity: Math.max(expirations) + (60 * 60 * 24 * 7), //datetime picker
         leverageMultiplier: 1, //slider from 1-30? or manual with validation
         hedgingManagerAddress: "0x0000000000000000000000000000000000000000", //toggle from hdeging manager addresses hardcoded in ui?
         hedgingNotionalThreshold:  1000, //silder of dollar amount?
       };
 
-      let depositTotalBigNum = collaterals.reduce((a, b) => a + b, 0);
+      let depositTotal = collaterals.reduce((a, b) => a + b, 0);
+      console.log(depositTotal);
 
-      this.syntheticLimitOrder["setParams"] = setParams
-      this.syntheticLimitOrder["depositTotal"] = depositTotalBigNum;
-      this.syntheticLimitOrder["addSymbols"] = addSymbols;
-      this.syntheticLimitOrder["createOptions"] = createOptions;
+      this.syntheticLimitOrder["setParams"] = setParams; //works
+      this.syntheticLimitOrder["depositTotal"] = depositTotal; //works
+      this.syntheticLimitOrder["addSymbols"] = addSymbols; //works
+      this.syntheticLimitOrder["createOptions"] = createOptions; //works
 
       this.createSyntheticLimitOrder();
 
@@ -1346,6 +1365,14 @@ export default {
         );
       }
 
+      /*
+
+        udlFeedAddr: udlFeed,//button
+        optType: (strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT", //button
+        strike: strat["legs"][lKey]["strike"], //manual?
+        maturity: strat["legs"][lKey]["expiration"] //datetimepicker
+      */
+
       // encode create options
       if (component.validateObj(component.syntheticLimitOrder["createOptions"])) {
         for (let i=0; i < component.syntheticLimitOrder["createOptions"].length; i++) {
@@ -1426,7 +1453,7 @@ export default {
       await fastPoolManagementContract.methods.createSyntheticLimitOrder(
         [
           tokenContract.options.address,
-          component.syntheticLimitOrder["depositTotal"],
+          String((component.syntheticLimitOrder["depositTotal"] * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
           true,
           component.getProposalManagerAddress,
           PoolManagementProposalJSON.bytecode,
