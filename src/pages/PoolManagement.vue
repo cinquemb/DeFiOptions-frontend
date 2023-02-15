@@ -326,9 +326,17 @@ export default {
     setDepositWith(choice) {
       this.depositWith = choice;
     },
-    async handleOptVizEvent (optVizState){
+    async handleOptVizEvent (optVizState) {
       let optVizData = optVizState.getState();
       console.log(optVizData);
+
+      if (!optVizData["currentSymbol"] || !optVizData["currentStrategies"]){
+        return;
+      }
+
+      if (optVizData["isSumbit"] != true){
+        return;
+      }      
 
       let udlFeed = this.OptVizData[optVizData["currentSymbol"]]["udlAddr"];
       let realizedVol = this.OptVizData[optVizData["currentSymbol"]]["realizedVol"];
@@ -353,12 +361,10 @@ export default {
       let rvol = realizedVol / currentPrice * 20;
       
       for (let strat in optVizData["currentStrategies"]) {
+        console.log(strat);
         let numLegs = Object.keys(strat["legs"]).length;
         for (let i =0; i < numLegs; i++){
           let lKey = i.toString();
-          strat["legs"][lKey]["direction"];
-          strat["legs"][lKey]["type"];
-          strat["legs"][lKey]["strike"];
           let optionsSize = parseInt(strat["legs"][lKey]["quantity"]);
           expirations.push(strat["legs"][lKey]["expiration"]);
 
@@ -381,7 +387,7 @@ export default {
 
           createOptions.push({
             udlFeedAddr: udlFeed,//button
-            optType: this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"], //button
+            optType: (strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT", //button
             strike: strat["legs"][lKey]["strike"], //manual?
             maturity: strat["legs"][lKey]["expiration"] //datetimepicker
           });
@@ -393,7 +399,7 @@ export default {
             udlFeed: udlFeed, // these can
             strike: strat["legs"][lKey]["strike"], // be inputed from 
             maturity: null, // avaiable options 
-            optionType: this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"], // in exchange
+            optionType: (strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT", // in exchange
             t0: Number(Math.floor(Date.now() / 1000)), //date time picker?
             t1: strat["legs"][lKey]["expiration"] - (60*60*24), //datetime picker
             x: xVals,
@@ -422,16 +428,12 @@ export default {
 
       let depositTotalBigNum = collaterals.reduce((a, b) => a + b, 0);
 
-      /*this.syntheticLimitOrder[];
-      this.syntheticLimitOrder[];
-      this.syntheticLimitOrder[];
-      this.syntheticLimitOrder[];*/
+      this.syntheticLimitOrder["setParams"] = setParams
+      this.syntheticLimitOrder["depositTotal"] = depositTotalBigNum;
+      this.syntheticLimitOrder["addSymbols"] = addSymbols;
+      this.syntheticLimitOrder["createOptions"] = createOptions;
 
-      //TODO: create limit order
-
-      if (setParams && depositTotalBigNum) {
-        //pass
-      }
+      //TODO: call submit order
 
     },
     addSymbol: function () {
@@ -1323,21 +1325,66 @@ export default {
 
       let createOptionsEncodedData = [];
       let createSymbolAbiJSON = component.getOptionsExchangeAbi[32];
+      let addSymbolAbiJSON = component.getLiquidityPoolAbi[8];
+      let setParametersAbiJSON = component.getLiquidityPoolAbi[32];
 
+      let encodedData = [];
 
-      if (component.validateObj(component.createOptions)) {
-        for (let i=0; i < component.createOptions.length; i++) {
+      //encode setParameters
+      if (component.syntheticLimitOrder["setParams"]) {
+        let parameters = [
+          Number(Number(component.syntheticLimitOrder["setParams"].reserveRatio) * (10** 7)), //5 * (10**7) == 5%, 0 to 100
+          Number(Number(component.syntheticLimitOrder["setParams"].withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
+          Number(component.syntheticLimitOrder["setParams"].maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
+          Number(component.syntheticLimitOrder["setParams"].leverageMultiplier), // 15, 1 to 30
+          component.setParams.hedgingManagerAddress,// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          String((parseInt(component.syntheticLimitOrder["setParams"].hedgingNotionalThreshold) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))
+        ];
+        encodedData.push(
+          component.getWeb3.eth.abi.encodeFunctionCall(setParametersAbiJSON, parameters)
+        );
+      }
+
+      // encode create options
+      if (component.validateObj(component.syntheticLimitOrder["createOptions"])) {
+        for (let i=0; i < component.syntheticLimitOrder["createOptions"].length; i++) {
           let parameters = [
-            component.createOptions[i].udlFeedAddr,
-            component.optTypes[component.createOptions[i].optType], //0 if optionType == 'CALL' else 1
-            String((parseInt(component.createOptions[i].strike) * (10**18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
-            component.createOptions[i].maturity //unix timestamp format
+            component.syntheticLimitOrder["createOptions"][i].udlFeedAddr,
+            component.optTypes[component.syntheticLimitOrder["createOptions"][i].optType], //0 if optionType == 'CALL' else 1
+            String((parseInt(component.syntheticLimitOrder["createOptions"][i].strike) * (10**18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
+            component.syntheticLimitOrder["createOptions"][i].maturity //unix timestamp format
           ];
           createOptionsEncodedData.push(
             component.getWeb3.eth.abi.encodeFunctionCall(createSymbolAbiJSON, parameters)
           );
         }
       }
+
+      //encode all addSymbols
+      if (component.validateObj(component.syntheticLimitOrder["addSymbols"])) {
+        for(let i=0; i<component.syntheticLimitOrder["addSymbols"].length; i++) {
+          let parameters = [
+            component.syntheticLimitOrder["addSymbols"][i].udlFeed, 
+            String((parseInt(component.syntheticLimitOrder["addSymbols"][i].strike) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),//strike * (10**EXCHG['decimals'])
+            component.syntheticLimitOrder["addSymbols"][i].maturity, //unix timestamp format
+            component.optTypes[component.syntheticLimitOrder["addSymbols"][i].optionType], //0 if optionType == 'CALL' else 1
+            Number(component.syntheticLimitOrder["addSymbols"][i].t0), // unix timestamp format
+            Number(component.syntheticLimitOrder["addSymbols"][i].t1), //unix timestamp format
+            component.syntheticLimitOrder["addSymbols"][i].x.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// x * (10**EXCHG['decimals'])
+            component.syntheticLimitOrder["addSymbols"][i].y.split(",").map(val => String((parseInt(val) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))),// y * (10**EXCHG['decimals'])
+            [
+              String((parseInt(component.syntheticLimitOrder["addSymbols"][i].bsStockSpread.split(",")[0]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.syntheticLimitOrder["addSymbols"][i].bsStockSpread.split(",")[1]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})),
+              String((parseInt(component.syntheticLimitOrder["addSymbols"][i].bsStockSpread.split(",")[2]) * (10 ** 7)).toLocaleString('fullwide', {useGrouping:false}))
+            ]//[buyStock * (10**EXCHG['decimals']),sellStock * (10**EXCHG['decimals']), spreadPercent * (10**7)]
+
+          ];
+          encodedData.push(
+            component.getWeb3.eth.abi.encodeFunctionCall(addSymbolAbiJSON, parameters)
+          );
+        }
+      }
+      
 
       if (component.depositWith === "USDT") {
         //unit = "kwei"; // USDT (Tether) - 4 decimals
@@ -1377,11 +1424,11 @@ export default {
 
       await fastPoolManagementContract.methods.createSyntheticLimitOrder(
         tokenContract.options.address,
-        /*uint256 stableTokenValue;
-        bool isDeposit;
-        address proposalManagerAddr;
-        bytes _code;
-        bytes[] _executionBytes;*/
+        component.syntheticLimitOrder["depositTotal"],
+        true,
+        component.getProposalManagerAddress,
+        PoolManagementProposalJSON.bytecode,
+        encodedData,
         2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
         1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
         Number(Math.floor(Date.now() / 1000) + (60 * 60)), //30 min to vote
