@@ -3,16 +3,15 @@ import React, { useState, useEffect } from 'react';
 import './Ticker.css';
 import Button from 'react-bootstrap/Button';
 import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
 import allActions from '../../redux/actions'
+import { connect } from 'react-redux';
 
 function Ticker(props) {
   const [curinput, setCurinput] = useState('');
   const [disabled, setDisabled] = useState(true);
+  const [submit, setSubmit] = useState(false);
   const [symbols, setSymbols] = useState(new Set());
-  const dispatch = useDispatch();
   const currSymbol = useSelector(state => state.currentSymbol)
-  let submit = false
 
   useEffect(() => {
     function getValidSymbols() {
@@ -37,14 +36,14 @@ function Ticker(props) {
   function handleSubmit(event) {
     let cleanInput = curinput.trim().toUpperCase();
     if (cleanInput !== currSymbol) {
-      dispatch(allActions.changeSymbol(cleanInput))
+      props.dispatch(allActions.changeSymbol(cleanInput))
     }
     event.preventDefault();
   }
 
   function handleLimitOrderSubmit(event) {
-    submit = true
-    dispatch(allActions.updateSubmit(true))
+    setSubmit(true);
+    props.dispatch(allActions.updateSubmit(true))
     event.preventDefault();
   }
 
@@ -67,4 +66,4 @@ function Ticker(props) {
   );
 }
 
-export default Ticker;
+export default connect()(Ticker);

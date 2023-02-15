@@ -1424,17 +1424,19 @@ export default {
       );
 
       await fastPoolManagementContract.methods.createSyntheticLimitOrder(
-        tokenContract.options.address,
-        component.syntheticLimitOrder["depositTotal"],
-        true,
-        component.getProposalManagerAddress,
-        PoolManagementProposalJSON.bytecode,
-        encodedData,
-        2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
-        1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
-        Number(Math.floor(Date.now() / 1000) + (60 * 60)), //30 min to vote
-        component.getOptionsExchangeContract.options.address,
-        createOptionsEncodedData
+        [
+          tokenContract.options.address,
+          component.syntheticLimitOrder["depositTotal"],
+          true,
+          component.getProposalManagerAddress,
+          PoolManagementProposalJSON.bytecode,
+          encodedData,
+          2, //enum Quorum { SIMPLE_MAJORITY, TWO_THIRDS, QUADRATIC } 0,1,2
+          1, //enum VoteType {PROTOCOL_SETTINGS, POOL_SETTINGS, ORACLE_SETTINGS} 0,1,2
+          Number(Math.floor(Date.now() / 1000) + (60 * 60)), //30 min to vote
+          component.getOptionsExchangeContract.options.address,
+          createOptionsEncodedData
+        ]
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
