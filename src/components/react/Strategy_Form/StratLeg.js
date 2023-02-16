@@ -14,7 +14,6 @@ import Button from 'react-bootstrap/Button';
 function StratLeg(props) {
     const symbol = useSelector(state => state.currentSymbol);
     const thisLeg = useSelector((state) => state.currentStrategies[props.id].legs == null ? null : state.currentStrategies[props.id].legs[props.index])
-    const [submit, setSubmit] = useState(false)
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -92,17 +91,13 @@ function StratLeg(props) {
     }
 
       function handleLimitOrderSubmit(event) {
-        setSubmit(true);
         dispatch(allActions.updateSubmit(true))
         event.preventDefault();
       }
 
     return (
     <div className="StratLeg-div"> 
-        <Form onSubmit={handleLimitOrderSubmit}>
-            <input type="hidden" placeholder="is submit" value={submit}/>
-            <Button variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>Place Limit Order</Button>
-          </Form>
+        <Button onMouseDown={handleLimitOrderSubmit} variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>Place Limit Order</Button>
         <Form>
             <Form.Row>
                 <Form.Group as={Col} controlID="legDirection">
