@@ -36,7 +36,7 @@ function StratContainer(props) {
   return (
     <div className="StratContainer-div"> 
         {strategies.map((strategy, i) => 
-            <StratBody id = {i} strat = {strategy.strat} legs = {strategy.legs} table = {legTable} thisStrategy = {strategies[i]} underlyingDataProps={props.underlyingDataProps}/>)}
+            <StratBody id = {i} strat = {strategy.strat} legs = {strategy.legs} table = {legTable} thisStrategy = {strategies[i]} underlyingDataProps={props.underlyingDataProps} loading={props.loading}/>)}
     </div>
   );
 }

@@ -22,7 +22,7 @@ class OptionsVizualizer extends React.Component {
         <div className="App" onInput={this.props.onChange.bind(this, store)} onMouseUp={this.props.onChange.bind(this, store)}>
           <Ticker underlyingDataProps={this.props.underlyingData}/>
           <AddClear />
-          <StratContainer underlyingDataProps={this.props.underlyingData}/>
+          <StratContainer underlyingDataProps={this.props.underlyingData} loading={this.props.loading}/>
           <Chart underlyingDataProps={this.props.underlyingData}/>
         </div>
       </Provider>

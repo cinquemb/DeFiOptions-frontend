@@ -16,7 +16,7 @@ const state = {
   poolMaturityDate: {undefined:null},
   poolWithdrawalFee: {undefined:null},
   symbolsListJson: {undefined:null},
-  allSymbolsListJSON: null,
+  allSymbolsListJSON: {},
   userBalance: {undefined:null},
   pool: {undefined: null},
   userPoolUsdValue: {undefined:null}, // USD value of the pool balance
@@ -125,8 +125,9 @@ const actions = {
     commit("setSymbolsList", {web3, symbolsRaw});
   },
   async fetchAllPoolOptions({ commit, rootState }){
+    console.log(rootState.accounts.chainId);
     let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
-    const protocolReaderContract = new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
+    const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
     let poolOptions = await protocolReaderContract.methods.listPoolOptions().call();
 
     let marketOptionsPoolMap = {};

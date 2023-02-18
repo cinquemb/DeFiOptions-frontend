@@ -5,7 +5,7 @@
 
 
     <!------ TODO: NEED TO MOVE THIS TO OWN TRADE PAGE ------>
-    <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent"/>
+    <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent" :loading="loading"/>
 
 
     <!------ create hedging manager ------>

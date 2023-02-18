@@ -57,7 +57,7 @@ function StratBody(props) {
             props.table[stratType].map((leg, i) =>
                 ([<Form.Label>Leg {i + 1}</Form.Label>,
                 <StratLeg id={props.id} index={i} direction={leg.charAt(0)} type={leg.charAt(1)} 
-                    newStrat={stratType} custom={stratType.startsWith('Custom')} underlyingDataProps={props.underlyingDataProps}/>])
+                    newStrat={stratType} custom={stratType.startsWith('Custom')} underlyingDataProps={props.underlyingDataProps} loading={props.loading}/>])
             )}
           </Form.Group>
           <Button onClick={handleDelete}>Delete Strategy</Button>

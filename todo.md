@@ -19,7 +19,8 @@ LINK/USD-EP-24e18-1643356800
 
 			- issue with options visulaizer
 				-submit order button
-					- event not firing on button click up thru from react component -> vue component
+					- display loadin icon on button press
+					- remove loading icon after button submit
 				- dissapears when using it, then going to another screen, then going back to it again in the lp page
 				- better default surface pricing
 				- better buton click response

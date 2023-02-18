@@ -153,6 +153,13 @@ export default {
       typeNames: null // PUT, CALL
     }
   },
+
+  watch: {
+      getAllSymbolsListJson: async function() {
+        this.loadOptionsAndMarkets()
+      }
+  },
+
   methods: {
     loadOptionsAndMarkets() {
       if (Object.keys(this.getAllSymbolsListJson).length > 0) {

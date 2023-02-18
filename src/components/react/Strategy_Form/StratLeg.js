@@ -12,9 +12,16 @@ import Button from 'react-bootstrap/Button';
 
 
 function StratLeg(props) {
+    console.log(props)
+    const [hidden, setHidden] = useState("hidden");
     const symbol = useSelector(state => state.currentSymbol);
     const thisLeg = useSelector((state) => state.currentStrategies[props.id].legs == null ? null : state.currentStrategies[props.id].legs[props.index])
     const dispatch = useDispatch();
+
+
+    useEffect(() => {
+        setHidden((props.loading == true) ? "true" : "hidden")
+    }, [props.loading]);
 
     useEffect(() => {
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "direction", props.direction))
@@ -95,9 +102,17 @@ function StratLeg(props) {
         event.preventDefault();
       }
 
+      function killCLick(event) {
+        event.preventDefault();
+      }
+
     return (
-    <div className="StratLeg-div"> 
-        <Button onMouseDown={handleLimitOrderSubmit} variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>Place Limit Order</Button>
+    <div className="StratLeg-div">
+        <Button onClick={killCLick} onMouseDown={handleLimitOrderSubmit} variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>
+            
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style={{visibility: hidden}}></span>
+            Place Limit Order
+        </Button>
         <Form>
             <Form.Row>
                 <Form.Group as={Col} controlID="legDirection">
