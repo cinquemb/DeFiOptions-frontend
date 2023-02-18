@@ -58,7 +58,7 @@ function StratLeg(props) {
     }
 
     function handleExpirationChange(date) {
-        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", Number(Math.floor(date / 1000))))
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", Number(Math.floor(date / 1000) +(60 * 60 * 8))))
         computePremium()
     }
 
@@ -98,6 +98,7 @@ function StratLeg(props) {
     }
 
       function handleLimitOrderSubmit(event) {
+        event.target.style = "visibility:true";
         dispatch(allActions.updateSubmit(true))
         event.preventDefault();
       }
@@ -108,9 +109,9 @@ function StratLeg(props) {
 
     return (
     <div className="StratLeg-div">
-        <Button onClick={killCLick} onMouseDown={handleLimitOrderSubmit} variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>
+        <Button class="btn btn-success" onClick={killCLick} onMouseDown={handleLimitOrderSubmit} variant="outline-primary" type="submit" style={{float:"center", borderRadius: "0px"}}>
             
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style={{visibility: hidden}}></span>
+            <span key={props.loading} class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style={{visibility: hidden}}></span>
             Place Limit Order
         </Button>
         <Form>

@@ -18,11 +18,13 @@ LINK/USD-EP-24e18-1643356800
 					- in udlfeed contracts
 
 			- issue with options visulaizer
+				- react date time picker color blends into background
 				-submit order button
 					- display loadin icon on button press
 					- remove loading icon after button submit
 				- dissapears when using it, then going to another screen, then going back to it again in the lp page
 				- better default surface pricing
+					- ablilty to select curvature of pricing surface
 				- better buton click response
 
 

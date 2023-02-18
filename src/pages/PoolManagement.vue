@@ -3,8 +3,6 @@
 
     <h1> Current Pool: ({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h1>
 
-
-    <!------ TODO: NEED TO MOVE THIS TO OWN TRADE PAGE ------>
     <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent" :loading="loading"/>
 
 
@@ -557,9 +555,6 @@ export default {
         },
         1000 * 60 * 2//update price every 2 min
       );
-
-      
-      
     },
     async setUdlRealizedVol() {
       for (var key in this.OptVizData) {
@@ -1358,7 +1353,7 @@ export default {
           Number(Number(component.syntheticLimitOrder["setParams"].withdrawFee) * (10 **7)), //1 * (10**7) == 1%, 0 to 100
           Number(component.syntheticLimitOrder["setParams"].maturity) ,  //Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 365 * 10) //10 years
           Number(component.syntheticLimitOrder["setParams"].leverageMultiplier), // 15, 1 to 30
-          component.setParams.hedgingManagerAddress,// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
+          component.syntheticLimitOrder["setParams"].hedgingManagerAddress,// 0x3d8E35BB6FdBEBFAefb1674b5B717aa946b85191
           String((parseInt(component.syntheticLimitOrder["setParams"].hedgingNotionalThreshold) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false}))
         ];
         encodedData.push(
@@ -1475,7 +1470,7 @@ export default {
       }).on('receipt', function(receipt){
         console.log(receipt);
         if (receipt.status) {
-          component.$toast.success("Register the proposal transactions was successfull. You can now vote on the proposal in the pool governance page");
+          component.$toast.success("Limit order succesful.");
           
         } else {
           component.$toast.error("The storing proposal transactions tx has failed. Please contact the DeFi Options support.");
