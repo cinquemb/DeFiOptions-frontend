@@ -27,6 +27,10 @@ LINK/USD-EP-24e18-1643356800
 					- ablilty to select curvature of pricing surface
 				- better buton click response
 
+				- cancel limit order
+					- remove option symbol
+					- withdraw funds from pool
+
 
 			- add check for hedging liquidity, kill open pos if not available
 
