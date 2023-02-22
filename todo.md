@@ -38,6 +38,21 @@ LINK/USD-EP-24e18-1643356800
 				- script to initalize udlfeeds
 					- https://docs.scry.finance/docs/smart-contracts/solidity-contracts-and-interface
 
+		- two step process for opening up trades against liq pools
+			- trader creates a pending position with all the collateral needed
+			- 3rd party address(es)/trader (in another tx):
+				- can cancel the order and send back the collateral
+				- fufill the order and assign the proper credits/debits/option tokens to the trader/pool
+				- how can we know that third party address ahead of time
+					- if we know that 3rd party address ahead of time,
+						- where would we store/access it?
+							- in the oracle contract?
+
+				- max fill time
+				- wait for all 2 step oracles to approve tx
+					- last one fills
+					- cancel if pass max fill time
+
 		- toggle pools
 
 			- debug to make sure that related pool values are being added
@@ -47,9 +62,12 @@ LINK/USD-EP-24e18-1643356800
 
 		- manage pool
 			- fast pool propsal
-				- issue with governance (msg.sender isnt account but contract now)
+				- issue with governance (msg.sender isnt account but FPM contract)
 					- vote yes on proposal
 					- close proposal
+				- avoid proposal contract creation with FPM when creating limit orders? (to save gas)
+					- add pool manangment proposal functions to FPM?
+						- can have many wrapers around same proposal addr?
 
 		https://forms.monday.com/forms/ce3817531bd3dcdba24e01e2263f397d?r=use1
 		https://docs.google.com/forms/d/e/1FAIpQLSe1_GGh_NArOi8_TcpmSjsNiDkLHINgb18dOewfQVWqcX8LWQ/viewform?usp=send_form
