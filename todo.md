@@ -52,6 +52,9 @@ LINK/USD-EP-24e18-1643356800
 				- wait for all 2 step oracles to approve tx
 					- last one fills
 					- cancel if pass max fill time
+				- may need conditions in openExposure funcition 
+					- https://github.com/cinquemb/DeFiOptions-core/blob/master/contracts/finance/OptionsExchange.sol#L259-L377
+					- that signal that exposure is being opened on behalf of a pending order
 
 		- toggle pools
 

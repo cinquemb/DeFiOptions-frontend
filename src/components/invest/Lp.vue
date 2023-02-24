@@ -6,7 +6,7 @@
 
     <!-- Pool data -->
     <div class="div-flex justify-content-center flex-wrap">
-      <LpDataItem class="data-item" title="Symbol" :data="pool.symbol" :divider="true" />
+      <LpDataItem class="data-item" title="Symbol" :data="formatSymbol" :divider="true" />
       <LpDataItem class="data-item" title="Address" :data="formatAddress" :divider="true" :info="formatAddressInfo" />
       <div class="data-item" >
         <button @click="togglePool" class="btn btn-success">
@@ -68,6 +68,15 @@ export default {
 
     formatAddress () {
       return this.pool.address.substring(0, 6) + '...' + this.pool.address.substring(38, 42)
+    }, 
+
+    formatSymbol () {
+      if (this.pool.symbol.length > 10) {
+        let ts = '0x' + this.pool.symbol
+        return ts.substring(0, 6) + '...' + ts.substring(38, 42)
+      } else {
+        return this.pool.symbol
+      }
     }, 
 
     formatAddressInfo () {

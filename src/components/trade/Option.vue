@@ -6,7 +6,7 @@
 
     <!-- Option data -->
     <div class="div-flex justify-content-center flex-wrap">
-      <OptionDataItem class="data-item" title="Pool" :data="option.pool" :divider="true" />
+      <OptionDataItem class="data-item" title="Pool" :data="formatOptionPool" :divider="true" />
       <OptionDataItem class="data-item" title="Strike" :data="'$' + option.strike" :divider="true" />
       <OptionDataItem v-if="getBreakEvenPrice" class="data-item" title="Break even" :data="getBreakEvenPrice" :divider="true" />
       <OptionDataItem class="data-item" title="Price" :green="true" :data="optionPriceFormatted" v-if="isGetBuy" />
@@ -105,6 +105,16 @@ export default {
     isGetBuy() {
       return this.side == "BUY"
     },
+
+    formatOptionPool () {
+      if (this.option.pool.length > 10) {
+        let ts = '0x' + this.option.pool
+
+        return ts.substring(0, 6) + '...' + ts.substring(38, 42)
+      } else {
+        return this.option.pool
+      }
+    }, 
 
     isGetSell() {
       return this.side == "SELL"
