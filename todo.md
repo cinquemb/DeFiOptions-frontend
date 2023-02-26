@@ -37,24 +37,29 @@ LINK/USD-EP-24e18-1643356800
 			-support canto testnet
 				- script to initalize udlfeeds
 					- https://docs.scry.finance/docs/smart-contracts/solidity-contracts-and-interface
+				- canto hedging
+					- look at what beefy is doing with canto money markets
+					- https://dexvaults.com/?chainFilter=%5B7700%5D&sortType=tvl&search=&tagsFilter=&profitFilter=&dexFiFilter=&vaultsType=ALL_VAULTS&smallTvl=false ???
+					- yubari finance (perps)
+					- https://nitter.lacontrevoie.fr/CION_FI (perps)
 
-		- two step process for opening up trades against liq pools
-			- trader creates a pending position with all the collateral needed
-			- 3rd party address(es)/trader (in another tx):
-				- can cancel the order and send back the collateral
-				- fufill the order and assign the proper credits/debits/option tokens to the trader/pool
-				- how can we know that third party address ahead of time
-					- if we know that 3rd party address ahead of time,
-						- where would we store/access it?
-							- in the oracle contract?
+			- support arbitrum
 
-				- max fill time
-				- wait for all 2 step oracles to approve tx
-					- last one fills
-					- cancel if pass max fill time
-				- may need conditions in openExposure funcition 
-					- https://github.com/cinquemb/DeFiOptions-core/blob/master/contracts/finance/OptionsExchange.sol#L259-L377
-					- that signal that exposure is being opened on behalf of a pending order
+		- non dollar-like stable deposits?
+			- DepositHedgingManager
+				- deposit
+					- take collateral into exchange balance vault
+					- open up delta-1 short
+						- money markets (borrow untill neutral)
+						- perps protocols
+						- deep itm put options? (how to deal with expirations? map to general deposit outflows windows)
+					- mint exchange balance to user
+				- withdrawal
+					- sell spot asset
+					- close short
+					- deposit net stables back into dod
+
+
 
 		- toggle pools
 

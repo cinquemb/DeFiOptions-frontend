@@ -8,7 +8,8 @@
       <span @click="switchToKovan" class="network-switch-link">Kovan testnet</span> or 
       <span @click="switchToMumbai" class="network-switch-link">Mumbai testnet</span> or 
       <span @click="switchToFuji" class="network-switch-link">Fuji testnet</span> or
-      <span @click="switchToCanto" class="network-switch-link">Canto testnet</span>.
+      <span @click="switchToCantoTestnet" class="network-switch-link">Canto testnet</span>.
+      <span @click="switchToArbitrumGoerli" class="network-switch-link">Arbitrum Goerli testnet</span>.
     </div>
 
     <router-view />
@@ -72,16 +73,23 @@ export default {
         }] 
       });
     },
-    switchToCanto() {
+    switchToCantoTestnet() {
       window.ethereum.request({ 
         method: 'wallet_switchEthereumChain', 
         params: [{ 
           chainId: '0x2e4'
         }] 
       });
+    },
+    switchToArbitrumGoerli() {
+      window.ethereum.request({ 
+        method: 'wallet_switchEthereumChain', 
+        params: [{ 
+          chainId: '0x66eed'
+        }] 
+      });
     }
   },
-
   watch: {
     getChainName: function () {
       // update everything whenever the network is changed
