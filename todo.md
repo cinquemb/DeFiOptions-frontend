@@ -4,122 +4,131 @@ yarn build --no-lint; cd build/; git init; git remote add origin git@github.com:
 cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push -f git@github.com:cinquemb/DeFiOptions-frontend.git master:gh-pages; cd ..;
 
 
-LINK/USD-EP-24e18-1643356800
-		- issues
-			- issue with rebalanicing alredy open position
-			- empty proposal being created when not setting all fields of setParams
-				- fix ui to not create Proposal when all fields are not set for setParams
+- issues
+	- issue with rebalanicing alredy open position
+	- empty proposal being created when not setting all fields of setParams
+		- fix ui to not create Proposal when all fields are not set for setParams
 
-			
-			- issue with bad oracle inialzation decimals?
-				- causes bad vol calcs
-					- try building samples from purely on chain
-				- need a better way to initialize on chain
-					- in udlfeed contracts
+	
+	- issue with bad oracle inialzation decimals?
+		- causes bad vol calcs
+			- try building samples from purely on chain
+		- need a better way to initialize on chain
+			- in udlfeed contracts
 
-			- issue with options visulaizer
-				- react date time picker color blends into background
-				-submit order button
-					- display loadin icon on button press
-					- remove loading icon after button submit
-				- dissapears when using it, then going to another screen, then going back to it again in the lp page
-				- better default surface pricing
-					- ablilty to select curvature of pricing surface
-				- better buton click response
+	- issue with options visulaizer
+		- react date time picker color blends into background
+		-submit order button
+			- display loadin icon on button press
+			- remove loading icon after button submit
+		- dissapears when using it, then going to another screen, then going back to it again in the lp page
+		- better default surface pricing
+			- ablilty to select curvature of pricing surface
+		- better buton click response
 
-				- cancel limit order
-					- remove option symbol
-					- withdraw funds from pool
+		- cancel limit order
+			- remove option symbol
+			- withdraw funds from pool
 
+- other hedging managers
+	- money market folding
 
-			- add check for hedging liquidity, kill open pos if not available
+-support canto testnet
+	- script to initalize udlfeeds
+		- https://docs.scry.finance/docs/smart-contracts/solidity-contracts-and-interface
+	- canto hedging
+		- look at what beefy is doing with canto money markets
+		- https://dexvaults.com/?chainFilter=%5B7700%5D&sortType=tvl&search=&tagsFilter=&profitFilter=&dexFiFilter=&vaultsType=ALL_VAULTS&smallTvl=false ???
+		- yubari finance (perps)
+		- https://nitter.lacontrevoie.fr/CION_FI (perps)
 
-			-support canto testnet
-				- script to initalize udlfeeds
-					- https://docs.scry.finance/docs/smart-contracts/solidity-contracts-and-interface
-				- canto hedging
-					- look at what beefy is doing with canto money markets
-					- https://dexvaults.com/?chainFilter=%5B7700%5D&sortType=tvl&search=&tagsFilter=&profitFilter=&dexFiFilter=&vaultsType=ALL_VAULTS&smallTvl=false ???
-					- yubari finance (perps)
-					- https://nitter.lacontrevoie.fr/CION_FI (perps)
+- support arbitrum
+	- deploy gmx fork or find gmx contracts on arbitrum
 
-			- support arbitrum
+- multi step oracle 
+	- pendingexposurerouter
+		- slippage param
+			- will be used to check price during 3rd party route doesn't deviate more than user expected
+	- ui support
+		- BuyOptions.vue
+		- SellOption.vue
+		- add new oracle and pendingexposurerouter abi to front end
+		- add another buy/sell button that uses pendingexposurerouter
 
-		- non dollar-like stable deposits?
-			- DepositHedgingManager
-				- deposit
-					- take collateral into exchange balance vault
-					- open up delta-1 short
-						- money markets (borrow untill neutral)
-						- perps protocols
-						- deep itm put options? (how to deal with expirations? map to general deposit outflows windows)
-					- mint exchange balance to user
-				- withdrawal
-					- sell spot asset
-					- close short
-					- deposit net stables back into dod
-
-
-
-		- toggle pools
-
-			- debug to make sure that related pool values are being added
-				- make sure pool data is entering the state
-				- have to toggle between two pools multiple times before something updates in the ui
-				- other pool stats?
-
-		- manage pool
-			- fast pool propsal
-				- issue with governance (msg.sender isnt account but FPM contract)
-					- vote yes on proposal
-					- close proposal
-				- avoid proposal contract creation with FPM when creating limit orders? (to save gas)
-					- add pool manangment proposal functions to FPM?
-						- can have many wrapers around same proposal addr?
-
-		https://forms.monday.com/forms/ce3817531bd3dcdba24e01e2263f397d?r=use1
-		https://docs.google.com/forms/d/e/1FAIpQLSe1_GGh_NArOi8_TcpmSjsNiDkLHINgb18dOewfQVWqcX8LWQ/viewform?usp=send_form
+- non dollar-like stable deposits?
+	- DepositHedgingManager
+		- deposit
+			- take collateral into exchange balance vault
+			- open up delta-1 short
+				- money markets (borrow untill neutral)
+				- perps protocols
+				- deep itm put options? (how to deal with expirations? map to general deposit outflows windows)
+			- mint exchange balance to user
+		- withdrawal
+			- sell spot asset
+			- close short
+			- deposit net stables back into dod
 
 
-		- pool governance
-			- other proposal data?
-			- info on pool risk
+
+- toggle pool
+	- debug to make sure that related pool values are being added
+		- make sure pool data is entering the state
+		- have to toggle between two pools multiple times before something updates in the ui
+		- other pool stats?
+
+- manage pool
+	- fast pool propsal
+		- issue with governance (msg.sender isnt account but FPM contract)
+			- vote yes on proposal
+			- close proposal
+		- avoid proposal contract creation with FPM when creating limit orders? (to save gas)
+			- add pool manangment proposal functions to FPM?
+				- can have many wrapers around same proposal addr?
+
+https://forms.monday.com/forms/ce3817531bd3dcdba24e01e2263f397d?r=use1
+https://docs.google.com/forms/d/e/1FAIpQLSe1_GGh_NArOi8_TcpmSjsNiDkLHINgb18dOewfQVWqcX8LWQ/viewform?usp=send_form
 
 
-		- protocol governance
-			- other proposal data?
-			- info on exchange risk
+- pool governance
+	- other proposal data?
+	- info on pool risk
 
 
-		- hedging
-			- different hedging strategies
-				- gamma hedging model
-				- theta hedging model
-				- pool parameters that set how much which combination of parameters to automatically hedge
-					- [0,0,0] -> [delta, gamma, theta]
+- protocol governance
+	- other proposal data?
+	- info on exchange risk
 
-		- liquidlity pool contract
-			- virtual methods for calcOptPrice
-				- another set params variable that defines an external addr, if non zero
-					- makes a static call to calcOptPrice defined on that addr?
-					- percent payout from transfers taken from pool on buy/sell tx's for pools that are using the amm
 
-		- trade page
-			- need to figure out how to list options in ui with the same functionality as existing
-			- make a new trade page (trade v2)
-				- toggle multiple options accross type
-			- more info on profit and loss
+- hedging
+	- different hedging strategies
+		- gamma hedging model
+		- theta hedging model
+		- pool parameters that set how much which combination of parameters to automatically hedge
+			- [0,0,0] -> [delta, gamma, theta]
 
-		- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]			
-		- contract viewers helper
-			- Reader		
-				- udl feed addrs?
-					- pull from government proposals?
-					- pull from JSON
+- liquidlity pool contract
+	- virtual methods for calcOptPrice
+		- another set params variable that defines an external addr, if non zero
+			- makes a static call to calcOptPrice defined on that addr?
+			- percent payout from transfers taken from pool on buy/sell tx's for pools that are using the amm
 
-				- trade
-					- make one unique strike per market but with a order book of diff prices?
-					- sub query the pools that price a particalr option
+- trade page
+	- need to figure out how to list options in ui with the same functionality as existing
+	- make a new trade page (trade v2)
+		- toggle multiple options accross type
+	- more info on profit and loss
+
+- select/remove multiple options accross pools to buy/sell/compute collateral requirements for [later]			
+- contract viewers helper
+	- Reader		
+		- udl feed addrs?
+			- pull from government proposals?
+			- pull from JSON
+
+		- trade
+			- make one unique strike per market but with a order book of diff prices?
+			- sub query the pools that price a particalr option
 
 
 https://wiki.polygon.technology/docs/zkEVM/develop/
