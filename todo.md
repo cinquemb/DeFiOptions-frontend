@@ -48,7 +48,11 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 
 - multi step oracle 
 	- pendingexposurerouter
-		- deploy to fuji and polygon
+		- mumbai
+			- test per against pyth oracle with approved updator
+				- initialize with proper deciamls for 
+					- btc/eth/matic
+
 	- ui support
 		- BuyOptions.vue
 		- SellOption.vue

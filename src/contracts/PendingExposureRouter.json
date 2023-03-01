@@ -1,0 +1,109 @@
+{
+  "contractName": "IPendingExposureRouter",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getMaxPendingMarketOrders",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        }
+      ],
+      "name": "cancelOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string[]",
+          "name": "symbols",
+          "type": "string[]"
+        }
+      ],
+      "name": "approveOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "string[]",
+              "name": "symbols",
+              "type": "string[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "volume",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "isShort",
+              "type": "bool[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "isCovered",
+              "type": "bool[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "poolAddrs",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "paymentTokens",
+              "type": "address[]"
+            }
+          ],
+          "internalType": "struct IOptionsExchange.OpenExposureInputs",
+          "name": "oEi",
+          "type": "tuple"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cancelAfter",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "slippage",
+          "type": "uint256"
+        }
+      ],
+      "name": "createOrder",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.0+commit.26b70077\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"string[]\",\"name\":\"symbols\",\"type\":\"string[]\"}],\"name\":\"approveOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"}],\"name\":\"cancelOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"string[]\",\"name\":\"symbols\",\"type\":\"string[]\"},{\"internalType\":\"uint256[]\",\"name\":\"volume\",\"type\":\"uint256[]\"},{\"internalType\":\"bool[]\",\"name\":\"isShort\",\"type\":\"bool[]\"},{\"internalType\":\"bool[]\",\"name\":\"isCovered\",\"type\":\"bool[]\"},{\"internalType\":\"address[]\",\"name\":\"poolAddrs\",\"type\":\"address[]\"},{\"internalType\":\"address[]\",\"name\":\"paymentTokens\",\"type\":\"address[]\"}],\"internalType\":\"struct IOptionsExchange.OpenExposureInputs\",\"name\":\"oEi\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"cancelAfter\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"slippage\",\"type\":\"uint256\"}],\"name\":\"createOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getMaxPendingMarketOrders\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"project:/contracts/interfaces/IPendingExposureRouter.sol\":\"IPendingExposureRouter\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/interfaces/IOptionsExchange.sol\":{\"keccak256\":\"0xce4cc93f29c744985cfc99affdae759bdd975c5dfbfa2de83b2ad5a3925c5d07\",\"urls\":[\"bzz-raw://6abe94722749c5808562850cadf2d1895e70e0a8f1faa43e610970464cf4b689\",\"dweb:/ipfs/QmaJBYSK6nqVp3ecRWhqkbQ7BLS1saEyxk1aMRtU1EWcxM\"]},\"project:/contracts/interfaces/IPendingExposureRouter.sol\":{\"keccak256\":\"0x57127cb859f59ce679083a9cbefa733afdae71b37fdad7e95430b0ef649d26fe\",\"urls\":[\"bzz-raw://fea29411b30410112c582263553cb40aa5c2d764ddf542c3431661fae6018ce2\",\"dweb:/ipfs/QmWYtxHn546WHiixaADoMBVoGW15Twu6FajvvDujUQ4ojw\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": ""
+}
