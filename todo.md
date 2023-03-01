@@ -43,12 +43,12 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 		- https://nitter.lacontrevoie.fr/CION_FI (perps)
 
 - support arbitrum
+	- https://pyth.network/developers/price-feed-ids
 	- deploy gmx fork or find gmx contracts on arbitrum
 
 - multi step oracle 
 	- pendingexposurerouter
-		- slippage param
-			- will be used to check price during 3rd party route doesn't deviate more than user expected
+		- deploy to fuji and polygon
 	- ui support
 		- BuyOptions.vue
 		- SellOption.vue
