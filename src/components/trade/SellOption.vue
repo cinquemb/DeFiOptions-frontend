@@ -112,12 +112,25 @@
           Write Cash Secured and Sell for ${{getTotal.toFixed(2)}}
         </button>
       </div>
+
+      <div class="p-2" v-if="!getCoveredType">
+        <button @click="writeOptionsPending" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || ((writingStepTx < 2) && (!isBuyWithExchangeBalance))">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Write Cash Secured and make Sell order for ${{getTotal.toFixed(2)}}
+        </button>
+      </div>
       <!-- <div></div> -->
 
       <div class="p-2" v-if="getCoveredType">
         <button @click="writeCovered" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || (writingStepTx < 1)">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Write Covered and Sell for ${{getTotal.toFixed(2)}}
+        </button>
+      </div>
+      <div class="p-2" v-if="getCoveredType">
+        <button @click="writeCoveredPending" class="btn btn-success form-control" :disabled="(isOptionSizeNotValid.status) || (writingStepTx < 1)">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Write Covered and make Sell order for ${{getTotal.toFixed(2)}}
         </button>
       </div>
       <!-- <div></div> -->
@@ -181,7 +194,7 @@ export default {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getWeb3"]),
     //...mapGetters("liquidityPool", ["getLiquidityPoolContract"]),
     ...mapGetters("dai", ["getUserDaiBalance", "getDaiContract", "getLpDaiAllowance"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserCollateralSurplus", "getUserExchangeBalanceAllowance", "getUserOptions"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserCollateralSurplus", "getUserExchangeBalanceAllowance", "getUserOptions", "getPendingExposureRouterContract"]),
     ...mapGetters("usdc", ["getUserUsdcBalance", "getUsdcContract", "getLpUsdcAllowance"]),
 
     allowanceNeeded() {
@@ -812,6 +825,124 @@ export default {
 
           if (receipt.status) {
             component.$toast.success("You have successfully wrote and sold and option");
+            component.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
+            component.writingStepTx = 0;
+          } else {
+            component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          }
+
+        }).on('error', function(error){
+          console.log(error);
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      } catch (e) {
+          window.console.log("Error:", e);
+          //component.$toast.error("The transaction has been reverted. Please contact DeFi Options support.");
+          
+      } finally {
+        component.loading = false;
+        
+      }
+    },
+
+    // write option covered by underlying balance
+    async writeCoveredPending() {
+      let component = this;
+      component.loading = true;
+
+      // get options size in wei
+      const optionSizeWei = this.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether");
+
+      console.log([
+            [component.option.symbol],//string[] symbols;
+            [optionSizeWei],//uint[] volume;
+            [1],//bool[] isShort; 1 is true 0 is false
+            [1],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
+            [component.option.poolAddr],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
+          ]);
+
+
+      // write covered option transaction
+      try {
+        await component.getPendingExposureRouterContract.methods.createOrder(
+          [
+            [component.option.symbol],//string[] symbols;
+            [optionSizeWei],//uint[] volume;
+            [1],//bool[] isShort; 1 is true 0 is false
+            [1],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
+            [component.option.poolAddr],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
+          ],
+          Number(Math.floor(Date.now() / 1000) + (60 * 10)), // cancelAfter, default to 5 min
+          30 // sliipage in bps
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The sell order (covered) transaction has been submitted. Please wait for it to be confirmed.");
+
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+
+          if (receipt.status) {
+            component.$toast.success("You have successfully wrote and make an order to sell options.");
+            component.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
+            component.writingStepTx = 0;
+          } else {
+            component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          }
+
+        }).on('error', function(error){
+          console.log(error);
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      } catch (e) {
+          window.console.log("Error:", e);
+          //component.$toast.error("The transaction has been reverted. Please contact DeFi Options support.");
+          
+      } finally {
+        component.loading = false;
+        
+      }
+    },
+
+    // write stablecoin collateral options
+    async writeOptionsPending() {
+      let component = this;
+      component.loading = true;
+
+      // get options size in wei
+      const optionSizeWei = component.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether");
+
+      // write stablecoin collateral options transaction
+      try {
+        await component.getPendingExposureRouterContract.methods.createOrder(
+          [
+            [component.option.symbol],//string[] symbols;
+            [optionSizeWei],//uint[] volume;
+            [1],//bool[] isShort; 1 is true 0 is false
+            [0],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
+            [component.option.poolAddr],//address[] poolAddrs;
+            ["0x0000000000000000000000000000000000000000"]//address[] paymentTokens; only needed for buying options
+          ],
+          Number(Math.floor(Date.now() / 1000) + (60 * 10)), // cancelAfter, default to 5 min
+          30 // sliipage in bps
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The sell order (cash secured) transaction has been submitted. Please wait for it to be confirmed.");
+
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+
+          if (receipt.status) {
+            component.$toast.success("You have successfully wrote and made an order to sell options");
             component.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
             component.writingStepTx = 0;
           } else {

@@ -42,6 +42,11 @@
         Buy for ${{getTotal.toFixed(2)}}
       </button>
 
+      <button v-if="!allowanceNeeded" @click="buyOptionPending" class="btn btn-success form-control" :disabled="isOptionSizeNotValid.status">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Buy for ${{getTotal.toFixed(2)}} (PER)
+      </button>
+
       <button 
         v-if="allowanceNeeded" 
         class="btn btn-success form-control" 
@@ -49,7 +54,7 @@
         :disabled="isOptionSizeNotValid.status"
       >
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Approve {{buyWith}} for ${{getTotal.toFixed(2)}}
+        Approve {{buyWith}} for ${{getTotal.toFixed(2)}}fc
       </button>
 
       <small v-if="allowanceNeeded" class="show-text form-text text-center">
@@ -145,7 +150,7 @@ export default {
     ...mapGetters("accounts", ["getActiveAccount", "getWeb3"]),
     //...mapGetters("liquidityPool", ["getLiquidityPoolContract"]),
     ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract", "getLpDaiAllowance"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserExchangeBalanceAllowance"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserExchangeBalanceAllowance", "getPendingExposureRouterContract"]),
     ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract", "getLpUsdcAllowance"]),
 
     allowanceNeeded() {
@@ -342,6 +347,89 @@ export default {
           console.log(receipt);
           if (receipt.status) {
             component.$toast.success("You have successfully bought an option.");
+            // refresh values
+            if (component.buyWith === "DAI") {
+              component.$store.dispatch("dai/fetchUserBalance");
+              if (component.getTotal === Number(component.$store.state.dai.lpAllowance)) {
+                console.log("equal")
+                component.$store.state.dai.lpAllowance = 0;
+              } else {
+                console.log("not equal")
+                component.$store.state.dai.lpAllowance = Number(component.$store.state.dai.lpAllowance) - component.getTotal;
+              }
+              //component.$store.dispatch("dai/fetchLpAllowance");
+            } else if (component.buyWith === "USDC") {
+              component.$store.dispatch("usdc/fetchUserBalance");
+              
+              if (component.getTotal === Number(component.$store.state.usdc.lpAllowance)) {
+                component.$store.state.usdc.lpAllowance = 0;
+              } else {
+                component.$store.state.usdc.lpAllowance = Number(component.$store.state.usdc.lpAllowance) - component.getTotal;
+              }
+              //component.$store.dispatch("usdc/fetchLpAllowance");
+            } else if (component.buyWith === "USDT") {
+              // TODO
+              //component.$store.dispatch("tether/fetchUserBalance");
+              
+              //this.$store.dispatch("tether/fetchLpAllowance");
+            } else if (component.buyWith === "Exchange Balance") {
+              component.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
+              if (component.getTotal === Number(component.$store.state.optionsExchange.userExchangeBalanceAllowance)) {
+                component.$store.state.optionsExchange.userExchangeBalanceAllowance = 0;
+              } else {
+                component.$store.state.optionsExchange.userExchangeBalanceAllowance = Number(component.$store.state.optionsExchange.userExchangeBalanceAllowance) - component.getTotal;
+              }
+              
+              //component.$store.dispatch("optionsExchange/fetchExchangeBalanceAllowance");
+            }
+            
+          } else {
+            component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          }
+        }).on('error', function(error){
+          console.log(error);
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      } catch (e) {
+          window.console.log("Error:", e);
+          //component.$toast.error("The transaction has been reverted. Please contact DeFi Options support.");
+          
+      } finally {
+        component.setFormData(); // refresh the option price
+        component.loading = false;
+      }
+    },
+
+    async buyOptionPending() {
+      let component = this;
+      component.loading = true;
+      component.getOptionPrice(); // refresh the option price
+      let optionSizeWei = component.getWeb3.utils.toWei(String(component.selectedOptionSize), "ether");
+      //let optionUnitPrice = component.getWeb3.utils.toWei(String(component.optionPrice), "ether");
+
+      try {
+        await component.getPendingExposureRouterContract.methods.createOrder(
+          [
+            [component.option.symbol],//string[] symbols;
+            [optionSizeWei],//uint[] volume;
+            [0],//bool[] isShort; 1 is true 0 is false
+            [0],//bool[] isCovered; 1 is true 0 is false (false for stablcoin short)
+            [component.option.poolAddr],//address[] poolAddrs;
+            [component.getStablecoinAddress]//address[] paymentTokens; only needed for buying options
+          ],
+          Number(Math.floor(Date.now() / 1000) + (60 * 10)), // cancelAfter, default to 5 min
+          30 // sliipage in bps
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The Buy order transaction has been submitted. Please wait for it to be confirmed and oracle approvals.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            component.$toast.success("You have successfully made your order.");
             // refresh values
             if (component.buyWith === "DAI") {
               component.$store.dispatch("dai/fetchUserBalance");

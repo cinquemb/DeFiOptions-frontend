@@ -247,9 +247,10 @@ export default {
       let expirations = [];
       let collaterals = [];
       let bins = 15;
+      let sigma = 1;
       
-      let low = currentPrice - (3*realizedVol);
-      let high = currentPrice + (3*realizedVol);
+      let low = currentPrice - (sigma*realizedVol);
+      let high = currentPrice + (sigma*realizedVol);
 
       let lower_bound = Math.ceil(low - currentPrice/bins - realizedVol);
       let upper_bound = Math.ceil(high + currentPrice/bins + realizedVol);

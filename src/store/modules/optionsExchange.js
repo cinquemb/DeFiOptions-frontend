@@ -1,4 +1,5 @@
 import OptionsExchange from "../../contracts/OptionsExchangeV2.json";
+import PendingExposureRouter from "../../contracts/PendingExposureRouter.json";
 import UnderlyingFeed from "../../contracts/UnderlyingFeed.json";
 import ProtocolReaderJSON from "../../contracts/ProtocolReader.json";
 
@@ -42,6 +43,9 @@ const getters = {
   getOptionsExchangeContract(state) {
     return state.contract;
   },
+  getPendingExposureRouterContract(state) {
+    return state.perContract;
+  },
   getUnderlyingPrice(state) {
     // underlying price for the currently selected pair/symbol
     return state.underlyingPrice;
@@ -76,6 +80,7 @@ const actions = {
     let chainIdDec = parseInt(rootState.accounts.chainId);
     let address = addresses.OptionsExchange[chainIdDec];
     let contract = new web3.eth.Contract(OptionsExchange.abi, address);
+    let perContract = new web3.eth.Contract(PendingExposureRouter.abi, addresses.PendingExposureRouter[chainIdDec]);
 
     let underlyingMap = {
       "BTC/USD": {"udlAddr": addresses["BTC/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
@@ -86,6 +91,7 @@ const actions = {
     };
     commit("setUnderlyingsAvailable", underlyingMap);
     commit("setContract", contract);
+    commit("setPERContract", perContract);
     commit("setAbi", OptionsExchange.abi);
   },
   async fetchExchangeBalanceAllowance({ commit, dispatch, state, rootState }) {
@@ -293,6 +299,9 @@ const mutations = {
   },
   setContract(state, _contract) {
     state.contract = _contract;
+  },
+  setPERContract(state, _contract) {
+    state.perContract = _contract;
   },
   setLiquidityPoolBalance(state, balance) {
     state.poolBalance[state.poolSymbolsAddrsMap[state.selectedPool]] = balance;
