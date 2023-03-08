@@ -48,7 +48,8 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 
 - multi step oracle
 	- pendingexposurerouter
-		- need to emit event when order is placed/canceld
+		- redeploy/verify
+			- mumbai
 		- mumbai
 			- test per against pyth oracle with approved updator
 				- initialize with proper deciamls for 
