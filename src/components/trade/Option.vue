@@ -80,10 +80,13 @@ export default {
 
     this.$store.dispatch("dai/fetchUserBalance");
     this.$store.dispatch("dai/fetchLpAllowance");
+    this.$store.dispatch("dai/fetchPERAllowance");
     this.$store.dispatch("usdc/fetchUserBalance");
     this.$store.dispatch("usdc/fetchLpAllowance");
+    this.$store.dispatch("usdc/fetchPERAllowance");
     this.$store.dispatch("optionsExchange/fetchExchangeUserBalance");
     this.$store.dispatch("optionsExchange/fetchExchangeBalanceAllowance");
+    this.$store.dispatch("optionsExchange/fetchPERBalanceAllowance");
   },
 
   computed: {

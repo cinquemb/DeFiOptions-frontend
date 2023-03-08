@@ -57,6 +57,9 @@ const getters = {
   getUserExchangeBalanceAllowance(state) {
     return state.userExchangeBalanceAllowance;
   },
+  getUserPERBalanceAllowance(state) {
+    return state.userPERBalanceAllowance;
+  },
   getSelectedPool(state) {
     return state.selectedPool;
   },
@@ -109,6 +112,22 @@ const actions = {
     let allowance = web3.utils.fromWei(allowanceWei, "ether");
 
     commit("setExchangeBalanceAllowance", allowance);
+  },
+  async fetchPERBalanceAllowance({ commit, dispatch, state, rootState }) {
+    if (!state.contract) {
+      dispatch("fetchContract");
+    }
+
+    let spender = state.perContract.options.address;
+    let owner = rootState.accounts.activeAccount;
+
+    // check user's Exchange Balance allowance for the PER contract
+    let allowanceWei = await state.contract.methods.allowance(owner, spender).call();
+
+    let web3 = rootState.accounts.web3;
+    let allowance = web3.utils.fromWei(allowanceWei, "ether");
+
+    commit("setPERBalanceAllowance", allowance);
   },
   async fetchExchangeUserBalance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
@@ -308,6 +327,9 @@ const mutations = {
   },
   setExchangeBalanceAllowance(state, allowance) {
     state.userExchangeBalanceAllowance = allowance;
+  },
+  setPERBalanceAllowance(state, allowance) {
+    state.userPERBalanceAllowance = allowance;
   },
   setUserExchangeBalance(state, balance) {
     state.userBalance = balance;

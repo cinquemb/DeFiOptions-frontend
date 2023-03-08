@@ -42,7 +42,7 @@
         Buy for ${{getTotal.toFixed(2)}}
       </button>
 
-      <button v-if="!allowanceNeeded" @click="buyOptionPending" class="btn btn-success form-control" :disabled="isOptionSizeNotValid.status">
+      <button v-if="!allowancePERNeeded" @click="buyOptionPending" class="btn btn-success form-control" :disabled="isOptionSizeNotValid.status">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Buy for ${{getTotal.toFixed(2)}} (PER)
       </button>
@@ -54,12 +54,28 @@
         :disabled="isOptionSizeNotValid.status"
       >
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        Approve {{buyWith}} for ${{getTotal.toFixed(2)}}fc
+        Approve {{buyWith}} for ${{getTotal.toFixed(2)}}
       </button>
 
       <small v-if="allowanceNeeded" class="show-text form-text text-center">
         You'll need to make 2 transactions: approve & buy.
       </small>
+
+
+      <button 
+        v-if="allowancePERNeeded" 
+        class="btn btn-success form-control" 
+        data-bs-toggle="modal" :data-bs-target="'#approvePERModal'+getUniqueOptionId"
+        :disabled="isOptionSizeNotValid.status"
+      >
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        Approve {{buyWith}} (PER) for ${{getTotal.toFixed(2)}}
+      </button>
+
+      <small v-if="allowancePERNeeded" class="show-text form-text text-center">
+        You'll need to make 2 transactions: approve & submit pending market order (buy).
+      </small>
+
     </div>
 
     <!-- Approve Confirmation Modal -->
@@ -115,6 +131,60 @@
         </div>
       </div>
     </div>
+
+    <!-- Approve PER Confirmation Modal -->
+    <div class="modal fade" :id="'approvePERModal'+getUniqueOptionId" tabindex="-1" aria-labelledby="approvePERModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="approvePERModalLabel">Confirm allowance</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Choose the amount of {{buyWith}} that you want to give 
+            <a target="_blank" :href="'https://polygonscan.com/address/'+option.poolAddr">this pool</a> 
+            on DeFi Options spending approval for:
+
+            <div class="form-check" @click="unlimitedApproval=false">
+              <input 
+                class="form-check-input" 
+                name="buyApprovalCheckbox" 
+                type="radio" id="specifiedRadio" 
+                :value="!unlimitedApproval"
+                :checked="!unlimitedApproval"
+              >
+              <label class="form-check-label" for="specifiedRadio">
+                ${{getTotal.toFixed(2)}}
+              </label>
+            </div>
+
+            <div class="form-check" @click="unlimitedApproval=true">
+              <input 
+                class="form-check-input" 
+                name="buyApprovalCheckbox" 
+                type="radio" id="unlimitedRadio"
+                :value="unlimitedApproval"
+                :checked="unlimitedApproval"
+              >
+              <label class="form-check-label" for="unlimitedRadio">
+                Unlimited amount of {{buyWith}}
+              </label>
+            </div>
+
+            <p class="mt-3">
+              After the approval transaction goes through you can click the Buy button and actually buy the option.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Cancel</button>
+            <button @click="approvePERAllowance" type="button" class="btn btn-success" data-bs-dismiss="modal">
+              <span v-if="!unlimitedApproval">Approve {{buyWith}} for ${{getTotal.toFixed(2)}}</span>
+              <span v-if="unlimitedApproval">Approve {{buyWith}} (unlimited)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -149,9 +219,9 @@ export default {
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getWeb3"]),
     //...mapGetters("liquidityPool", ["getLiquidityPoolContract"]),
-    ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract", "getLpDaiAllowance"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserExchangeBalanceAllowance", "getPendingExposureRouterContract"]),
-    ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract", "getLpUsdcAllowance"]),
+    ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract", "getLpDaiAllowance", "getPERDaiAllowance"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getExchangeUserBalance", "getUserExchangeBalanceAllowance", "getUserPERBalanceAllowance" ,"getPendingExposureRouterContract"]),
+    ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract", "getLpUsdcAllowance", "getPERUsdcAllowance"]),
 
     allowanceNeeded() {
       if (this.buyWith === "DAI") {
@@ -162,6 +232,19 @@ export default {
         return true; // TODO
       } else if (this.buyWith === "Exchange Balance") {
         return this.getUserExchangeBalanceAllowance < this.getTotal;
+      } 
+      return false;
+    },
+
+    allowancePERNeeded() {
+      if (this.buyWith === "DAI") {
+        return this.getPERDaiAllowance < this.getTotal;
+      } else if (this.buyWith === "USDC") {
+        return this.getPERUsdcAllowance < this.getTotal;
+      } else if (this.buyWith === "USDT") { // Tether
+        return true; // TODO
+      } else if (this.buyWith === "Exchange Balance") {
+        return this.getUserPERBalanceAllowance < this.getTotal;
       } 
       return false;
     },
@@ -321,6 +404,75 @@ export default {
       }
     },
 
+    async approvePERAllowance() {
+      let component = this;
+      component.loading = true;
+      component.getOptionPrice(); // refresh the option price
+      // define unit and token contract
+      let unit = "ether"; // Exchange Balance & DAI - 18 decimals
+      let tokenContract = component.getOptionsExchangeContract; // Exchange Balance contract
+      if (component.buyWith === "USDT") {
+        unit = "kwei"; // USDT (Tether) - 4 decimals
+        // TODO: tokenContract = ...; // USDT contract
+      }
+      if (component.buyWith === "USDC") {
+        unit = "mwei"; // USDC - 6 decimals
+        tokenContract = component.getUsdcContract; // USDC contract
+      }
+      if (component.buyWith === "DAI") {
+        tokenContract = component.getDaiContract; // DAI contract
+      }
+      // define allowance value
+      let allowanceValue = component.getTotal * 1.05; // make it 5% bigger to avoid slippage issues
+      if (component.unlimitedApproval) {
+        allowanceValue = 10 ** 9; // 1B tokens as "unlimited" value
+      }
+      const allowanceValueWei = component.getWeb3.utils.toWei(String(allowanceValue.toFixed(4)), unit); // round to 4 decimals
+      
+      // call the approve method
+      try {
+        await tokenContract.methods.approve(component.getPendingExposureRouterContract.options.address, allowanceValueWei).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            component.$toast.success("The approval was successfull. You can buy the option now.");
+            // refresh values
+            if (component.buyWith === "DAI") {
+              // needs to be updated this way because Polygon RPC nodes are slow with updating state
+              component.$store.state.dai.perAllowance = allowanceValue;
+            } else if (component.buyWith === "USDC") {
+              // needs to be updated this way because Polygon RPC nodes are slow with updating state
+              component.$store.state.usdc.perAllowance = allowanceValue;
+            } else if (component.buyWith === "USDT") {
+              // needs to be updated this way because Polygon RPC nodes are slow with updating state
+              // component.$store.state.tether.perAllowance = allowanceValue;
+            } else if (component.buyWith === "Exchange Balance") {
+              // needs to be updated this way because Polygon RPC nodes are slow with updating state
+              component.$store.state.optionsExchange.userPERBalanceAllowance = allowanceValue;
+            }
+            component.getOptionPrice(); // refresh the option price
+            
+          } else {
+            component.$toast.error("The transaction has failed. Please contact the DeFi Options support.");
+          }
+        }).on('error', function(error){
+          console.log(error);
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+      } catch (e) {
+          window.console.log("Error:", e);
+          component.$toast.error("The transaction has been reverted. Please try again or contact DeFi Options support.");
+      } finally {
+        component.loading = false;
+      }
+    },
+
     async buyOption() {
       let component = this;
       component.loading = true;
@@ -418,7 +570,7 @@ export default {
             [component.getStablecoinAddress]//address[] paymentTokens; only needed for buying options
           ],
           Number(Math.floor(Date.now() / 1000) + (60 * 10)), // cancelAfter, default to 5 min
-          30 // sliipage in bps
+          30 // slippage in bps
         ).send({
           from: component.getActiveAccount,
           maxPriorityFeePerGas: null,

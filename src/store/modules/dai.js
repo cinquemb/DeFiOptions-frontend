@@ -33,6 +33,9 @@ const getters = {
   getExchangeDaiAllowance(state) {
     return state.exchangeAllowance;
   },
+  getPERDaiAllowance(state) {
+    return state.perAllowance;
+  },
   getUserDaiBalance(state) {
     return state.userBalance;
   },
@@ -80,6 +83,22 @@ const actions = {
 
     commit("setExchangeAllowance", allowance);
   },
+  async fetchPERAllowance({ commit, dispatch, state, rootState }) {
+    if (!state.contract) {
+      dispatch("fetchContract");
+    }
+
+    let userAddress = rootState.accounts.activeAccount;
+    let chainIdDec = parseInt(rootState.accounts.chainId);
+    let perAddress = addresses.PendingExposureRouter[chainIdDec];
+
+    let allowanceWei = await state.contract.methods.allowance(userAddress, perAddress).call();
+
+    let web3 = rootState.accounts.web3;
+    let allowance = web3.utils.fromWei(allowanceWei, "ether");
+
+    commit("setPERAllowance", allowance);
+  },
   async fetchUserBalance({ commit, dispatch, state, rootState }) {
     if (!state.contract) {
       dispatch("fetchContract");
@@ -117,6 +136,9 @@ const mutations = {
   },
   setExchangeAllowance(state, allowance) {
     state.exchangeAllowance = allowance;
+  },
+  setPERAllowance(state, allowance) {
+    state.perAllowance = allowance;
   },
   setUserBalance(state, balance) {
     state.userBalance = balance;

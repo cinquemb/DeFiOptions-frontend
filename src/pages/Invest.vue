@@ -91,6 +91,8 @@ export default {
 
       let poolData = await protocolReaderContract.methods.listPoolsData(this.getActiveAccount).call();
 
+      console.log(poolData);
+
       if (poolData.length > 0){
         for (var i=0; i < poolData[0].length; i++) {
             let pSym = poolData[0][i];
