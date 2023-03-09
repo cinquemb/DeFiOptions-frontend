@@ -47,15 +47,7 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	- deploy gmx fork or find gmx contracts on arbitrum
 
 - multi step oracle
-	- pendingexposurerouter
-		- redeploy/verify
-			- mumbai
-		- mumbai
-			- test per against pyth oracle with approved updator
-				- initialize with proper deciamls for 
-					- btc/eth/matic/avax
-
-					node node_modules/@pythnetwork/pyth-evm-js/lib/examples/EvmRelay.js --network "mumbai" --mnemonic "PRIVATE KEY" --endpoint https://xc-testnet.pyth.network --price-ids "0xf9c0172ba10dfa4d19088d94f5bf61d3b54d5bd7483a322a982e1373ee8ea31b" "0xca80ba6dc32e08d06f1aa886011eed1d77c77be9eb761cc10d72b7d0a2fd57a6" "0xd2c2c1f2bba8e0964f9589e060c2ee97f5e19057267ac3284caef3bd50bd2cb5" "0xd7566a3ba7f7286ed54f4ae7e983f4420ae0b1e0f3892e11f9c4ab107bbad7b9"
+	- test opening and closing order mumbai
 
 - non dollar-like stable deposits?
 	- DepositHedgingManager
