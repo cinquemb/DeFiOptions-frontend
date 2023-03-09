@@ -90,8 +90,15 @@ const actions = {
       "ETH/USD": {"udlAddr": addresses["ETH/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
       "MATIC/USD": {"udlAddr": addresses["MATIC/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
       "CANTO/USD": {"udlAddr": addresses["CANTO/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
-      "AVAX/USD": {"udlAddr": addresses["AVAX/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}
+      "AVAX/USD": {"udlAddr": addresses["AVAX/USD"][chainIdDec], "currentPrice": null, "realizedVol": null},
+      "BTC/USD-PYTH-1": {"udlAddr": addresses["BTC/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "ETH/USD-PYTH-1": {"udlAddr": addresses["ETH/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "MATIC/USD-PYTH-1": {"udlAddr": addresses["MATIC/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "CANTO/USD-PYTH-1": {"udlAddr": addresses["CANTO/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      "AVAX/USD-PYTH-1": {"udlAddr": addresses["AVAX/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}
     };
+
+    
     commit("setUnderlyingsAvailable", underlyingMap);
     commit("setContract", contract);
     commit("setPERContract", perContract);
