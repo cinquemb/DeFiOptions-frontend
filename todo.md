@@ -47,7 +47,13 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	- deploy gmx fork or find gmx contracts on arbitrum
 
 - multi step oracle
+	-PER
+		- redeploy with correct eoa transfer amount that factors in slippage
 	- test opening and closing order mumbai
+		- need to check in PER that why buying options
+			- transfered amount is less than or equal to amount deposited by user
+			- if less than
+				- transfer deposit_amount.sub(transfer_amount) back to user
 
 - non dollar-like stable deposits?
 	- DepositHedgingManager

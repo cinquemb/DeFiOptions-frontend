@@ -142,7 +142,7 @@
           </div>
           <div class="modal-body">
             Choose the amount of {{buyWith}} that you want to give 
-            <a target="_blank" :href="'https://polygonscan.com/address/'+option.poolAddr">this pool</a> 
+            <a target="_blank" :href="'https://polygonscan.com/address/'+getPendingExposureRouterContract.options.address">the pending order router</a> 
             on DeFi Options spending approval for:
 
             <div class="form-check" @click="unlimitedApproval=false">
@@ -172,7 +172,7 @@
             </div>
 
             <p class="mt-3">
-              After the approval transaction goes through you can click the Buy button and actually buy the option.
+              After the approval transaction goes through you can click the Buy button and sumbit your order to buy the option (which may get filled or canceld).
             </p>
           </div>
           <div class="modal-footer">
