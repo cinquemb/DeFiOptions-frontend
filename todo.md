@@ -48,6 +48,7 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 
 - multi step oracle
 	- test opening and closing order mumbai
+		- oracle reverts when trying to update vol for pyth agg?
 
 - non dollar-like stable deposits?
 	- DepositHedgingManager
