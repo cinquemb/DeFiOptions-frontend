@@ -46,9 +46,6 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	- https://pyth.network/developers/price-feed-ids
 	- deploy gmx fork or find gmx contracts on arbitrum
 
-- multi step oracle
-	- test opening and closing order mumbai
-
 - non dollar-like stable deposits?
 	- DepositHedgingManager
 		- deposit
