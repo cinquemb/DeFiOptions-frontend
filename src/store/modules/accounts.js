@@ -208,7 +208,7 @@ const mutations = {
       case "0xa869":
         state.chainName = "Fuji";
         break
-      case "0x2e4":
+      case "0x1e15":
         state.chainName = "Canto Testnet";
         break
       case "0x66eed":
