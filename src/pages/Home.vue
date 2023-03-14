@@ -10,11 +10,25 @@
         </div>
       </div>
 
-      <div class="d-flex flex-row justify-content-center text-white">
+      <div class="d-flex flex-row justify-content-center text-white" v-if="isCantoTestnet">
         <div class="canto-hero-line-left"></div>
         <div>on</div>
         <img src="@/assets/img/canto-logo-green-on-transparent.png" class="polygon-logo" />
         <div class="canto-hero-line-right"></div>
+      </div>
+
+      <div class="d-flex flex-row justify-content-center text-white" v-if="isMumbai">
+        <div class="polygon-hero-line-left"></div>
+        <div>on</div>
+        <img src="@/assets/img/polygon-logo-inverted.svg" class="polygon-logo" />
+        <div class="polygon-hero-line-right"></div>
+      </div>
+
+      <div class="d-flex flex-row justify-content-center text-white" v-if="isPolygon">
+        <div class="polygon-hero-line-left"></div>
+        <div>on</div>
+        <img src="@/assets/img/polygon-logo-inverted.svg" class="polygon-logo" />
+        <div class="polygon-hero-line-right"></div>
       </div>
       
       <div class="d-flex flex-wrap flex-row justify-content-center text-uppercase hero-buttons" v-if="isUserConnected">
@@ -352,6 +366,18 @@ export default {
 
   computed: {
     ...mapGetters("accounts", ["getChainName", "isUserConnected"]),
+
+    isMumbai() {
+      return this.getChainName == "Mumbai";
+    },
+
+    isCantoTestnet() {
+      return this.getChainName == "Canto Testnet";
+    },
+
+    isPolygon() {
+      return this.getChainName == "Polygon";
+    }
   },
 
   created() {
