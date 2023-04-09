@@ -18,12 +18,17 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 
 	- issue with options visulaizer
 		- react date time picker color blends into background
-		-submit order button
+		- submit order button
 			- display loadin icon on button press
 			- remove loading icon after button submit
+		
 		- dissapears when using it, then going to another screen, then going back to it again in the lp page
+		
 		- better default surface pricing
 			- ablilty to select curvature of pricing surface
+				- min-max over t0-t1
+					- 3 sigmaa, 2 sigma, 1 sigma, flat
+		
 		- better buton click response
 
 		- cancel limit order
@@ -32,6 +37,12 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 
 - other hedging managers
 	- money market folding
+
+		- (flash loans that replicate money market folding)
+			- "While the recursive-deposit method has a certain aesthetic appeal, transaction costs and slippage limit its utility in practice. Flash loans, which must be repaid within a single transaction but can provide arbitrary amounts of temporary capital, offer a more elegant solution. We can obtain the same leverage as above by flash-loaning Cr/(1 − r) to an address holding C, depositing all funds as collateral, and borrowing Cr/(1 − r) to repay the flash loan. We then have a debt position of Cr/(1 − r) against collateral of C/(1 − r), providing a leverage ratio of 1/(1 − r). Again, this method creates a $5M long position against a $4M short using only $1M in starting equity."
+				- https://jumpcrypto.com/paradigms-for-on-chain-credit/
+	- options protocols
+		- cheapest set of options with a given delta, and min maturity on external protocols
 
 -support canto testnet
 	- script to initalize udlfeeds
@@ -147,3 +158,10 @@ https://docs.chain.link/docs/data-feeds/price-feeds/addresses/
 Smart contract bugs: https://nitter.lacontrevoie.fr/1nf0s3cpt/status/1583011233363824640
 
 https://solvemymath.com/online_math_calculator/statistics/cdf_calculator.php
+
+
+needs mods: https://github.com/1Hive/gardens/blob/master/packages/hardhat/contracts/GardensTemplate.sol
+https://github.com/1Hive/token-manager-app/blob/master/contracts/HookedTokenManager.sol
+https://github.com/1Hive/agreement-app/blob/master/contracts/Agreement.sol
+https://github.com/Giveth/minime/blob/master/contracts/MiniMeToken.sol
+https://github.com/1Hive/conviction-voting-app/blob/master/contracts/ConvictionVoting.sol
