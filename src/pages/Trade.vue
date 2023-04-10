@@ -76,8 +76,9 @@
                   <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   Approve FPM Contract For Synthetic Limit Orders
                 </button>
-                <!--------- REACT OPTION BUILDER GOES HERE --------->
+                <!--------- REACT OPTION BUILDER BELOW --------->
                 <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent" :loading="loading"/>
+                <!--------- REACT OPTION BUILDER ABOVE --------->
 
               </div>
               <div class="modal-footer">
@@ -299,6 +300,35 @@ export default {
           console.log(tCol / (10 ** 18));
           collaterals.push(parseInt(tCol) / (10 ** 18));
 
+          let sigma = 1;
+          let isFlat = false;
+
+          switch(strat["legs"][lKey]["surface"]){
+            case "F1S":
+              sigma = 1;
+              isFlat = true;
+              break;
+            case "1S":
+              sigma = 1;
+              break;
+            case "2S":
+              sigma = 2;
+              break;
+            case "3S":
+              sigma = 3;
+          }
+      
+          let low = currentPrice - (sigma*realizedVol);
+          let high = currentPrice + (sigma*realizedVol);
+
+          let lower_bound = Math.ceil(low - currentPrice/bins - realizedVol);
+          let upper_bound = Math.ceil(high + currentPrice/bins + realizedVol);
+          let bound_width = (upper_bound - lower_bound)/bins;
+          let xVals = [];
+          for(let i =0; i < bins; i++){
+            xVals.push(lower_bound+(i*bound_width));
+          }
+
           createOptions.push({
             udlFeedAddr: udlFeed,//button
             optType: (strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT", //button
@@ -309,19 +339,32 @@ export default {
           let dt = (strat["legs"][lKey]["expiration"] - Number(Math.floor(Date.now() / 1000))) / (60 * 60 * 24 * 365);
           let dt1 = (60 * 60 * 24) / (60 * 60 * 24 * 365);
 
-          let yVals1 = xVals.map(
-            p => bs.blackScholes(p,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
-          );
+          let yVals1;
+          let yVals2;
+          let yVals;
+
+          if (isFlat == true) {
+            yVals1 = xVals.map(
+              p => p > 0 ? parseFloat(strat["legs"][lKey]["premium"]) : 'nan'
+            );
+            yVals2 = xVals.map(
+              p => p > 0 ? parseFloat(strat["legs"][lKey]["premium"]) : 'nan'
+            );
+            yVals = yVals1.concat(yVals2);
+          } else {
+            yVals1 = xVals.map(
+              p => bs.blackScholes(p,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+            );
+            yVals2 = xVals.map(
+              p => bs.blackScholes(p,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
+            );
+            yVals = yVals1.concat(yVals2);
+          }
 
           console.log(yVals1);
-
-          let yVals2 = xVals.map(
-            p => bs.blackScholes(p,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
-          );
-
           console.log(yVals2);
 
-          let yVals = yVals1.concat(yVals2);
+          
 
           addSymbols.push({
             udlFeed: udlFeed, // these can

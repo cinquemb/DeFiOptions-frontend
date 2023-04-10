@@ -26,12 +26,13 @@ function StratLeg(props) {
     useEffect(() => {
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "direction", props.direction))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "type", props.type))
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "surface", '3S'))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "strike", 0.00))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "premium", 0.00))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "premium1", 0.00))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "quantity", 0))
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "expiration", Number(Math.floor(Date.now() / 1000))))
-    }, [dispatch, props.id, props.index, props.direction, props.type, props.newStrat]);
+    }, [dispatch, props.id, props.index, props.direction, props.type, props.surface, props.newStrat, props.strike, props.premium, props.quantity, props.expiration]);
 
     function handleDirectionChange(event) {
         const newDir = (event.target.value === '+') ? '+' : '-'
@@ -41,6 +42,11 @@ function StratLeg(props) {
     function handleTypeChange(event) {
         const newType = (event.target.value === 'P') ? 'P' : 'C'
         dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "type", newType))
+        computePremium()         
+    }
+
+    function handleSurfaceChange(event) {
+        dispatch(allActions.updateStrategies.updateLeg(props.id, props.index, "surface", event.target.value))
         computePremium()         
     }
 
@@ -117,6 +123,7 @@ function StratLeg(props) {
         <Form>
             <Form.Row>
                 <Form.Group as={Col} controlID="legDirection">
+                    <Form.Label>Direction</Form.Label>
                     <Form.Check type="radio" name="dir" label="Long" value='+'
                         checked={thisLeg == null ? props.direction ==='+' : thisLeg["direction"] ==='+'}
                         disabled={props.direction !=='+' && !props.custom} onChange={handleDirectionChange}/>
@@ -125,6 +132,7 @@ function StratLeg(props) {
                         disabled={props.direction !=='-' && !props.custom} onChange={handleDirectionChange}/>    
                 </Form.Group>
                 <Form.Group as={Col} controlID="legType">
+                    <Form.Label>Type</Form.Label>
                     <Form.Check type="radio" name="pc" label="Put" value='P'
                         checked={thisLeg == null ? props.type === 'P' : thisLeg["type"] ==='P'}
                         disabled={props.type !=='P' && !props.custom} onChange={handleTypeChange}/>
@@ -132,6 +140,20 @@ function StratLeg(props) {
                         checked={thisLeg == null ? props.type === 'C' : thisLeg["type"] ==='C'}
                         disabled={props.type !=='C' && !props.custom} onChange={handleTypeChange}/>    
                 </Form.Group>
+                <Form.Group as={Col} controlID="legSurfaceSteepness">
+                    <Form.Label>Option Price Surface Steepness</Form.Label>
+                    <Form.Check type="radio" name="sigflat" label="3 Sigma" value='3S'
+                        checked={thisLeg == null ? props.surface === '3S' : thisLeg["surface"] ==='3S'}
+                        disabled={props.surface !=='3S' && !props.custom} onChange={handleSurfaceChange}/>
+                    <Form.Check type="radio" name="sigflat" label="2 Sigma" value='2S'
+                        checked={thisLeg == null ? props.surface === '2S' : thisLeg["surface"] ==='2S'}
+                        disabled={props.surface !=='2S' && !props.custom} onChange={handleSurfaceChange}/>
+                    <Form.Check type="radio" name="sigflat" label="1 Sigma" value='1S'
+                        checked={thisLeg == null ? props.surface === '1S' : thisLeg["surface"] ==='1S'}
+                        disabled={props.surface !=='1S' && !props.custom} onChange={handleSurfaceChange}/>    
+                    <Form.Check type="radio" name="sigflat" label="Flat - 1 Sigma" value='F1S'
+                        checked={thisLeg == null ? props.surface === 'F1S' : thisLeg["surface"] ==='F1S'}
+                        disabled={props.surface !=='F' && !props.custom} onChange={handleSurfaceChange}/>                   </Form.Group>
                 <Form.Group as={Col} controlID="legStrike">
                     <Form.Label>Strike</Form.Label>
                     <Form.Control value={thisLeg == null ? 0.00 : thisLeg["strike"]} onChange={handleStrikeChange}/>  

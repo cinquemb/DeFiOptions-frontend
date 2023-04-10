@@ -24,11 +24,6 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 		
 		- dissapears when using it, then going to another screen, then going back to it again in the lp page
 		
-		- better default surface pricing
-			- ablilty to select curvature of pricing surface
-				- min-max over t0-t1
-					- 3 sigmaa, 2 sigma, 1 sigma, flat
-		
 		- better buton click response
 
 		- cancel limit order
