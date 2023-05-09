@@ -31,6 +31,14 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 			- withdraw funds from pool
 
 - other hedging managers
+	- d8x hedging manager
+		- implement first pass
+			- https://github.com/D8-X/d8x-integrations/blob/main/src/scripts/contractAddresses.ts#L19-#L30
+				- need to find a way to query pool id by collateral asset and base currency address
+		- deploy to mumbai
+		- use approved stablecoins from d8x in dod
+
+
 	- money market folding
 
 		- (flash loans that replicate money market folding)
