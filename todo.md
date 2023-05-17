@@ -32,11 +32,9 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 
 - other hedging managers
 	- d8x hedging manager
-		- implement first pass
-			- https://github.com/D8-X/d8x-integrations/blob/main/src/scripts/contractAddresses.ts#L19-#L30
-				- need to find a way to query pool id by collateral asset and base currency address
 		- deploy to mumbai
 		- use approved stablecoins from d8x in dod
+		- add to liq pool frontend for hedging using d8x
 
 
 	- money market folding
@@ -47,6 +45,8 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	- options protocols
 		- cheapest set of options with a given delta, and min maturity on external protocols
 
+- support bnb  testnet
+	- https://docs.bnbchain.org/docs/BSCtestnet/
 -support canto testnet
 	- script to initalize udlfeeds
 		- https://docs.scry.finance/docs/smart-contracts/solidity-contracts-and-interface
@@ -168,3 +168,6 @@ https://github.com/1Hive/token-manager-app/blob/master/contracts/HookedTokenMana
 https://github.com/1Hive/agreement-app/blob/master/contracts/Agreement.sol
 https://github.com/Giveth/minime/blob/master/contracts/MiniMeToken.sol
 https://github.com/1Hive/conviction-voting-app/blob/master/contracts/ConvictionVoting.sol
+
+
+layer zero docs: https://layerzero.gitbook.io/docs/technical-reference/testnet/testnet-addresses
