@@ -31,9 +31,15 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 			- withdraw funds from pool
 
 - other hedging managers
+	-https://d8x.gitbook.io/d8x/deployments/polygon-testnet-mumbai
 	- d8x hedging manager
 		- deploy to mumbai
+			- proxy: 0x7Fb76c91e4950bD48Ed1C812EdE98A5Db96cb4e7
+			- orderbook: 0x60B9719252DbDe3d255C90Ae9C40Eb92374da9E9 
+		- redeploy pyth wrapper oracles compatiable with d8x hedging
+			- btc and eth only
 		- use approved stablecoins from d8x in dod
+			- mockUSD: 0xf66c0D17C285Ea7aa8733A75229b8E16fd60c828
 		- add to liq pool frontend for hedging using d8x
 
 
