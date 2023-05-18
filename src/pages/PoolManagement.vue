@@ -12,12 +12,20 @@
       <div class="col-md-12">
         <button @click="createHedgingManager" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          Create Hedging Manager
+          Create Hedging Manager (GMX-like)
         </button>
+
+        <button @click="createD8xHedgingManager" class="btn btn-success">
+          <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          Create Hedging Manager (D8X-like)
+        </button>
+
       </div>
     </div>
     <span></span>
     <span></span>
+
+    
 
     <!------ transfer excess stables in hedging manager ------>
 
@@ -1075,6 +1083,42 @@ export default {
       let component = this;
         component.loading = true;
         const mvhedgingManagerFactoryAddr = addresses["MetavaultHedgingManagerFactory"][parseInt(component.getChainId)];
+
+        const mvhedgingManagerFactoryContract = await new component.getWeb3.eth.Contract(MetavaultHedgingManagerFactoryJSON.abi, mvhedgingManagerFactoryAddr);
+
+        await mvhedgingManagerFactoryContract.methods.create(
+          component.getSelectedPoolAddress,
+        ).send({
+          from: component.getActiveAccount,
+          maxPriorityFeePerGas: null,
+          maxFeePerGas: null
+        }).on('transactionHash', function(hash){
+          console.log("tx hash: " + hash);
+          component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+        }).on('receipt', function(receipt){
+          console.log(receipt);
+          if (receipt.status) {
+            console.log(receipt.events.NewHedgingManager.returnValues.hedgingManager);
+            component.setParams.hedgingManagerAddress = receipt.events.NewHedgingManager.returnValues.hedgingManager;
+            component.$toast.success("Hedging Manager Creation Succeeded, Please Set the Pool Parameters Again With the Hedging Manager Contract Address From This TX");
+          } else {
+            component.$toast.error("The create on MetavaultHedgingManagerFactory tx has failed. Please contact the DeFi Options support.");
+          }
+          component.loading = false;
+
+        }).on('error', function(error){
+          console.log(error);
+          component.loading = false;
+          component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+        });
+
+        
+
+    },
+    async createD8xHedgingManager() {
+      let component = this;
+        component.loading = true;
+        const mvhedgingManagerFactoryAddr = addresses["D8xHedgingManagerFactory"][parseInt(component.getChainId)];
 
         const mvhedgingManagerFactoryContract = await new component.getWeb3.eth.Contract(MetavaultHedgingManagerFactoryJSON.abi, mvhedgingManagerFactoryAddr);
 

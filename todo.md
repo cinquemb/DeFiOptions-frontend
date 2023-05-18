@@ -37,8 +37,7 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 			- btc and eth only
 		- use approved stablecoins from d8x in dod
 			- mockUSD: 0xf66c0D17C285Ea7aa8733A75229b8E16fd60c828
-		- add to liq pool frontend for hedging using d8x
-
+			- add to frontend
 
 	- money market folding
 
