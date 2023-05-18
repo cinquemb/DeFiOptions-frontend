@@ -9,6 +9,7 @@ import incentivized from "./modules/incentivized";
 import creditToken from "./modules/creditToken";
 import dai from "./modules/dai";
 import usdc from "./modules/usdc";
+import mockusd from "./modules/mockusd";
 
 Vue.use(Vuex);
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
         incentivized,
         optionsExchange,
         protocolSettings,
-        usdc
+        usdc,
+        mockusd
     }
 });

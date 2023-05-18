@@ -75,6 +75,7 @@
                 <li>
                   <span class="dropdown-item text-uppercase" @click="changeStablecoin('DAI')">DAI</span>
                   <span class="dropdown-item text-uppercase" @click="changeStablecoin('USDC')">USDC</span>
+                  <span class="dropdown-item text-uppercase" @click="changeStablecoin('MOCKUSD')">MOCKUSD</span>
                 </li>
               </ul>
             </div>
@@ -164,6 +165,7 @@ export default {
     ...mapGetters("optionsExchange", ["getOptionsExchangeAddress", "getOptionsExchangeContract", "getUserExchangeBalanceAllowance"]), 
      ...mapGetters("dai", ["getDaiAddress", "getUserDaiBalance", "getDaiContract", "getExchangeDaiAllowance"]),
     ...mapGetters("usdc", ["getUsdcAddress", "getUserUsdcBalance", "getUsdcContract", "getExchangeUsdcAllowance"]),
+    ...mapGetters("mockusd", ["getMockUSDAddress", "getUserMockUSDBalance", "getMockUSDContract", "getExchangeMockUSDAllowance"]),
 
     isDepositValueNotValid() { // validation for deposit value
       // too many digits
@@ -193,6 +195,8 @@ export default {
         return Number(this.depositValue) <= Number(this.getExchangeDaiAllowance);
       } else if (this.selectedToken === "USDC") {
         return Number(this.depositValue) <= Number(this.getExchangeUsdcAllowance);
+      } else if (this.selectedToken === "MOCKUSD") {
+        return Number(this.depositValue) <= Number(this.getExchangeMockUSDAllowance);
       }
 
       return false;
@@ -202,6 +206,8 @@ export default {
         return this.getDaiContract;
       } else if (this.selectedToken === "USDC") {
         return this.getUsdcContract;
+      } else if (this.selectedToken === "MOCKUSD") {
+        return this.getMockUSDContract;
       }
 
       return null;
@@ -211,6 +217,8 @@ export default {
         return this.getUserDaiBalance;
       } else if (this.selectedToken === "USDC") {
         return this.getUserUsdcBalance;
+      } else if (this.selectedToken === "MOCKUSD") {
+        return this.getUserMockUSDBalance;
       }
 
       return null;
@@ -223,6 +231,8 @@ export default {
     this.$store.dispatch("dai/fetchExchangeAllowance");
     this.$store.dispatch("usdc/fetchUserBalance");
     this.$store.dispatch("usdc/fetchExchangeAllowance");
+    this.$store.dispatch("mockusd/fetchUserBalance");
+    this.$store.dispatch("mockusd/fetchExchangeAllowance");
   },
 
   data() {
@@ -375,6 +385,9 @@ export default {
           } else if (component.selectedToken === "USDC") {
             component.$store.dispatch("usdc/fetchUserBalance");
             component.$store.dispatch("usdc/fetchExchangeAllowance");
+          } else if (component.selectedToken === "MOCKUSD") {
+            component.$store.dispatch("mockusd/fetchUserBalance");
+            component.$store.dispatch("mockusd/fetchExchangeAllowance");
           }
           
           component.depositValue = null;
