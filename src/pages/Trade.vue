@@ -106,6 +106,8 @@ import App from '../components/react/App/App';
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
 import FastPoolManagementJSON from "../contracts/FastPoolManagement.json";
 import ChainlinkContractJson from "../contracts/ChainlinkFeed.json";
+import LiquidityPoolAbiJson from "../../contracts/GovernableLinearLiquidityPool.json";
+
 import bs from 'black-scholes';
 
 export default {
@@ -233,6 +235,14 @@ export default {
     async handleOptVizEvent (optVizState) {
       let optVizData = optVizState.getState();
       console.log(optVizData);
+
+      let poolAddr = await this.getOptionsExchangeContract.getPoolAddress(String(component.getActiveAccount)).call();
+      let hedgingManagerAddr;
+
+      if (poolAddr.length > 0) {
+        let tmpPoolContract = await new component.getWeb3.eth.Contract(LiquidityPoolAbiJson.abi, poolAddr);
+        hedgingManagerAddr = await this.tmpPoolContract.methods.getHedgingManager().call();
+      }
 
       if (!optVizData["currentSymbol"] || !optVizData["currentStrategies"]){
         return;
@@ -389,9 +399,11 @@ export default {
         withdrawFee: 0, //slider as a percentage
         maturity: Math.max(expirations) + (60 * 60 * 24 * 7), //datetime picker
         leverageMultiplier: 1, //slider from 1-30? or manual with validation
-        hedgingManagerAddress: "0x0000000000000000000000000000000000000000", //toggle from hdeging manager addresses hardcoded in ui?
+        hedgingManagerAddress: (hedgingManagerAddr.length > 0) ? hedgingManagerAddr : "0x0000000000000000000000000000000000000000", //toggle from hdeging manager addresses hardcoded in ui?
         hedgingNotionalThreshold:  1000, //silder of dollar amount?
       };
+
+      console.log(setParams);
 
       let depositTotal = collaterals.reduce((a, b) => a + b, 0);
       console.log(depositTotal);
