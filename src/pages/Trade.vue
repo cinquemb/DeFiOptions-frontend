@@ -236,10 +236,11 @@ export default {
       let optVizData = optVizState.getState();
       console.log(optVizData);
 
-      let poolAddr = await this.getOptionsExchangeContract.methods.getPoolAddress(String(this.getActiveAccount)).call();
+      let poolAddr = await this.getOptionsExchangeContract.methods.getPoolAddress(String(this.getActiveAccount).substring(2).toLowerCase()).call();
+      console.log("poolAddr: " + poolAddr);
       let hedgingManagerAddr;
 
-      if (poolAddr.length > 0) {
+      if ((poolAddr.length > 0) && ("0x0000000000000000000000000000000000000000" != poolAddr)) {
         let tmpPoolContract = await new this.getWeb3.eth.Contract(LiquidityPoolAbiJson.abi, poolAddr);
         hedgingManagerAddr = await tmpPoolContract.methods.getHedgingManager().call();
       }
