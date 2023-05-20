@@ -236,7 +236,7 @@ export default {
       let optVizData = optVizState.getState();
       console.log(optVizData);
 
-      let poolAddr = await this.getOptionsExchangeContract.getPoolAddress(String(this.getActiveAccount)).call();
+      let poolAddr = await this.getOptionsExchangeContract.methods.getPoolAddress(String(this.getActiveAccount)).call();
       let hedgingManagerAddr;
 
       if (poolAddr.length > 0) {
