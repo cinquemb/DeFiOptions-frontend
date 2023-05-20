@@ -106,7 +106,7 @@ import App from '../components/react/App/App';
 import PoolManagementProposalJSON from "../contracts/PoolManagementProposal.json";
 import FastPoolManagementJSON from "../contracts/FastPoolManagement.json";
 import ChainlinkContractJson from "../contracts/ChainlinkFeed.json";
-import LiquidityPoolAbiJson from "../../contracts/GovernableLinearLiquidityPool.json";
+import LiquidityPoolAbiJson from "../contracts/GovernableLinearLiquidityPool.json";
 
 import bs from 'black-scholes';
 
