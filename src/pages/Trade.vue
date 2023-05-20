@@ -236,12 +236,12 @@ export default {
       let optVizData = optVizState.getState();
       console.log(optVizData);
 
-      let poolAddr = await this.getOptionsExchangeContract.getPoolAddress(String(component.getActiveAccount)).call();
+      let poolAddr = await this.getOptionsExchangeContract.getPoolAddress(String(this.getActiveAccount)).call();
       let hedgingManagerAddr;
 
       if (poolAddr.length > 0) {
-        let tmpPoolContract = await new component.getWeb3.eth.Contract(LiquidityPoolAbiJson.abi, poolAddr);
-        hedgingManagerAddr = await this.tmpPoolContract.methods.getHedgingManager().call();
+        let tmpPoolContract = await new this.getWeb3.eth.Contract(LiquidityPoolAbiJson.abi, poolAddr);
+        hedgingManagerAddr = await tmpPoolContract.methods.getHedgingManager().call();
       }
 
       if (!optVizData["currentSymbol"] || !optVizData["currentStrategies"]){
