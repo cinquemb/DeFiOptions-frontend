@@ -33,8 +33,7 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 - other hedging managers
 	-https://d8x.gitbook.io/d8x/deployments/polygon-testnet-mumbai
 	- d8x hedging manager
-		- redeploy pyth wrapper oracles compatiable with d8x hedging
-			- btc and eth only
+		- test with PER
 
 	- money market folding
 
