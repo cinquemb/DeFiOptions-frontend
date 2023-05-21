@@ -34,7 +34,7 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	-https://d8x.gitbook.io/d8x/deployments/polygon-testnet-mumbai
 	- d8x hedging manager
 		- test with PER
-			- not able to trigger a tx to buy against pool with pyth oracle, just refunds
+			- redeploy PER with fixes
 
 	- money market folding
 
