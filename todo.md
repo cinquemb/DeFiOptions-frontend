@@ -34,7 +34,8 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	-https://d8x.gitbook.io/d8x/deployments/polygon-testnet-mumbai
 	- d8x hedging manager
 		- test with PER
-			- redeploy PER with fixes
+			- poolIdx>0 error from d8x (https://mumbai.polygonscan.com/tx/0xbf8954015d65d385398a76b8bea4971fb5af3062ca3a2ded95295a1a75ed698a)
+				- test out functions with new hedging manager
 
 	- money market folding
 
