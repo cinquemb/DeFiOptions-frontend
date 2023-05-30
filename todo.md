@@ -36,6 +36,28 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 		- test with PER
 			- try with > 30DTE options
 
+	- teller
+		- hedging manager borrow asset from teller 
+			- for short 
+				- lend out user asset to teller via rehypotication manager
+					- (at undercollateralized rate, ex: $100 usdc collateral for $1000 notional token loan amount? (coming from dod rehypotication)
+					- dao determined max ratio's for short asset
+				- market sell asset for leveraged short?
+					- would need to buy back the asset at spot market rates
+				
+				- supply as liq in perp protocol and short with stables collateral?
+			
+			- for long
+				- lend out user asset to teller via rehypotication manager
+					- (at undercollateralized rate, ex: $100 notional token collateral for $1000 in dodd [coming from dod, but need to incentivze users to create liq pools of token/dodd])
+					- dao determined max ratio's for short dodd
+
+				- market buy asset for leveraged long?
+					- would need to sell back the asset at spot market rates (in token/dodd dex liq pools)
+
+
+		- may need leverge/liquidation frame work for hedges that rehypotocate collareral from covered call sellers?
+
 	- money market folding
 
 		- (flash loans that replicate money market folding)
