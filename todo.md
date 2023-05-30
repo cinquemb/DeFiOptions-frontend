@@ -43,7 +43,7 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 					- (at undercollateralized rate, ex: $100 usdc collateral for $1000 notional token loan amount? (coming from dod rehypotication)
 					- dao determined max ratio's for short asset
 				- market sell asset for leveraged short?
-					- would need to buy back the asset at spot market rates
+					- would need to buy back the asset at spot market rates, payback loan
 				
 				- supply as liq in perp protocol and short with stables collateral?
 			
@@ -53,7 +53,7 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 					- dao determined max ratio's for short dodd
 
 				- market buy asset for leveraged long?
-					- would need to sell back the asset at spot market rates (in token/dodd dex liq pools)
+					- would need to sell back the asset for stables (or dodd if at higher rate), deposit stables in dod, payback loan
 
 
 		- may need leverge/liquidation frame work for hedges that rehypotocate collareral from covered call sellers?
