@@ -41,8 +41,8 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 			- for short 
 				- lend out user asset to teller via rehypotication manager
 					- (at undercollateralized rate, ex: $100 usdc collateral for $1000 notional token loan amount? (coming from dod rehypotication)
-					- dao determined max ratio's for lend for short addr
-					- dao determined apy for addr
+					- dao determined max ratio's for lend for short addr?
+					- dao determined apy for addr?
 				- market sell asset for leveraged short?
 					- would need to buy back the asset at spot market rates, payback loan
 				
@@ -51,8 +51,8 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 			- for long
 				- lend out user asset to teller via rehypotication manager
 					- (at undercollateralized rate, ex: $100 notional token collateral for $1000 in dodd [coming from dod, but need to incentivze users to create liq pools of token/dodd])
-					- dao determined max ratio's for lend short addr (dodd)
-					- dao determined apy for addr
+					- dao determined max ratio's for lend short addr (dodd)?
+					- dao determined apy for addr?
 
 				- market buy asset for leveraged long?
 					- would need to sell back the asset for stables (or dodd if at higher rate), deposit stables in dod, payback loan
