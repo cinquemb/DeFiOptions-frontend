@@ -95,13 +95,13 @@
     <span></span>
     <span></span>
 
-    <!------ cleanUp Book ------>
+    <!------ burn options ------>
 
     <div class="section-big row mt-4 mx-3">
       <div class="col-md-12">
-        <SetAddressMapMultiple :data="CleanUp" />
+        <SetAddressMapMultiple :data="BurnOptions" />
         <span></span>
-        <button @click="cleanUp" class="btn btn-success">
+        <button @click="burnOptions" class="btn btn-success">
           <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           Remove Expired Options From Book
         </button>
@@ -120,6 +120,7 @@ import SetAddressMap from '../components/manage/exchange/SetAddressMap.vue';
 import SetAddressMapMultiple from '../components/manage/exchange/SetAddressMapMultiple.vue';
 import UnderlyingFeedJSON from "../contracts/UnderlyingFeed.json";
 import AggregatorV3InterfaceJSON from '../contracts/AggregatorV3Interface.json';
+import OptionTokenJSON from '../contracts/OptionToken.json';
 
 
 export default {
@@ -163,6 +164,13 @@ export default {
         field_name2: "Option Token Address",
         value2: null,
         desc: "Execute Collateral Call/Liquidate Option Writer"
+      },
+      BurnOptions: {
+        field_name1: "Account Address",
+        value1: null,
+        field_name2: "Option Token Address",
+        value2: null,
+        desc: "Burn Options"
       },
     }
   },
@@ -410,6 +418,45 @@ export default {
         component.$toast.error("There has been an error. Please contact the DeFi Options support.");
       });
     },
+
+    async burnOptions() {
+      //      function  burn(address owner, uint value) public returns (uint value), SetAddressMap
+      let component = this;
+      component.loading = true;
+
+      const optionContract = await new component.getWeb3.eth.Contract(OptionTokenJSON.abi,       component.BurnOptions.value2);
+
+      const burnValue = await optionContract.methods.balanceOf(component.BurnOptions.value1).call();
+
+      console.log(burnValue);
+
+      await component.getOptionsExchangeContract.methods.burn(
+        component.BurnOptions.value1,
+        burnValue,
+        component.BurnOptions.value2
+      ).send({
+        from: component.getActiveAccount,
+        maxPriorityFeePerGas: null,
+        maxFeePerGas: null
+      }).on('transactionHash', function(hash){
+        console.log("tx hash: " + hash);
+        component.$toast.info("The transaction has been submitted. Please wait for it to be confirmed.");
+      }).on('receipt', function(receipt){
+        console.log(receipt);
+        if (receipt.status) {
+          component.$toast.success("Removal Success");
+        } else {
+          component.$toast.error("The cleanUp tx has failed. Please contact the DeFi Options support.");
+        }
+        component.loading = false;
+
+      }).on('error', function(error){
+        console.log(error);
+        component.loading = false;
+        component.$toast.error("There has been an error. Please contact the DeFi Options support.");
+      });
+    },
+
 
   }
 }
