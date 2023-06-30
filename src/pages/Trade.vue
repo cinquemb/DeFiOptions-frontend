@@ -238,7 +238,7 @@ export default {
 
       let poolAddr = await this.getOptionsExchangeContract.methods.getPoolAddress(String(this.getActiveAccount).substring(2).toLowerCase()).call();
       console.log("poolAddr: " + poolAddr);
-      let hedgingManagerAddr;
+      let hedgingManagerAddr= "";
 
       if ((poolAddr.length > 0) && ("0x0000000000000000000000000000000000000000" != poolAddr)) {
         let tmpPoolContract = await new this.getWeb3.eth.Contract(LiquidityPoolAbiJson.abi, poolAddr);
