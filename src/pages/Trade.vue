@@ -76,6 +76,26 @@
                   <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   Approve FPM Contract For Synthetic Limit Orders
                 </button>
+                <div class="form-button-mobile">
+                  <div class="btn-group" aria-describedby="button-text">
+                    Deposit With:
+                    <button type="button" class="btn btn-outline-success dropdown-toggle text-uppercase" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{depositWith}}
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li>
+                        <span class="dropdown-item text-uppercase" @click="setDepositWith('DAI')">DAI</span>
+                        <span class="dropdown-item text-uppercase" @click="setDepositWith('USDC')">USDC</span>
+                        <span class="dropdown-item text-uppercase" @click="setDepositWith('Exchange Balance')">Exchange Balance</span>
+                      </li>
+                    </ul>
+                    <div class="show-text form-text">
+                      Balance: {{Number(getUserStablecoinBalance).toFixed(2)}} {{depositWith}}.
+                    </div>
+                  </div>
+
+                  
+                </div>
                 <!--------- REACT OPTION BUILDER BELOW --------->
                 <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent" :loading="loading"/>
                 <!--------- REACT OPTION BUILDER ABOVE --------->
@@ -121,7 +141,7 @@ export default {
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getActiveBalanceEth", "getWeb3", "isUserConnected", "getLastSelectedTradePair", "getLastSelectedTradeMaturity", "getLastSelectedTradeType", "getLastSelectedTradeSide"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeContract", "getOptionsExchangeAbi", "getOptionsExchangeAddress", "getExchangeUserBalance", "getUnderlyingPrice", "getOptionTokenAddress", "getSelectedPool", "getUnderlyingsAvailable"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeContract", "getOptionsExchangeAbi", "getOptionsExchangeAddress", "getExchangeUserBalance", "getUnderlyingPrice", "getOptionTokenAddress", "getSelectedPool", "getUnderlyingsAvailable", "getUserCollateralSurplus"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi", "getLiquidityPoolAddress", "getAllSymbolsListJson", "getDefaultMaturity", "getDefaultPair", "getDefaultType", "getDefaultSide", "getSelectedPoolAddress"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
 
@@ -162,7 +182,20 @@ export default {
     },
     getMarkets() {
       return Object.keys(this.getAllSymbolsListJson) || this.pairs;
-    }
+    },
+    getUserStablecoinBalance() {
+
+
+      if (this.depositWith === "DAI") {
+        return this.getUserDaiBalance;
+      } else if (this.depositWith === "USDC") {
+        return this.getUserUsdcBalance;
+      } else if (this.depositWith === "Exchange Balance") {
+        return this.getUserCollateralSurplus;
+      }
+
+      return null;
+    },
   },
   created() {
     if (!this.getWeb3 || !this.isUserConnected) {
@@ -172,6 +205,7 @@ export default {
 
     this.$store.dispatch("optionsExchange/fetchContract");
     this.$store.dispatch("optionsExchange/storeAddress");
+    this.$store.dispatch("optionsExchange/fetchExchangeCollateralSurplus");
     this.$store.dispatch("liquidityPool/storeAbi");
     this.$store.dispatch("liquidityPool/fetchAllPoolOptions");
     this.$store.dispatch("dai/fetchContract");
@@ -218,6 +252,9 @@ export default {
   },
 
   methods: {
+    setDepositWith(choice) {
+      this.depositWith = choice;
+    },
     validateObj(obj) {
       if (obj.length == 0)
         return false;
@@ -483,6 +520,10 @@ export default {
         tokenContract = component.getDaiContract; // DAI contract
       }
 
+      if (component.depositWith === "Exchange Balance") {
+        tokenContract = component.getOptionsExchangeContract; // Exchange Balance Contract
+      }
+
       // define allowance value
       let allowanceValue = 10 ** 9; // 1B tokens as "unlimited" value
 
@@ -611,6 +652,10 @@ export default {
 
       if (component.depositWith === "DAI") {
         tokenContract = component.getDaiContract; // DAI contract
+      }
+
+      if (component.depositWith === "Exchange Balance") {
+        tokenContract = component.getOptionsExchangeContract; // Exchange Balance Contract
       }
 
       /*

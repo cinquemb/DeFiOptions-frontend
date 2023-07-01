@@ -36,6 +36,14 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 		- test with PER
 			- try with > 30DTE options
 
+	- liqudation script
+		- list all the pools
+			- list option token for pools
+				- get list of holders for tokens (by tracking transfers events?)
+					- check their collateral reqs and tyr to liquidate
+			- check pool collateral reqs and try to liquidate
+		- look at exchange events for WriteOptions, try to liquidate recipiants that are not pool addrs
+
 	- teller
 		- hedging manager borrow asset from teller 
 			- for short 

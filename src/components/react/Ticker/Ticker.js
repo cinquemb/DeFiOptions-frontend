@@ -1,16 +1,13 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
 import './Ticker.css';
-import Button from 'react-bootstrap/Button';
-import { useSelector } from 'react-redux';
 import allActions from '../../redux/actions'
 import { connect } from 'react-redux';
+import Form from 'react-bootstrap/Form';
+
 
 function Ticker(props) {
-  const [curinput, setCurinput] = useState('');
-  const [disabled, setDisabled] = useState(true);
   const [symbols, setSymbols] = useState(new Set());
-  const currSymbol = useSelector(state => state.currentSymbol)
 
   useEffect(() => {
     function getValidSymbols() {
@@ -21,36 +18,27 @@ function Ticker(props) {
     setSymbols(new Set(data.map(i => i))); 
   }, []);
 
-  function handleChange(event) {
+  function handleSymbolChange(event) {
     const cleanInput = event.target.value.trim().toUpperCase();
 
     if (symbols.has(cleanInput)) {
-      setDisabled(false);
-    } else{ 
-      setDisabled(true);
+      props.dispatch(allActions.changeSymbol(cleanInput));
+      //setCursym(event.target.value);
     }
-    setCurinput(event.target.value);
-  }
-
-  function handleSubmit(event) {
-    let cleanInput = curinput.trim().toUpperCase();
-    if (cleanInput !== currSymbol) {
-      props.dispatch(allActions.changeSymbol(cleanInput))
-    }
-    event.preventDefault();
   }
 
   return (
     <div className="Ticker-div"> 
-      <div>
-        Available Symbols: {Object.keys(props.underlyingDataProps).join(', ')}
-      </div>
-      <form onSubmit={handleSubmit}>
-        <label style={{paddingRight:"5px"}}>
-          <input type="text" placeholder="Enter Ticker Symbol Here" value={curinput} onChange={handleChange} className="Ticker-searchbar" />
-        </label>
-        <Button variant="outline-primary" type="submit" disabled={disabled} style={{float:"center", borderRadius: "0px"}}>Submit</Button>
-      </form>
+      <Form>
+        <Form.Label>Available Symbols:</Form.Label>
+        <Form.Control
+          as="select"
+          onChange={handleSymbolChange}>
+          <option value="N/A">Please Select Symbol</option>
+          {Object.keys(props.underlyingDataProps).map((symbol, i) => <option value={symbol} id={i}>{symbol}</option>)}
+        </Form.Control>
+      </Form>
+        
     </div>
   );
 }
