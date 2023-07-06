@@ -334,7 +334,6 @@ export default {
     },
     async handleOptVizEvent (optVizState) {
       let optVizData = optVizState.getState();
-      console.log(optVizData);
 
       if (!optVizData["currentSymbol"] || !optVizData["currentStrategies"]){
         return;
@@ -369,7 +368,6 @@ export default {
       
       for (let sidx in optVizData["currentStrategies"]) {
         let strat = optVizData["currentStrategies"][sidx];
-        console.log(strat);
         let numLegs = Object.keys(strat["legs"]).length;
         for (let i =0; i < numLegs; i++){
           let lKey = i.toString();
@@ -393,13 +391,6 @@ export default {
             tCol = strat["legs"][lKey]["premium"];
           }
 
-          console.log(udlFeed)
-          console.log(String((optionsSize * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})))
-          console.log(this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"])
-          console.log(String((parseInt(strat["legs"][lKey]["strike"]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})))
-          console.log(strat["legs"][lKey]["expiration"])
-
-          console.log(tCol / (10 ** 18));
           collaterals.push(parseInt(tCol) / (10 ** 18));
 
           createOptions.push({
@@ -416,13 +407,9 @@ export default {
             p => bs.blackScholes(p,strike,dt,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
           );
 
-          console.log(yVals1);
-
           let yVals2 = xVals.map(
             p => bs.blackScholes(p,strike,dt1,rvol,0, (strat["legs"][lKey]["type"] === 'P') ? 'put' : 'call')
           );
-
-          console.log(yVals2);
 
           let yVals = yVals1.concat(yVals2);
 
@@ -454,7 +441,6 @@ export default {
       };
 
       let depositTotal = collaterals.reduce((a, b) => a + b, 0);
-      console.log(depositTotal);
 
       this.syntheticLimitOrder["setParams"] = setParams; //works
       this.syntheticLimitOrder["depositTotal"] = depositTotal; //works
@@ -560,7 +546,6 @@ export default {
             }
           }
 
-          console.log(component.OptVizData);
         },
         1000 * 60 * 2//update price every 2 min
       );
@@ -581,7 +566,6 @@ export default {
           this.OptVizData[key]["realizedVol"] = underlyingVolBig;
         }
       }
-      console.log(this.OptVizData);
     },
     async setHedgingManagerAddr() {
       const hedgingManagerAddr = await this.getLiquidityPoolContract.methods.getHedgingManager().call();
@@ -590,8 +574,6 @@ export default {
     async createProposal () {
       let component = this;
       component.loading = true;
-
-      //console.log(component.getLiquidityPoolAbi);
 
       let addSymbolAbiJSON = component.getLiquidityPoolAbi[8];
       let setRangeAbiJSON = component.getLiquidityPoolAbi[33];
@@ -1256,7 +1238,6 @@ export default {
       }
       const hedgingManagerContract = await new component.getWeb3.eth.Contract(BaseHedgingManagerJSON.abi, hedgingManagerAddr);
 
-      console.log(component.pairs);
 
       for (let pair of component.pairs){
           let priceFeedType = pair;
@@ -1265,8 +1246,6 @@ export default {
           let feedContract = new this.getWeb3.eth.Contract(ChainlinkContractJson.abi, feedAddress);
           let underlyingAddr = await feedContract.methods.getUnderlyingAddr().call();
           let idealExpoRaw = await hedgingManagerContract.methods.idealHedgeExposure(underlyingAddr).call();
-          console.log("idealExpoRaw");
-          console.log(idealExpoRaw);
           this.idealExpo[feedAddress] = idealExpoRaw  / 10 **18;
       }   
 

@@ -271,10 +271,8 @@ export default {
     },
     async handleOptVizEvent (optVizState) {
       let optVizData = optVizState.getState();
-      console.log(optVizData);
 
       let poolAddr = await this.getOptionsExchangeContract.methods.getPoolAddress(String(this.getActiveAccount).substring(2).toLowerCase()).call();
-      console.log("poolAddr: " + poolAddr);
       let hedgingManagerAddr= "";
 
       if ((poolAddr.length > 0) && ("0x0000000000000000000000000000000000000000" != poolAddr)) {
@@ -315,7 +313,6 @@ export default {
       
       for (let sidx in optVizData["currentStrategies"]) {
         let strat = optVizData["currentStrategies"][sidx];
-        console.log(strat);
         let numLegs = Object.keys(strat["legs"]).length;
         for (let i =0; i < numLegs; i++){
           let lKey = i.toString();
@@ -339,13 +336,6 @@ export default {
             tCol = strat["legs"][lKey]["premium"];
           }
 
-          console.log(udlFeed)
-          console.log(String((optionsSize * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})))
-          console.log(this.optTypes[(strat["legs"][lKey]["type"] == 'C') ? "CALL" : "PUT"])
-          console.log(String((parseInt(strat["legs"][lKey]["strike"]) * (10 ** 18)).toLocaleString('fullwide', {useGrouping:false})))
-          console.log(strat["legs"][lKey]["expiration"])
-
-          console.log(tCol / (10 ** 18));
           collaterals.push(parseInt(tCol) / (10 ** 18));
 
           let sigma = 1;
@@ -409,11 +399,6 @@ export default {
             yVals = yVals1.concat(yVals2);
           }
 
-          console.log(yVals1);
-          console.log(yVals2);
-
-          
-
           addSymbols.push({
             udlFeed: udlFeed, // these can
             strike: strat["legs"][lKey]["strike"], // be inputed from 
@@ -441,11 +426,8 @@ export default {
         hedgingNotionalThreshold:  1000, //silder of dollar amount?
       };
 
-      console.log(setParams);
 
       let depositTotal = collaterals.reduce((a, b) => a + b, 0);
-      console.log(depositTotal);
-
       this.syntheticLimitOrder["setParams"] = setParams; //works
       this.syntheticLimitOrder["depositTotal"] = depositTotal; //works
       this.syntheticLimitOrder["addSymbols"] = addSymbols; //works
@@ -472,8 +454,6 @@ export default {
               component.OptVizData[key]["currentPrice"] = underlyingPriceBig;
             }
           }
-
-          console.log(component.OptVizData);
         },
         1000 * 60 * 2//update price every 2 min
       );
@@ -494,7 +474,6 @@ export default {
           this.OptVizData[key]["realizedVol"] = underlyingVolBig;
         }
       }
-      console.log(this.OptVizData);
     },
 
     // approve the amount of stablecoins to use as collateral to sell/buy options against FPM contract

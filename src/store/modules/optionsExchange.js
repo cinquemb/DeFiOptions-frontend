@@ -271,7 +271,6 @@ const actions = {
 
       for (let symbol of symbolsList) {
         let itemList = symbol.split("-");
-        console.log(itemList);
 
         let pair = itemList[0];
         let udlSymbol = pair.split("/")[0];

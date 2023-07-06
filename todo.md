@@ -26,9 +26,20 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 		
 		- better buton click response
 
-		- cancel limit order
-			- remove option symbol
-			- withdraw funds from pool
+	- clearing cache need why??
+		- too much storage used over time?
+
+- add way to view options a pool is holding in pool management page
+	- copy+mod portfolio options flow?
+
+- create limit order
+	- via FPM
+		- new action modify to set range to 0, 0 first
+
+- cancel limit order button
+	-via FPM
+		- set range to uint256-1, uint256-1
+		- withdraw funds from pool
 
 - other hedging managers
 	-https://d8x.gitbook.io/d8x/deployments/polygon-testnet-mumbai

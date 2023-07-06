@@ -220,7 +220,7 @@ export default {
         await navigator.clipboard.writeText(this.option.address);
         let msg = "Copied Option Address (" + this.option.address + ") to clipboard";
         this.$toast.success(msg);
-      } catch($e) {console.log("fail copy")}
+      } catch($e) {return;}
     },
 
     // approve allowance to sell an option

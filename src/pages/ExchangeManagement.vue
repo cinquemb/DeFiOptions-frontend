@@ -428,8 +428,6 @@ export default {
 
       const burnValue = await optionContract.methods.balanceOf(component.BurnOptions.value1).call();
 
-      console.log(burnValue);
-
       await component.getOptionsExchangeContract.methods.burn(
         component.BurnOptions.value1,
         burnValue,

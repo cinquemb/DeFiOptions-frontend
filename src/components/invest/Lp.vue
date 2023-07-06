@@ -111,7 +111,7 @@ export default {
         await navigator.clipboard.writeText(this.$store.state.liquidityPool["selectedPoolAddress"]);
         let msg = "Copied Pool Address (" + this.$store.state.liquidityPool["selectedPoolAddress"] + ") to clipboard";
         this.$toast.success(msg);
-      } catch($e) {console.log("fail copy")}
+      } catch($e) {return;}
     }
   }
 }

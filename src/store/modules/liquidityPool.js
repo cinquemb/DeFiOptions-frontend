@@ -120,12 +120,9 @@ const actions = {
     let web3 = rootState.accounts.web3;
     let symbolsRaw = state.pool[state.selectedPoolAddress]["poolSymbolList"];//await state.contract[state.selectedPoolAddress].methods.listSymbols().call();
 
-    console.log(symbolsRaw);
-
     commit("setSymbolsList", {web3, symbolsRaw});
   },
   async fetchAllPoolOptions({ commit, rootState }){
-    console.log(rootState.accounts.chainId);
     let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
     const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
     let poolOptions = await protocolReaderContract.methods.listPoolOptions().call();
@@ -168,7 +165,6 @@ const actions = {
           let strikeRaw = itemList[2];
 
           let udlSymbol = pair.split("/")[0];
-          console.log(pair);
           state.defaultPair = pair;
           state.defaultType = typeName;
 
@@ -356,9 +352,6 @@ const mutations = {
       }
 
       let itemList = item.split("-");
-
-      console.log(itemList);
-
       
       let timestamp = itemList[3];
       let strikeRaw = itemList[2];
