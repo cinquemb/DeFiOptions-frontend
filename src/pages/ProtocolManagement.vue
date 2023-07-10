@@ -475,7 +475,6 @@ export default {
     this.$store.dispatch("protocolSettings/fetchContract");
     this.$store.dispatch("protocolSettings/storeAddress");
     this.$store.dispatch("protocolSettings/storeAbi");
-    console.error(this.getDODAddress);
   },
 
   methods: {

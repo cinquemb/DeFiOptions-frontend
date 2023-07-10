@@ -29,9 +29,6 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	- clearing cache need why??
 		- too much storage used over time?
 
-- add way to view options a pool is holding in pool management page
-	- copy+mod portfolio options flow?
-
 - create limit order
 	- via FPM
 		- new action modify to set range to 0, 0 first
@@ -40,6 +37,9 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	-via FPM
 		- set range to uint256-1, uint256-1
 		- withdraw funds from pool
+	- via PER
+		- loop over orders, filter for ui based on creator?
+		- add open orders to portfolio page?
 
 - other hedging managers
 	-https://d8x.gitbook.io/d8x/deployments/polygon-testnet-mumbai

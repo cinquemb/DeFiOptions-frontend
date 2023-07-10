@@ -3,7 +3,10 @@
 
     <h1> Current Pool: ({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h1>
 
-    <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent" :loading="loading"/>
+    <MyOptions :getUserOptions="getPoolOptions" class="mb-5" />
+
+
+    <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent" :loading="loading" class="section-big row mt-4 mx-3"/>
 
 
     <!------ create hedging manager ------>
@@ -204,6 +207,7 @@ import SetParams from '../components/manage/SetParams.vue';
 import SetAddress from '../components/manage/exchange/SetAddress.vue';
 import CreateOption from '../components/manage/CreateOption.vue';
 import RemoveSymbol from '../components/manage/RemoveSymbol.vue';
+import MyOptions from '../components/portfolio/MyOptions.vue';
 
 import { ReactWrapper } from 'vuera';
 //import { ReactInVue } from 'vuera';
@@ -269,20 +273,19 @@ export default {
     SetParams,
     CreateOption,
     RemoveSymbol,
+    MyOptions,
     'react': ReactWrapper,
     //'OptViz': ReactInVue(App),
   },
   computed: {
     ...mapGetters("accounts", ["getActiveAccount", "getChainId", "getChainName", "getWeb3", "isUserConnected"]),
-    ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getOptionsExchangeAbi", "getLiquidityPoolBalance", "getSelectedPool", "getUnderlyingsAvailable"]),
+    ...mapGetters("optionsExchange", ["getOptionsExchangeContract","getOptionsExchangeAbi", "getLiquidityPoolBalance", "getSelectedPool", "getUnderlyingsAvailable", "getPoolOptions"]),
     ...mapGetters("liquidityPool", ["getLiquidityPoolContract", "getLiquidityPoolAbi","getApy", "getUserPoolUsdValue", "getSelectedPoolAddress", "getSymbolsListJson"]),
     ...mapGetters("proposalManager", ["getProposalManagerContract", "getProposalManagerAddress", "getFastPoolManagementAddress"]),
     ...mapGetters("dai", ["getUserDaiBalance", "getDaiContract"]),
     ...mapGetters("usdc", ["getUserUsdcBalance", "getUsdcContract"]),
 
     getUserStablecoinBalance() {
-
-
       if (this.depositWith === "DAI") {
         return this.getUserDaiBalance;
       } else if (this.depositWith === "USDC") {

@@ -242,7 +242,6 @@ const actions = {
     }
 
     const withdrawalFeeBig = state.pool[state.selectedPoolAddress]["poolWithdrawalFee"];//await state.contract[state.selectedPoolAddress].methods.withdrawFee().call();
-    console.error("withdrawalFeeBig:" + withdrawalFeeBig);
 
     const wFeeSmall = Number(withdrawalFeeBig) / 1000000000; // divide to remove 9 decimal places
     const wFeePercentage = wFeeSmall * 100; // the result is percentage

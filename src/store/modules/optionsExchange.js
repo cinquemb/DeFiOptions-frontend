@@ -14,6 +14,7 @@ const state = {
   userSurplusBalance: null,
   userExchangeBalanceAllowance: null,
   userOptions: null,
+  poolOptions: null,
   underlyingPrice: null,
   availableLiquidityPools: [],
   poolSymbolsAddrsMap: {},
@@ -65,6 +66,9 @@ const getters = {
   },
   getUserOptions(state) {
     return state.userOptions;
+  },
+  getPoolOptions(state) {
+    return state.poolOptions;
   },
   getSelectedPoolAddr(state) {
     return state.poolSymbolsAddrsMap[state.selectedPool];
@@ -305,6 +309,59 @@ const actions = {
 
     commit("setUserOptions", optionsList);
   },
+  async fetchPoolOptions({ commit, dispatch, state, rootState }) {
+    if (!state.contract) {
+      dispatch("fetchContract");
+    }
+
+    let activeAccount = state.selectedPool;
+    let options = await state.contract.methods.getBook(activeAccount).call();
+
+    let web3 = rootState.accounts.web3;
+
+    let symbolsList = options.symbols.split("\n");
+
+    let optionsList = [];
+    if (symbolsList[0] !== "") { // if the list is not empty  
+      let counter = 0;
+
+
+      for (let symbol of symbolsList) {
+        let itemList = symbol.split("-");
+
+        let pair = itemList[0];
+        let udlSymbol = pair.split("/")[0];
+        let timestamp = itemList[3];
+        let strike = Math.round(web3.utils.fromWei(Number(itemList[2]).toString(16), "ether"));
+        let strikeRaw = itemList[2];
+
+        let holding = web3.utils.fromWei(options.holding[counter], "ether");
+        let written = web3.utils.fromWei(options.written[counter], "ether");
+        let intrinsicValue = web3.utils.fromWei(options.iv[counter], "ether");
+        let address = options.tokens[counter];
+
+        // type
+        let type = "CALL";
+        if (itemList[1] === "EP") {
+          type = "PUT";
+        }
+
+        // maturity
+        let maturity = new Date(Number(itemList[3])*1e3).toLocaleDateString('en-GB', { 
+          day: 'numeric', 
+          month: 'short', 
+          year: 'numeric' });
+        
+        // option object
+        let optionObject = {symbol, pair, udlSymbol, type, maturity, strike, strikeRaw, holding, written, intrinsicValue, timestamp, address}
+        optionsList.push(optionObject);
+
+        counter++;
+      }
+    }
+
+    commit("setPoolOptions", optionsList);
+  },
   storeAbi({commit}) {
     commit("setAbi", OptionsExchange.abi);
   },
@@ -351,6 +408,9 @@ const mutations = {
   },
   setUserOptions(state, options) {
     state.userOptions = options;
+  },
+  setPoolOptions(state, options) {
+    state.poolOptions = options;
   },
   setPoolSymbols(state, poolSymbols) {
       state.availableLiquidityPools = poolSymbols;
