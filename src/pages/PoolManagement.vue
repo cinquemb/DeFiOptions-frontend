@@ -3,7 +3,7 @@
 
     <h1> Current Pool: ({{getSelectedPoolAddress.substring(0, 6)}}...{{getSelectedPoolAddress.substring(38, 42)}})</h1>
 
-    <MyOptions :getUserOptions="getPoolOptions" class="mb-5" />
+    <MyOptions :getUserOptions="getPoolOptions" class="mb-5" :isPoolExposure="true" />
 
 
     <react :component="OptViz" :underlyingData="OptVizData" @onChange="handleOptVizEvent" :loading="loading" class="section-big row mt-4 mx-3"/>

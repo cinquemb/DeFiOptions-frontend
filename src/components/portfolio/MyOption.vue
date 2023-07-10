@@ -39,7 +39,7 @@
       
       <button v-if="isOptionExpired(option) && intrinsicValue == 0" class="btn btn-danger" @click="copyOptionAddr">Expired</button>
 
-      <button @click="liquidateOptions" v-if="isOptionExpired(option) && (this.option.written > this.option.holding)" class="btn btn-outline-success">
+      <button @click="liquidateOptions" v-if="isOptionExpired(option) && ((this.option.written > this.option.holding) || ((this.isPoolExposure === true) && ((this.option.written > 0) || ((this.option.holding > 0)))))" class="btn btn-outline-success">
         <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
         Free Collateral
       </button>
@@ -118,7 +118,7 @@ import addresses from "../../contracts/addresses.json";
 
 export default {
   name: "MyOption",
-  props: ["option"],
+  props: ["option", "isPoolExposure"],
   data() {
     return { 
       expiryPrice: null, // price at the expiration date (if option expired already)
@@ -345,7 +345,7 @@ export default {
 
       // redeem option transaction
       await optionContract.methods.redeem(
-        component.getActiveAccount
+        (component.isPoolExposure === true) ? component.getLiquidityPoolAddress : component.getActiveAccount
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,
@@ -387,7 +387,7 @@ export default {
       // liquidateOptions transaction
       await component.getIncentivizedContract.methods.liquidateExpired(
         component.option.address,
-        [component.getActiveAccount]
+        [(component.isPoolExposure === true) ? component.getLiquidityPoolAddress : component.getActiveAccount]
       ).send({
         from: component.getActiveAccount,
         maxPriorityFeePerGas: null,

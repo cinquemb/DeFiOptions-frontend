@@ -1,6 +1,6 @@
 <template>
   <div class="section-big row mt-4 mx-3">
-    <h3>My options</h3>
+    <h3>{{myOptionsLabel}}</h3>
 
     <div class="form-check form-switch mt-1 mx-3">
       <input 
@@ -17,7 +17,7 @@
     </div>
 
     <div v-for="option in filteredUserOptions" v-bind:key="option.symbol">
-      <MyOption :option="option" />
+      <MyOption :option="option" :isPoolExposure="isPoolExposure" />
     </div>
     
   </div>
@@ -28,7 +28,7 @@ import MyOption from './MyOption.vue';
 
 export default {
   name: "MyOptions",
-  props: ["getUserOptions"],
+  props: ["getUserOptions", "isPoolExposure"],
 
   data() {
     return {
@@ -37,6 +37,14 @@ export default {
   },
 
   computed: {
+    myOptionsLabel() {
+      if (this.isPoolExposure === true) {
+        return "Pool Options";
+      } else {
+        return "My Options";
+      }
+    },
+
     filteredUserOptions() {
       if (this.showExpired === true) {
         return this.getUserOptions;
