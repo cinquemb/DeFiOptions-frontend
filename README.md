@@ -1,6 +1,6 @@
 # DeFiOptions web3 app
 
-Accessible via: https://DeFiOptions.org
+Accessible via: https://DeFi-Options.org
 
 ## IMPORTANT!
 

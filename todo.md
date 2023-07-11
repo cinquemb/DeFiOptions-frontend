@@ -29,6 +29,8 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 	- clearing cache need why??
 		- too much storage used over time?
 
+	- issue with address options book not being cleared after liquidate/redeem passing txs?
+
 - create limit order
 	- via FPM
 		- new action modify to set range to 0, 0 first
