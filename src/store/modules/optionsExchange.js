@@ -93,13 +93,13 @@ const actions = {
       "BTC/USD-CHAINLINK": {"udlAddr": addresses["BTC/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
       "ETH/USD-CHAINLINK": {"udlAddr": addresses["ETH/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
       "MATIC/USD-CHAINLINK": {"udlAddr": addresses["MATIC/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
-      "CANTO/USD-N/A": {"udlAddr": addresses["CANTO/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      //"CANTO/USD-N/A": {"udlAddr": addresses["CANTO/USD"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
       "AVAX/USD-CHAINLINK": {"udlAddr": addresses["AVAX/USD"][chainIdDec], "currentPrice": null, "realizedVol": null},
       "BTC/USD-PYTH-1": {"udlAddr": addresses["BTC/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
       "ETH/USD-PYTH-1": {"udlAddr": addresses["ETH/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
-      "MATIC/USD-PYTH-1": {"udlAddr": addresses["MATIC/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
-      "CANTO/USD-PYTH-1": {"udlAddr": addresses["CANTO/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
-      "AVAX/USD-PYTH-1": {"udlAddr": addresses["AVAX/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}
+      //"MATIC/USD-PYTH-1": {"udlAddr": addresses["MATIC/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      //"CANTO/USD-PYTH-1": {"udlAddr": addresses["CANTO/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}, 
+      //"AVAX/USD-PYTH-1": {"udlAddr": addresses["AVAX/USD(0xe977757dA5fd73Ca3D2bA6b7B544bdF42bb2CBf6)"][chainIdDec], "currentPrice": null, "realizedVol": null}
     };
 
     
