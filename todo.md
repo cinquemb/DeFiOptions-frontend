@@ -31,12 +31,15 @@ cd dist/; git init; git add -A; git commit -m "deployment to GH Pages"; git push
 
 	- issue with address options book not being cleared after liquidate/redeem passing txs?
 
+
 - create limit order
 	- via FPM
 		- new action modify to set range to 0, 0 first
 
 - cancel limit order button
+	- show button if pool is owned by person, or created by person, or owns shares of pool
 	-via FPM
+		- input: symbol of option, side of option
 		- set range to uint256-1, uint256-1
 		- withdraw funds from pool
 - cancel market order button

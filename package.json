@@ -9,6 +9,9 @@
   },
   "dependencies": {
     "@burner-wallet/burner-connect-provider": "^0.1.1",
+    "@coinbase/wallet-sdk": "^3.0.9",
+    "@ledgerhq/connect-kit-loader": "^1.1.2",
+    "@walletconnect/web3-provider": "^1.8.0",
     "authereum": "^0.1.0",
     "black-scholes": "^1.1.0",
     "bootstrap": "^4.5.0",
@@ -32,7 +35,7 @@
     "vuera": "github:akxcv/vuera",
     "vuex": "^3.6.0",
     "web3": "^1.6.0",
-    "web3modal": "^1.9.2"
+    "web3modal": "^1.9.12"
   },
   "devDependencies": {
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",

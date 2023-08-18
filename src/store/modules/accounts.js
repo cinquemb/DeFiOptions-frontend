@@ -2,6 +2,9 @@ import Web3Modal from "web3modal";
 import Web3 from "web3";
 import BurnerConnectProvider from "@burner-wallet/burner-connect-provider";
 import Authereum from "authereum";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
+import { loadConnectKit } from '@ledgerhq/connect-kit-loader';
 import router from '@/router';
 
 const state = {
@@ -84,6 +87,34 @@ const actions = {
       },
       authereum: {
         package: Authereum // required
+      },
+      walletconnect: {
+        package: WalletConnectProvider, // required
+        options: {
+          infuraId: "INFURA_ID" // required
+        }
+      },
+      ledger: {
+        package: loadConnectKit,  // required
+        opts: {
+          chainId: 1,               // defaults to 1
+          infuraId: "INFURA_ID",     // required if no rpc
+          rpc: {                    // required if no infuraId
+            1: "INSERT_MAINNET_RPC_URL",
+            137: "INSERT_POLYGON_RPC_URL",
+            // ...
+          }
+        }
+      },
+      coinbasewallet: {
+        package: CoinbaseWalletSDK, // Required
+        options: {
+          appName: "DeFi Options DAO frontend", // Required
+          infuraId: "INFURA_ID", // Required
+          rpc: "", // Optional if `infuraId` is provided; otherwise it's required
+          chainId: 1, // Optional. It defaults to 1 if not provided
+          darkMode: true // Optional. Use dark theme, defaults to false
+        }
       }
     };
     

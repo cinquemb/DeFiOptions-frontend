@@ -124,6 +124,9 @@ const actions = {
   },
   async fetchAllPoolOptions({ commit, rootState }){
     let protocolReaderAddr = addresses["ProtocolReader"][parseInt(rootState.accounts.chainId)];
+    if (!rootState.accounts.web3) {
+      return;
+    }
     const protocolReaderContract = await new rootState.accounts.web3.eth.Contract(ProtocolReaderJSON.abi, protocolReaderAddr);
     let poolOptions = await protocolReaderContract.methods.listPoolOptions().call();
 
