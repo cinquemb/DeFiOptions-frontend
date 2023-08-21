@@ -12,6 +12,7 @@
     "@coinbase/wallet-sdk": "^3.0.9",
     "@ledgerhq/connect-kit-loader": "^1.1.2",
     "@walletconnect/web3-provider": "^1.8.0",
+    "@web3modal/trezor-provider": "^1.0.0",
     "authereum": "^0.1.0",
     "black-scholes": "^1.1.0",
     "bootstrap": "^4.5.0",

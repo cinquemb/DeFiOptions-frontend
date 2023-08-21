@@ -5,6 +5,7 @@ import Authereum from "authereum";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 import { loadConnectKit } from '@ledgerhq/connect-kit-loader';
+import TrezorProvider from '@web3modal/trezor-provider';
 import router from '@/router';
 
 const state = {
@@ -93,6 +94,9 @@ const actions = {
         options: {
           infuraId: "INFURA_ID" // required
         }
+      },
+      trezor: {
+          package: TrezorProvider
       },
       ledger: {
         package: loadConnectKit,  // required

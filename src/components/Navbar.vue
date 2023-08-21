@@ -103,6 +103,9 @@
               Community
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" target="_blank" href="https://calendly.com/defi-options/30min">
+                <i class="fas fa-calender"></i> Calendly
+              </a></li>
               <li><a class="dropdown-item" target="_blank" href="https://dune.xyz/dod/DeFi-Options?period=3months">
                 <i class="fas fa-chart-bar"></i> Analytics
               </a></li>
